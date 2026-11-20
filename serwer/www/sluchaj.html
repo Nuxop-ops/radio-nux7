@@ -123,6 +123,18 @@ h1 { margin: 10px 0 0; font-family: var(--szeryf); font-weight: 500; font-size: 
 .odtwarzacz .panel { width: min(560px, 100%); text-align: center; padding: 24px 16px 20px; margin: 0; }
 .odtwarzacz h2 { margin: 0; font-family: var(--szeryf); font-weight: 500; font-size: 38px; line-height: 1.05; }
 .odtwarzacz p { margin: 4px 0 0; color: var(--cichy); font-size: 14px; }
+.odtwarzacz .utwor { margin-top: 8px; font-family: var(--szeryf); font-style: italic; font-size: 22px; line-height: 1.15; color: var(--tekst); }
+.odtwarzacz .wykonawca { font-size: 14px; color: var(--cichy); }
+.grane { margin-top: 16px; text-align: left; border-top: 1px solid var(--linia); padding-top: 12px; }
+.grane summary { cursor: pointer; font-size: 11px; font-weight: 600; letter-spacing: 0.24em; color: var(--akcent); list-style: none; min-height: 32px; display: flex; align-items: center; justify-content: space-between; }
+.grane summary::-webkit-details-marker { display: none; }
+.grane summary::after { content: "Zobacz utwory"; letter-spacing: 0; font-weight: 500; font-size: 13px; color: var(--cichy); }
+.grane[open] summary::after { content: "Zwiń"; }
+.grane ol { margin: 6px 0 0; padding: 0; list-style: none; max-height: 190px; overflow: auto; }
+.grane li { display: flex; gap: 12px; padding: 8px 0; border-top: 1px solid var(--linia); font-size: 14px; }
+.grane li:first-child { border-top: 0; }
+.grane li time { flex: none; width: 44px; color: var(--cichy); font-variant-numeric: tabular-nums; }
+.grane li span { color: var(--cichy); }
 .sterowanie { margin-top: 22px; display: flex; align-items: center; justify-content: space-between; }
 
 .opcja { display: flex; align-items: center; gap: 12px; min-height: 60px; }
@@ -246,6 +258,7 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
   <div class="panel szklo">
     <h2 id="duza-nazwa"></h2>
     <p id="duzy-opis"></p>
+    <div id="co-gra" hidden><div class="utwor" id="utwor"></div><div class="wykonawca" id="wykonawca"></div></div>
     <div class="sterowanie">
       <button class="ikona-przycisk" id="duze-serce" type="button"></button>
       <button class="ikona-przycisk" id="poprzednia" type="button" aria-label="Poprzednia stacja" style="color:var(--tekst)"></button>
@@ -253,6 +266,7 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
       <button class="ikona-przycisk" id="nastepna" type="button" aria-label="Następna stacja" style="color:var(--tekst)"></button>
       <span style="width:48px"></span>
     </div>
+    <details class="grane" id="grane" hidden><summary>OSTATNIO GRANE</summary><ol id="grane-lista"></ol></details>
   </div>
 </section>
 
@@ -815,7 +829,8 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
     document.getElementById('mini').hidden = !grana;
     if (grana) {
       var stan = niegra ? 'Stacja nie odpowiada' : (gra ? 'Na żywo' : 'Zatrzymane');
-      document.getElementById('mini-stan').textContent = stan;
+      var u = gra && !niegra && coGra && coGra.utwor;
+      document.getElementById('mini-stan').textContent = u ? (u.wykonawca ? u.wykonawca + ' – ' : '') + u.tytul : stan;
       document.getElementById('duzy-stan').textContent = stan.toUpperCase();
       ['mini-graj', 'duzy-graj'].forEach(function (id) {
         var p = document.getElementById(id);
@@ -844,9 +859,47 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
 
   // ---------- Odtwarzanie ----------
 
+  // ---------- Co teraz gra ----------
+
+  var coGra = null;
+  function pokazCoGra() {
+    var u = coGra && coGra.utwor;
+    document.getElementById('co-gra').hidden = !u;
+    if (u) {
+      document.getElementById('utwor').textContent = u.tytul;
+      document.getElementById('wykonawca').textContent = u.wykonawca;
+    }
+    var ostatnie = coGra ? coGra.ostatnie.slice(1) : [];
+    var pole = document.getElementById('grane');
+    pole.hidden = !ostatnie.length;
+    var spis = document.getElementById('grane-lista');
+    spis.textContent = '';
+    ostatnie.forEach(function (o) {
+      var li = el('li');
+      var kiedy = new Date(o.czas);
+      li.appendChild(el('time', '', ('0' + kiedy.getHours()).slice(-2) + ':' + ('0' + kiedy.getMinutes()).slice(-2)));
+      var opis = el('div', '', o.tytul + ' ');
+      if (o.wykonawca) opis.appendChild(el('span', '', '· ' + o.wykonawca));
+      li.appendChild(opis);
+      spis.appendChild(li);
+    });
+    zaznacz();
+  }
+  function odswiezCoGra() {
+    if (!grana || dzwiek.paused) return;
+    var dla = grana.id;
+    fetch('/api/teraz/' + encodeURIComponent(dla)).then(function (o) { return o.ok ? o.json() : null; }).then(function (d) {
+      if (d && grana && grana.id === dla) { coGra = d; pokazCoGra(); }
+    }).catch(function () {});
+  }
+  setInterval(odswiezCoGra, 20000);
+  dzwiek.addEventListener('playing', odswiezCoGra);
+
   function graj(stacja) {
     grana = stacja;
     niegra = false;
+    coGra = null;
+    pokazCoGra();
     document.getElementById('mini-nazwa').textContent = stacja.nazwa;
     document.getElementById('duza-nazwa').textContent = stacja.nazwa;
     document.getElementById('duzy-opis').textContent = stacja.opis;

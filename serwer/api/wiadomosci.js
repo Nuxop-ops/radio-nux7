@@ -32,7 +32,6 @@ const KANALY = [
   ['Polsat News', 'nauka', 'https://www.polsatnews.pl/rss/technologie.xml'],
   ['Polsat News', 'kultura', 'https://www.polsatnews.pl/rss/kultura.xml'],
   ['Polsat News', 'sport', 'https://www.polsatnews.pl/rss/sport.xml'],
-  ['TVN24', 'polska', 'https://tvn24.pl/najnowsze.xml'],
   ['Nauka w Polsce', 'nauka', 'https://naukawpolsce.pl/rss.xml'],
 ];
 

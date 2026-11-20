@@ -301,6 +301,39 @@ function zAdresu(req, res, adres, zapasowo, przekierowania = 0) {
   res.on('close', () => zadanie.destroy());
 }
 
+// ---------- Co teraz gra ----------
+
+// Pośrednik stacji zna tytuł utworu tylko dla części stacji (głównie RMF).
+// Odpowiedź trzymamy kilkanaście sekund i zapamiętujemy ostatnie utwory każdej stacji.
+const teraz = new Map(); // id stacji -> { kiedy, utwor, ostatnie: [] }
+function rozdziel(napis) {
+  const czysty = String(napis || '').replace(/\s+/g, ' ').trim().slice(0, 160);
+  if (!czysty) return null;
+  const gdzie = czysty.indexOf(' - ');
+  return gdzie > 0
+    ? { wykonawca: czysty.slice(0, gdzie), tytul: czysty.slice(gdzie + 3) }
+    : { wykonawca: '', tytul: czysty };
+}
+async function coGra(id) {
+  let wpis = teraz.get(id);
+  if (!wpis) { wpis = { kiedy: 0, utwor: null, ostatnie: [] }; teraz.set(id, wpis); }
+  if (Date.now() - wpis.kiedy > 15000 && !BEZ_SIECI) {
+    wpis.kiedy = Date.now();
+    try {
+      const klucz = doPosrednika();
+      const dane = JSON.parse(await pobierz(POSREDNIK + '/api/now?id=' + encodeURIComponent(id) + (klucz ? '&' + klucz.slice(1) : ''), 6000));
+      const utwor = rozdziel(dane.title);
+      const poprzedni = wpis.utwor;
+      if (utwor && (!poprzedni || poprzedni.tytul !== utwor.tytul || poprzedni.wykonawca !== utwor.wykonawca)) {
+        wpis.ostatnie.unshift(Object.assign({ czas: new Date().toISOString() }, utwor));
+        wpis.ostatnie = wpis.ostatnie.slice(0, 12);
+      }
+      wpis.utwor = utwor;
+    } catch (e) { /* brak odpowiedzi: zostaje poprzedni utwór */ }
+  }
+  return { utwor: wpis.utwor, ostatnie: wpis.ostatnie };
+}
+
 // ---------- Odpowiedzi ----------
 
 function json(res, kod, tresc) {
@@ -364,6 +397,12 @@ async function obsluz(req, res) {
     const wlasna = wszystkieStacje.find(s => s.id === strumien[1] && s.wlasna);
     if (wlasna) return zAdresu(req, res, wlasna.adresy[0], () => blad(res, 502, 'Stacja nie odpowiada.'));
     return przezPosrednika();
+  }
+
+  const gra = sciezka.match(/^\/api\/teraz\/([a-z0-9-]{1,40})$/);
+  if (gra && metoda === 'GET') {
+    if (!wszystkieStacje.some(s => s.id === gra[1])) return blad(res, 404, 'Nie ma takiej stacji.');
+    return json(res, 200, await coGra(gra[1]));
   }
 
   if (sciezka === '/api/wiadomosci' && metoda === 'GET') {
