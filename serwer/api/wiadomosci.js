@@ -12,7 +12,7 @@ const TEMATY = [
   { id: 'nauka', nazwa: 'Nauka i technologie' },
   { id: 'kultura', nazwa: 'Kultura i rozrywka' },
   { id: 'gospodarka', nazwa: 'Gospodarka' },
-  { id: 'polityka', nazwa: 'Polityka' },
+  { id: 'polityka', nazwa: 'Polityka i konflikty' },
   { id: 'sport', nazwa: 'Sport' },
 ];
 // Tematy zaznaczone, dopóki użytkownik sam nie wybierze.
@@ -35,7 +35,7 @@ const KANALY = [
   ['Nauka w Polsce', 'nauka', 'https://naukawpolsce.pl/rss.xml'],
 ];
 
-const POLITYKA = /sejm|senat|\bpis\b|\bpis-|koalicj|opozycj|\bpos[eł]{2}\b|posł[aóo]|posłank|sonda[żz]|\bparti|tusk|kaczyński|nawrock|konfederacj|\blewic|\bpsl\b|wotum|komisj[aię] śledcz|\bwet[oa]\b|kampani[aię] wyborcz|rzecznik rządu|\bpolity[ck]|marszał[ek]{2} sejmu|ministe?r|premier|\brząd(?:u|owi|em|zie)?\b|prezydent (?:powoł|podpis|zawetow|odmówi)|ustaw[ayęi]\b|głosowani/i;
+const POLITYKA = /sejm|senat|\bpis\b|\bpis-|koalicj|opozycj|\bpos[eł]{2}\b|posł[aóo]|posłank|sonda[żz]|\bparti|tusk|kaczyński|nawrock|konfederacj|\blewic|\bpsl\b|wotum|komisj[aię] śledcz|\bwet[oa]\b|kampani[aię] wyborcz|rzecznik rządu|\bpolity[ck]|marszał[ek]{2} sejmu|ministe?r|premier|\brząd(?:u|owi|em|zie)?\b|prezydent (?:powoł|podpis|zawetow|odmówi)|ustaw[ayęi]\b|głosowani|prezyden|kancler|parlament|wybor(?:y|ów|ach|cz)|referend|zełensk|putin|trump|biden|macron|merz|orb[aá]n|łukaszenk|netanjahu|erdo[gğ]an|kreml|biały dom|białego domu|\bnato\b|\bue\b|uni[iaę] europejsk|komisj[aię] europejsk|sankcj|rozejm|zawieszeni\S+ broni|rozmow\S+ pokojow|plan\S* pokojow|negocjacj|wojsk|armi[aię]\b|żołnierz|rakiet|dron(?:y|ów|ami)?\b|ostrzał|ofensyw|okupac|inwazj|na froncie|linii frontu|dyploma|ambasad|sojusz|traktat|szczyt\w* (?:nato|ue|g7|g20|klimat)|artykuł 5|hamas|hezbollah|strefie gazy|strefy gazy/i;
 const ZDARZENIA = /wypad|zderz|pożar|zgin[ęąe]|nie żyj|ofiar|katastrof|trzęsieni|powód[źz]|podtopie|ewakuac|wybuch|zagin|poszukiwa|uton|tragedi|rann[yaie]|ratown|akcja ratun|policj|zatrzyman|napad|nożownik|strzelanin|huragan|tornado|lawin|wichur|śmierteln|potrąc|dachowa/i;
 const SPORT = /\bmecz|ekstraklas|\blig[iaę]\b|piłkar|\btrener|mundial|\bgol[ae]?\b|tenis|świątek|lewandowsk|siatk|żużl|skoki narciarskie|formuł[ay] 1|olimpi|mistrzostw|\bmedal|kolarz|bokser|\bnba\b/i;
 const PRZYNETY = /nie uwierzysz|zobacz,? co|\bquiz\b|\[wideo\]|\[zdjęcia\]|sprawdź,? czy|tego nie wiedzia/i;

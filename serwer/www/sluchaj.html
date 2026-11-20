@@ -92,21 +92,27 @@ h1 { margin: 10px 0 0; font-family: var(--szeryf); font-weight: 500; font-size: 
 .okragly { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; }
 .na-zywo { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 600; letter-spacing: 0.28em; color: var(--akcent); }
 .na-zywo i { width: 6px; height: 6px; border-radius: 50%; background: var(--akcent); }
-.pierscien { position: relative; flex: none; margin: auto 0 0; width: 272px; height: 272px; border-radius: 50%; display: grid; place-items: center; background: radial-gradient(circle at 32% 24%, rgba(255,255,255,0.13), rgba(255,255,255,0.03) 58%, rgba(0,0,0,0.25)); box-shadow: 0 24px 60px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.18); cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
+.pierscien { position: relative; flex: none; margin: auto 0 0; width: 272px; height: 272px; border-radius: 50%; display: grid; place-items: center; background: radial-gradient(circle at 50% 38%, #1d1d1f, #0b0b0c 72%); box-shadow: 0 26px 60px rgba(0,0,0,0.65), 0 2px 0 rgba(255,255,255,0.06); cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
 .pierscien:active { cursor: grabbing; }
 .pierscien:focus-visible { outline: 2px solid var(--akcent); outline-offset: 4px; }
-.pierscien svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.pierscien > svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .pierscien .tor { fill: none; stroke: rgba(255,255,255,0.14); stroke-width: 5; stroke-linecap: round; }
-.pierscien .poziom { fill: none; stroke: var(--akcent); stroke-width: 5; stroke-linecap: round; }
-.pierscien .poziom.blask { stroke-width: 8; opacity: 0.55; }
-.pierscien .galka-cien { fill: rgba(0,0,0,0.55); }
-.pierscien .galka { fill: var(--akcent); stroke: rgba(255,255,255,0.75); stroke-width: 1.5; }
-.pierscien .galka-srodek { fill: var(--na-akcencie); }
+.pierscien .poziom { fill: none; stroke: url(#pk-zloto); stroke-width: 5; stroke-linecap: round; }
+.pierscien .poziom.blask { stroke: var(--akcent); stroke-width: 9; opacity: 0.6; }
+.pierscien .galka-cien { fill: none; }
+.pierscien .galka { fill: #fff3cf; stroke: var(--akcent); stroke-width: 1.5; filter: drop-shadow(0 0 5px var(--akcent)); }
+.pierscien .galka-srodek { fill: none; }
 .pierscien .kreski line { stroke: rgba(255,255,255,0.22); stroke-width: 1.2; stroke-linecap: round; }
 .pierscien .kreski line.duza { stroke: rgba(255,255,255,0.5); stroke-width: 1.6; }
 .pierscien .kreski line.zapalona { stroke: var(--akcent); }
-.tarcza { position: relative; width: 188px; height: 188px; border-radius: 50%; display: grid; place-items: center; background: radial-gradient(circle at 35% 28%, #2c2c2c, #0d0d0d 70%); border: 1.5px solid var(--akcent); box-shadow: 0 10px 30px rgba(0,0,0,0.6), inset 0 0 0 6px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.2); pointer-events: none; }
-.tarcza .logo.wielkie { width: 124px; height: 124px; border-width: 1px; border-color: rgba(255,255,255,0.25); box-shadow: 0 6px 18px rgba(0,0,0,0.5); }
+.tarcza { position: relative; width: 182px; height: 182px; border-radius: 50%; display: grid; place-items: center; background: repeating-conic-gradient(from 0deg, rgba(255,255,255,0.045) 0deg 0.6deg, rgba(0,0,0,0.05) 0.6deg 1.4deg), conic-gradient(from 35deg, #2d2d2f, #0e0e0f 22%, #343436 50%, #0e0e0f 76%, #2d2d2f); box-shadow: 0 12px 28px rgba(0,0,0,0.7), inset 0 1px 1px rgba(255,255,255,0.22), inset 0 -1px 1px rgba(0,0,0,0.6), 0 0 0 1px rgba(0,0,0,0.7); pointer-events: none; }
+.tarcza > * { grid-area: 1 / 1; transition: opacity 0.18s ease; }
+.tarcza .procent { opacity: 0; display: grid; justify-items: center; gap: 6px; color: #f5e8cf; }
+.tarcza .procent b { font: 300 44px/1 Inter, system-ui, sans-serif; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.pierscien.reguluje .logo.wielkie { opacity: 0; }
+.pierscien.reguluje .procent { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .tarcza > * { transition: none; } }
+.tarcza .logo.wielkie { width: 116px; height: 116px; border-width: 1px; border-color: rgba(255,255,255,0.22); box-shadow: 0 6px 18px rgba(0,0,0,0.55); }
 .ile-glosno { flex: none; height: 18px; margin: 10px 0 auto; font-size: 12px; letter-spacing: 0.14em; color: var(--cichy); opacity: 0; transition: opacity 0.4s ease; }
 .ile-glosno.widac { opacity: 1; }
 
@@ -266,8 +272,11 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
   <div class="pierscien" id="pokretlo" role="slider" tabindex="0" aria-label="Głośność" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
     <svg viewBox="0 0 272 272" aria-hidden="true">
       <defs>
-        <linearGradient id="pk-metal" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#ffffff" stop-opacity="0.34"/><stop offset="0.45" stop-color="#ffffff" stop-opacity="0.06"/><stop offset="1" stop-color="#ffffff" stop-opacity="0.22"/>
+        <linearGradient id="pk-metal" x1="0.1" y1="0" x2="0.9" y2="1">
+          <stop offset="0" stop-color="#e9dfc4"/><stop offset="0.18" stop-color="#6d6758"/><stop offset="0.42" stop-color="#1c1c1c"/><stop offset="0.6" stop-color="#8a8372"/><stop offset="0.8" stop-color="#262626"/><stop offset="1" stop-color="#d6c9a4"/>
+        </linearGradient>
+        <linearGradient id="pk-zloto" x1="0" y1="1" x2="1" y2="0">
+          <stop offset="0" stop-color="var(--akcent)"/><stop offset="1" stop-color="#fff3cf"/>
         </linearGradient>
         <radialGradient id="pk-wglebienie" cx="0.5" cy="0.5" r="0.5">
           <stop offset="0.72" stop-color="#000000" stop-opacity="0.55"/><stop offset="1" stop-color="#000000" stop-opacity="0"/>
@@ -275,14 +284,18 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
         <filter id="pk-blask" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="4"/></filter>
       </defs>
       <circle cx="136" cy="136" r="135" fill="url(#pk-wglebienie)"/>
-      <circle cx="136" cy="136" r="134.500" fill="none" stroke="url(#pk-metal)" stroke-width="1.500"/>
+      <circle cx="136" cy="136" r="133.500" fill="none" stroke="url(#pk-metal)" stroke-width="3.500"/>
+      <circle cx="136" cy="136" r="130.500" fill="none" stroke="#000000" stroke-opacity="0.6" stroke-width="1.500"/>
       <g class="kreski" id="pokretlo-kreski"></g>
       <path class="tor" id="pokretlo-tor"></path>
       <path class="poziom blask" id="pokretlo-blask" filter="url(#pk-blask)"></path>
       <path class="poziom" id="pokretlo-poziom"></path>
       <g id="pokretlo-galka"><circle class="galka-cien" r="12"></circle><circle class="galka" r="8.500"></circle><circle class="galka-srodek" r="2.500"></circle></g>
     </svg>
-    <span class="tarcza"><span class="logo wielkie" id="duze-logo"></span></span>
+    <span class="tarcza">
+      <span class="logo wielkie" id="duze-logo"></span>
+      <span class="procent" aria-hidden="true"><b id="pokretlo-procent">100%</b><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.500h3l4.500-3.500v12L7 14.500H4z"/><path d="M15 9.200a4 4 0 0 1 0 5.600M17.800 6.800a7.500 7.500 0 0 1 0 10.400"/></svg></span>
+    </span>
   </div>
   <div class="ile-glosno" id="ile-glosno" aria-hidden="true"></div>
   <div class="panel szklo">
@@ -1015,11 +1028,12 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
       });
       pokretlo.setAttribute('aria-valuenow', Math.round(v * 100));
       pokretlo.setAttribute('aria-valuetext', Math.round(v * 100) + ' procent');
+      document.getElementById('pokretlo-procent').textContent = Math.round(v * 100) + '%';
+      // Podczas regulacji w miejscu logo widać procent, a chwilę później logo wraca.
       if (pokazNapis) {
-        napis.textContent = 'GŁOŚNOŚĆ ' + Math.round(v * 100) + '%';
-        napis.classList.add('widac');
+        pokretlo.classList.add('reguluje');
         clearTimeout(gasnie);
-        gasnie = setTimeout(function () { napis.classList.remove('widac'); }, 1400);
+        if (!kreci) gasnie = setTimeout(function () { pokretlo.classList.remove('reguluje'); }, 900);
       }
     }
     var zapisana = parseFloat(pamiec('nux7-glosnosc'));
@@ -1043,8 +1057,13 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
       zeWskaznika(z);
     });
     pokretlo.addEventListener('pointermove', function (z) { if (kreci) zeWskaznika(z); });
-    pokretlo.addEventListener('pointerup', function () { kreci = false; });
-    pokretlo.addEventListener('pointercancel', function () { kreci = false; });
+    function puszczone() {
+      kreci = false;
+      clearTimeout(gasnie);
+      gasnie = setTimeout(function () { pokretlo.classList.remove('reguluje'); }, 900);
+    }
+    pokretlo.addEventListener('pointerup', puszczone);
+    pokretlo.addEventListener('pointercancel', puszczone);
     pokretlo.addEventListener('wheel', function (z) {
       z.preventDefault();
       ustaw(dzwiek.volume + (z.deltaY < 0 ? 0.05 : -0.05), true);
