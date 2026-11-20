@@ -56,7 +56,7 @@ h1 { margin: 10px 0 0; font-family: var(--szeryf); font-weight: 500; font-size: 
 .logo.duze { width: 72px; height: 72px; font-size: 13px; }
 .logo.wielkie { width: 200px; height: 200px; font-size: 34px; border-width: 2px; border-color: var(--akcent); }
 .gra > .logo, .gra .logo.duze { border: 1.5px solid var(--akcent); }
-.logo img { width: 100%; height: 100%; object-fit: contain; background: #fff; opacity: 0; transition: opacity 0.25s ease; }
+.logo img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.25s ease; }
 
 .wiersze { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); column-gap: 28px; }
 .wiersz { display: flex; align-items: center; min-height: 66px; border-top: 1px solid var(--linia); }
@@ -314,7 +314,12 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
     if (!stacja.logo) { element.textContent = skrot(stacja.nazwa); return; }
     var obraz = document.createElement('img');
     obraz.alt = '';
-    obraz.onload = function () { obraz.style.opacity = '1'; };
+    obraz.decoding = 'async';
+    obraz.onload = function () {
+      // Malutkie ikonki po powiększeniu są rozmyte, więc zamiast nich pokazujemy skrót nazwy.
+      if (obraz.naturalWidth < 64 || obraz.naturalHeight < 64) { element.textContent = skrot(stacja.nazwa); return; }
+      obraz.style.opacity = '1';
+    };
     obraz.onerror = function () { element.textContent = skrot(stacja.nazwa); };
     obraz.src = stacja.logo;
     element.appendChild(obraz);
