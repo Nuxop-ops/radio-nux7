@@ -6,7 +6,7 @@
 const rmfGlowne = [
   [5, 'RMF FM'], [6, 'RMF MAXX'], [7, 'RMF Classic'], [190, 'Radio RMF24'],
   [82, '36 lat RMF FM'], [112, 'Best of RMF ON'], [148, 'Sizeer FM'],
-  [152, 'Radio Gra Toruń'], [162, 'Radio Gra Wrocław'], [241, 'Dodaphone'],
+  [152, 'Radio Gra Toruń'], [162, 'Radio Gra Wrocław'],
 ];
 
 const rmfTematyczne = [
