@@ -257,7 +257,6 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
   var FILTRY = [['wszystkie', 'Wszystkie'], ['bezgadania', 'Bez gadania'], ['polski', 'Tylko po polsku'], ['angielski', 'Tylko po angielsku']];
 
   var stacje = [], wczytano = false, konto = null, grana = null, zakladka = 'start', filtr = 'wszystkie', szukane = '';
-  var FILTRY = ['wszystkie', 'bezgadania', 'polski', 'angielski'];
   var niegra = false; // stacja nie odpowiedziała
   var dzwiek = document.getElementById('dzwiek');
   var tresc = document.getElementById('tresc');
@@ -281,7 +280,7 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
     } catch (e) { return null; }
   }
   function lista(nazwa) { try { return JSON.parse(pamiec(nazwa) || '[]'); } catch (e) { return []; } }
-  if (FILTRY.indexOf(pamiec('nux7-filtr')) >= 0) filtr = pamiec('nux7-filtr');
+  if (FILTRY.some(function (f) { return f[0] === pamiec('nux7-filtr'); })) filtr = pamiec('nux7-filtr');
   function klucz() { return pamiec('nux7-klucz'); }
   // Bez konta i bez własnego wyboru pokazujemy cztery stacje na start, jak w aplikacji.
   function ulubione() {
