@@ -73,7 +73,7 @@ h1 { margin: 10px 0 0; font-family: var(--szeryf); font-weight: 500; font-size: 
 .szukaj { margin-top: 16px; display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 18px; border-radius: 26px; }
 .szukaj input { flex: 1; min-width: 0; height: 48px; border: 0; outline: 0; background: transparent; }
 .szukaj input::placeholder { color: var(--cichy); }
-.filtry { margin-top: 12px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.filtry { margin-top: 12px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .filtry button { min-height: 44px; border-radius: 22px; font-size: 13px; font-weight: 500; }
 .filtry button[aria-pressed="true"] { background: var(--akcent); border-color: transparent; color: var(--na-akcencie); font-weight: 600; -webkit-backdrop-filter: none; backdrop-filter: none; }
 
@@ -86,20 +86,28 @@ h1 { margin: 10px 0 0; font-family: var(--szeryf); font-weight: 500; font-size: 
 .glosnosc { width: 120px; accent-color: var(--akcent); }
 .pasek-dolny { display: none; }
 
-.odtwarzacz { position: fixed; inset: 0; z-index: 5; display: flex; flex-direction: column; align-items: center; padding: 24px; }
+.odtwarzacz { position: fixed; inset: 0; z-index: 5; display: flex; flex-direction: column; align-items: center; padding: 24px; overflow-y: auto; }
+.odtwarzacz > * { flex: none; }
 .odtwarzacz .gora { width: min(560px, 100%); display: flex; align-items: center; justify-content: space-between; }
 .okragly { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; }
 .na-zywo { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 600; letter-spacing: 0.28em; color: var(--akcent); }
 .na-zywo i { width: 6px; height: 6px; border-radius: 50%; background: var(--akcent); }
-.pierscien { position: relative; margin: auto 0; width: 272px; height: 272px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--ramka); background: rgba(255,255,255,0.05); cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
+.pierscien { position: relative; flex: none; margin: auto 0 0; width: 272px; height: 272px; border-radius: 50%; display: grid; place-items: center; background: radial-gradient(circle at 32% 24%, rgba(255,255,255,0.13), rgba(255,255,255,0.03) 58%, rgba(0,0,0,0.25)); box-shadow: 0 24px 60px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.18); cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
 .pierscien:active { cursor: grabbing; }
+.pierscien:focus-visible { outline: 2px solid var(--akcent); outline-offset: 4px; }
 .pierscien svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-.pierscien .tor { fill: none; stroke: rgba(255,255,255,0.2); stroke-width: 4; stroke-linecap: round; }
-.pierscien .poziom { fill: none; stroke: var(--akcent); stroke-width: 4; stroke-linecap: round; }
-.pierscien .galka { fill: var(--akcent); stroke: var(--na-akcencie); stroke-width: 2; }
-.pierscien .kreski { stroke: rgba(255,255,255,0.28); stroke-width: 1.5; stroke-linecap: round; }
-.pierscien .logo.wielkie { pointer-events: none; }
-.ile-glosno { height: 18px; margin: -6px 0 10px; font-size: 12px; letter-spacing: 0.14em; color: var(--cichy); opacity: 0; transition: opacity 0.4s ease; }
+.pierscien .tor { fill: none; stroke: rgba(255,255,255,0.14); stroke-width: 5; stroke-linecap: round; }
+.pierscien .poziom { fill: none; stroke: var(--akcent); stroke-width: 5; stroke-linecap: round; }
+.pierscien .poziom.blask { stroke-width: 8; opacity: 0.55; }
+.pierscien .galka-cien { fill: rgba(0,0,0,0.55); }
+.pierscien .galka { fill: var(--akcent); stroke: rgba(255,255,255,0.75); stroke-width: 1.5; }
+.pierscien .galka-srodek { fill: var(--na-akcencie); }
+.pierscien .kreski line { stroke: rgba(255,255,255,0.22); stroke-width: 1.2; stroke-linecap: round; }
+.pierscien .kreski line.duza { stroke: rgba(255,255,255,0.5); stroke-width: 1.6; }
+.pierscien .kreski line.zapalona { stroke: var(--akcent); }
+.tarcza { position: relative; width: 188px; height: 188px; border-radius: 50%; display: grid; place-items: center; background: radial-gradient(circle at 35% 28%, #2c2c2c, #0d0d0d 70%); border: 1.5px solid var(--akcent); box-shadow: 0 10px 30px rgba(0,0,0,0.6), inset 0 0 0 6px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.2); pointer-events: none; }
+.tarcza .logo.wielkie { width: 124px; height: 124px; border-width: 1px; border-color: rgba(255,255,255,0.25); box-shadow: 0 6px 18px rgba(0,0,0,0.5); }
+.ile-glosno { flex: none; height: 18px; margin: 10px 0 auto; font-size: 12px; letter-spacing: 0.14em; color: var(--cichy); opacity: 0; transition: opacity 0.4s ease; }
 .ile-glosno.widac { opacity: 1; }
 
 .tematy { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; }
@@ -125,17 +133,27 @@ h1 { margin: 10px 0 0; font-family: var(--szeryf); font-weight: 500; font-size: 
 .odtwarzacz p { margin: 4px 0 0; color: var(--cichy); font-size: 14px; }
 .odtwarzacz .utwor { margin-top: 8px; font-family: var(--szeryf); font-style: italic; font-size: 22px; line-height: 1.15; color: var(--tekst); }
 .odtwarzacz .wykonawca { font-size: 14px; color: var(--cichy); }
-.grane { margin-top: 16px; text-align: left; border-top: 1px solid var(--linia); padding-top: 12px; }
-.grane summary { cursor: pointer; font-size: 11px; font-weight: 600; letter-spacing: 0.24em; color: var(--akcent); list-style: none; min-height: 32px; display: flex; align-items: center; justify-content: space-between; }
-.grane summary::-webkit-details-marker { display: none; }
-.grane summary::after { content: "Zobacz utwory"; letter-spacing: 0; font-weight: 500; font-size: 13px; color: var(--cichy); }
-.grane[open] summary::after { content: "Zwiń"; }
-.grane ol { margin: 6px 0 0; padding: 0; list-style: none; max-height: 190px; overflow: auto; }
+.grane { width: min(560px, 100%); text-align: left !important; padding: 16px !important; margin-top: 12px !important; }
+.grane ol { margin: 6px 0 0; padding: 0; list-style: none; max-height: 220px; overflow: auto; }
 .grane li { display: flex; gap: 12px; padding: 8px 0; border-top: 1px solid var(--linia); font-size: 14px; }
 .grane li:first-child { border-top: 0; }
 .grane li time { flex: none; width: 44px; color: var(--cichy); font-variant-numeric: tabular-nums; }
 .grane li span { color: var(--cichy); }
-.sterowanie { margin-top: 22px; display: flex; align-items: center; justify-content: space-between; }
+.fala { margin: 18px auto 0; height: 36px; display: flex; align-items: center; justify-content: center; gap: 5px; max-width: 300px; }
+.fala i { flex: none; width: 2px; height: var(--h); border-radius: 1px; background: var(--akcent); transform-origin: center; animation: fala 1.1s ease-in-out infinite alternate; animation-delay: var(--d); }
+.fala i.dalej { background: rgba(214,210,202,0.45); }
+.fala.stoi i { animation-play-state: paused; transform: scaleY(0.3); }
+@keyframes fala { from { transform: scaleY(0.3); } to { transform: scaleY(1); } }
+@media (prefers-reduced-motion: reduce) { .fala i { animation: none; } }
+.kolo.wielkie { box-shadow: 0 10px 30px color-mix(in srgb, var(--akcent) 35%, transparent); }
+.wylacznik-opis { margin: 10px 0 0 !important; color: var(--akcent) !important; font-size: 13px !important; }
+.kafelki { flex: none; width: min(560px, 100%); margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.kafel { min-height: 60px; border-radius: 22px; padding: 0 16px; display: flex; align-items: center; gap: 12px; text-align: left; color: var(--tekst); }
+.kafel .znak { color: var(--akcent); display: grid; place-items: center; }
+.kafel small { display: block; font-size: 10px; font-weight: 600; letter-spacing: 0.18em; color: var(--cichy); }
+.kafel b { display: block; font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kafel[disabled] { opacity: 0.45; }
+.sterowanie { margin-top: 14px; display: flex; align-items: center; justify-content: space-between; }
 
 .opcja { display: flex; align-items: center; gap: 12px; min-height: 60px; }
 .opcja + .opcja { border-top: 1px solid var(--linia); }
@@ -247,26 +265,44 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
   </div>
   <div class="pierscien" id="pokretlo" role="slider" tabindex="0" aria-label="Głośność" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
     <svg viewBox="0 0 272 272" aria-hidden="true">
+      <defs>
+        <linearGradient id="pk-metal" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#ffffff" stop-opacity="0.34"/><stop offset="0.45" stop-color="#ffffff" stop-opacity="0.06"/><stop offset="1" stop-color="#ffffff" stop-opacity="0.22"/>
+        </linearGradient>
+        <radialGradient id="pk-wglebienie" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0.72" stop-color="#000000" stop-opacity="0.55"/><stop offset="1" stop-color="#000000" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="pk-blask" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="4"/></filter>
+      </defs>
+      <circle cx="136" cy="136" r="135" fill="url(#pk-wglebienie)"/>
+      <circle cx="136" cy="136" r="134.500" fill="none" stroke="url(#pk-metal)" stroke-width="1.500"/>
       <g class="kreski" id="pokretlo-kreski"></g>
       <path class="tor" id="pokretlo-tor"></path>
+      <path class="poziom blask" id="pokretlo-blask" filter="url(#pk-blask)"></path>
       <path class="poziom" id="pokretlo-poziom"></path>
-      <circle class="galka" id="pokretlo-galka" r="8"></circle>
+      <g id="pokretlo-galka"><circle class="galka-cien" r="12"></circle><circle class="galka" r="8.500"></circle><circle class="galka-srodek" r="2.500"></circle></g>
     </svg>
-    <span class="logo wielkie" id="duze-logo"></span>
+    <span class="tarcza"><span class="logo wielkie" id="duze-logo"></span></span>
   </div>
   <div class="ile-glosno" id="ile-glosno" aria-hidden="true"></div>
   <div class="panel szklo">
     <h2 id="duza-nazwa"></h2>
     <p id="duzy-opis"></p>
     <div id="co-gra" hidden><div class="utwor" id="utwor"></div><div class="wykonawca" id="wykonawca"></div></div>
+    <div class="fala stoi" id="fala" aria-hidden="true"></div>
     <div class="sterowanie">
       <button class="ikona-przycisk" id="duze-serce" type="button"></button>
       <button class="ikona-przycisk" id="poprzednia" type="button" aria-label="Poprzednia stacja" style="color:var(--tekst)"></button>
       <button class="kolo wielkie" id="duzy-graj" type="button" aria-label="Pauza"></button>
       <button class="ikona-przycisk" id="nastepna" type="button" aria-label="Następna stacja" style="color:var(--tekst)"></button>
-      <span style="width:48px"></span>
+      <button class="ikona-przycisk" id="wylacznik" type="button" aria-label="Wyłącznik czasowy" style="color:var(--tekst)"></button>
     </div>
-    <details class="grane" id="grane" hidden><summary>OSTATNIO GRANE</summary><ol id="grane-lista"></ol></details>
+    <p class="wylacznik-opis" id="wylacznik-opis" hidden></p>
+  </div>
+  <div class="panel szklo grane" id="grane" hidden><h3 class="etykieta" style="color:var(--akcent)">OSTATNIO GRANE</h3><ol id="grane-lista"></ol></div>
+  <div class="kafelki">
+    <button class="kafel szklo" id="kafel-grane" type="button" aria-expanded="false"><span class="znak" id="kafel-grane-znak"></span><span><small>OSTATNIO GRANE</small><b id="kafel-grane-napis">Zobacz utwory</b></span></button>
+    <button class="kafel szklo" id="kafel-wiadomosci" type="button"><span class="znak" id="kafel-wiadomosci-znak"></span><span><small>WIADOMOŚCI</small><b>Co się dzieje</b></span></button>
   </div>
 </section>
 
@@ -301,7 +337,9 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
     wiadomosci: '<rect x="4" y="5" width="16" height="14" rx="2"/><path d="M8 9h8M8 13h8M8 16h5"/>',
     opcje: '<path d="M4 7h9M19 7h1M4 17h1M11 17h9"/><circle cx="16" cy="7" r="2.500"/><circle cx="8" cy="17" r="2.500"/>',
     szukaj: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.800-3.800"/>',
-    wdol: '<path d="M6 9l6 6 6-6"/>'
+    wdol: '<path d="M6 9l6 6 6-6"/>',
+    zegar: '<circle cx="12" cy="13.500" r="7"/><path d="M12 13.500V9.500M12 13.500l2.800 1.600M9.500 3.500h5"/>',
+    nuty: '<path d="M4 7h10M4 12h7M4 17h5"/><path d="M15 17.500V8l5-1.500v9"/><circle cx="13.200" cy="17.500" r="1.800"/><circle cx="18.200" cy="15.500" r="1.800"/>'
   };
   var PELNE = {
     graj: '<path d="M8 5v14l11-7z"/>',
@@ -311,7 +349,7 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
   };
   var NAZWY = { start: 'Start', stacje: 'Stacje', ulubione: 'Ulubione', wiadomosci: 'Wiadomości', opcje: 'Opcje' };
   var MOTYWY = [['zloto', 'Złoto', '#e3c27e'], ['platyna', 'Platyna', '#e4e8ec'], ['miedz', 'Miedź', '#d9916a'], ['szmaragd', 'Szmaragd', '#5fb898'], ['szafir', 'Szafir', '#86adeb']];
-  var FILTRY = [['wszystkie', 'Wszystkie'], ['bezgadania', 'Bez gadania'], ['polski', 'Tylko po polsku'], ['angielski', 'Tylko po angielsku']];
+  var FILTRY = [['wszystkie', 'Wszystkie'], ['bezgadania', 'Bez gadania'], ['polski', 'Tylko po polsku']];
 
   var stacje = [], wczytano = false, konto = null, grana = null, zakladka = 'start', filtr = 'wszystkie', szukane = '';
   var niegra = false; // stacja nie odpowiedziała
@@ -376,6 +414,9 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
     obraz.onload = function () {
       // Malutkie ikonki po powiększeniu są rozmyte, więc zamiast nich pokazujemy skrót nazwy.
       if (obraz.naturalWidth < 64 || obraz.naturalHeight < 64) { element.textContent = skrot(stacja.nazwa); return; }
+      // Szerokie albo wysokie logo pokazujemy w całości, żeby nie ucinać napisu.
+      var proporcja = obraz.naturalWidth / obraz.naturalHeight;
+      if (proporcja < 0.87 || proporcja > 1.15) { obraz.style.objectFit = 'contain'; obraz.style.padding = '8%'; }
       obraz.style.opacity = '1';
     };
     obraz.onerror = function () { element.textContent = skrot(stacja.nazwa); };
@@ -826,6 +867,7 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
       e.setAttribute('aria-pressed', lubiana ? 'true' : 'false');
       e.setAttribute('aria-label', (lubiana ? 'Usuń z ulubionych: ' : 'Dodaj do ulubionych: ') + (s ? s.nazwa : ''));
     });
+    document.getElementById('fala').classList.toggle('stoi', !grana || !gra || niegra);
     document.getElementById('mini').hidden = !grana;
     if (grana) {
       var stan = niegra ? 'Stacja nie odpowiada' : (gra ? 'Na żywo' : 'Zatrzymane');
@@ -870,8 +912,10 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
       document.getElementById('wykonawca').textContent = u.wykonawca;
     }
     var ostatnie = coGra ? coGra.ostatnie.slice(1) : [];
-    var pole = document.getElementById('grane');
-    pole.hidden = !ostatnie.length;
+    var kafel = document.getElementById('kafel-grane');
+    kafel.disabled = !ostatnie.length;
+    if (!ostatnie.length) { document.getElementById('grane').hidden = true; kafel.setAttribute('aria-expanded', 'false'); }
+    document.getElementById('kafel-grane-napis').textContent = !ostatnie.length ? 'Jeszcze brak' : (document.getElementById('grane').hidden ? 'Zobacz utwory' : 'Zwiń listę');
     var spis = document.getElementById('grane-lista');
     spis.textContent = '';
     ostatnie.forEach(function (o) {
@@ -946,10 +990,11 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
       var a = punkt(POCZATEK, PROMIEN), b = punkt(doKata, PROMIEN);
       return 'M' + a[0].toFixed(2) + ' ' + a[1].toFixed(2) + ' A' + PROMIEN + ' ' + PROMIEN + ' 0 ' + (doKata - POCZATEK > 180 ? 1 : 0) + ' 1 ' + b[0].toFixed(2) + ' ' + b[1].toFixed(2);
     }
-    var kreski = '';
-    for (var k = 0; k <= 10; k++) {
-      var p1 = punkt(POCZATEK + ZAKRES * k / 10, 106), p2 = punkt(POCZATEK + ZAKRES * k / 10, 112);
-      kreski += '<line x1="' + p1[0].toFixed(1) + '" y1="' + p1[1].toFixed(1) + '" x2="' + p2[0].toFixed(1) + '" y2="' + p2[1].toFixed(1) + '"/>';
+    var LICZBA_KRESEK = 30, kreski = '';
+    for (var k = 0; k <= LICZBA_KRESEK; k++) {
+      var duza = k % 5 === 0;
+      var p1 = punkt(POCZATEK + ZAKRES * k / LICZBA_KRESEK, duza ? 102 : 105), p2 = punkt(POCZATEK + ZAKRES * k / LICZBA_KRESEK, 110);
+      kreski += '<line' + (duza ? ' class="duza"' : '') + ' x1="' + p1[0].toFixed(1) + '" y1="' + p1[1].toFixed(1) + '" x2="' + p2[0].toFixed(1) + '" y2="' + p2[1].toFixed(1) + '"/>';
     }
     document.getElementById('pokretlo-kreski').innerHTML = kreski;
     document.getElementById('pokretlo-tor').setAttribute('d', luk(POCZATEK + ZAKRES));
@@ -960,11 +1005,14 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
       suwak.value = v;
       pamiec('nux7-glosnosc', String(v));
       var kat = POCZATEK + ZAKRES * v;
-      document.getElementById('pokretlo-poziom').setAttribute('d', v > 0.005 ? luk(kat) : '');
+      var ksztalt = v > 0.005 ? luk(kat) : '';
+      document.getElementById('pokretlo-poziom').setAttribute('d', ksztalt);
+      document.getElementById('pokretlo-blask').setAttribute('d', ksztalt);
       var g = punkt(kat, PROMIEN);
-      var galka = document.getElementById('pokretlo-galka');
-      galka.setAttribute('cx', g[0].toFixed(2));
-      galka.setAttribute('cy', g[1].toFixed(2));
+      document.getElementById('pokretlo-galka').setAttribute('transform', 'translate(' + g[0].toFixed(2) + ' ' + g[1].toFixed(2) + ')');
+      Array.prototype.forEach.call(document.getElementById('pokretlo-kreski').children, function (kreska, numer) {
+        kreska.classList.toggle('zapalona', v > 0 && numer / LICZBA_KRESEK <= v + 0.001);
+      });
       pokretlo.setAttribute('aria-valuenow', Math.round(v * 100));
       pokretlo.setAttribute('aria-valuetext', Math.round(v * 100) + ' procent');
       if (pokazNapis) {
@@ -1030,6 +1078,48 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
   document.getElementById('zwin').innerHTML = ikona(IKONY.wdol, 22);
   document.getElementById('do-opcji').innerHTML = ikona(IKONY.opcje, 20);
   document.getElementById('duze-serce').innerHTML = ikona(IKONY.ulubione, 26);
+  document.getElementById('wylacznik').innerHTML = ikona(IKONY.zegar, 26);
+  document.getElementById('kafel-grane-znak').innerHTML = ikona(IKONY.nuty, 22);
+  document.getElementById('kafel-wiadomosci-znak').innerHTML = ikona(IKONY.wiadomosci, 22);
+  (function () {
+    var fala = document.getElementById('fala'), slupki = '';
+    for (var n = 0; n < 33; n++) {
+      var wys = Math.round(8 + 28 * Math.abs(Math.sin(n * 0.9 + 1.3)) * (1 - Math.abs(n - 16) / 33));
+      slupki += '<i' + (n > 20 ? ' class="dalej"' : '') + ' style="--h:' + wys + 'px;--d:-' + ((n * 137) % 1100) + 'ms"></i>';
+    }
+    fala.innerHTML = slupki;
+  })();
+  document.getElementById('kafel-grane').addEventListener('click', function () {
+    var pole = document.getElementById('grane');
+    pole.hidden = !pole.hidden;
+    this.setAttribute('aria-expanded', pole.hidden ? 'false' : 'true');
+    document.getElementById('kafel-grane-napis').textContent = pole.hidden ? 'Zobacz utwory' : 'Zwiń listę';
+  });
+  document.getElementById('kafel-wiadomosci').addEventListener('click', function () { idz('wiadomosci'); });
+
+  // Wyłącznik czasowy: kolejne kliknięcia ustawiają 15, 30, 60, 90 minut i wyłączają.
+  (function () {
+    var KROKI = [0, 15, 30, 60, 90], wybrany = 0, koniec = 0, zegar = null, licznik = null;
+    var przycisk = document.getElementById('wylacznik'), opis = document.getElementById('wylacznik-opis');
+    function pokaz() {
+      var zostalo = koniec ? Math.max(1, Math.ceil((koniec - Date.now()) / 60000)) : 0;
+      opis.hidden = !koniec;
+      opis.textContent = koniec ? 'Radio wyłączy się za ' + zostalo + ' min' : '';
+      przycisk.style.color = koniec ? 'var(--akcent)' : 'var(--tekst)';
+      przycisk.setAttribute('aria-label', koniec ? 'Wyłącznik czasowy: ' + zostalo + ' minut' : 'Wyłącznik czasowy');
+    }
+    przycisk.addEventListener('click', function () {
+      wybrany = (wybrany + 1) % KROKI.length;
+      clearTimeout(zegar);
+      clearInterval(licznik);
+      koniec = KROKI[wybrany] ? Date.now() + KROKI[wybrany] * 60000 : 0;
+      if (koniec) {
+        zegar = setTimeout(function () { dzwiek.pause(); koniec = 0; wybrany = 0; clearInterval(licznik); pokaz(); zaznacz(); }, KROKI[wybrany] * 60000);
+        licznik = setInterval(pokaz, 15000);
+      }
+      pokaz();
+    });
+  })();
   document.getElementById('poprzednia').innerHTML = pelna(PELNE.poprzednia, 28);
   document.getElementById('nastepna').innerHTML = pelna(PELNE.nastepna, 28);
 
