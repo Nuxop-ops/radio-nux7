@@ -119,6 +119,23 @@ const wlasne = [
   ['plus', 'Radio Plus', 'Inne polskie', ['https://pl.cdn.eurozet.pl/plu-waw.mp3']],
 ];
 
+// Zagraniczne stacje z samą muzyką: [id, nazwa, gatunek, adres].
+// Stacja, której adres nie nadaje, sama znika z listy.
+const muzyka = [
+  ['swiss-pop', 'Radio Swiss Pop', 'Pop · współczesne hity', 'https://stream.srg-ssr.ch/m/rsp/mp3_128'],
+  ['soma-poptron', 'SomaFM PopTron', 'Pop · elektroniczny i spokojniejszy', 'https://ice1.somafm.com/poptron-128-mp3'],
+  ['soma-seventies', 'SomaFM Left Coast 70s', 'Rock · klasyczny, lata 70.', 'https://ice1.somafm.com/seventies-128-mp3'],
+  ['soma-indiepop', 'SomaFM Indie Pop Rocks', 'Rock · alternatywa', 'https://ice1.somafm.com/indiepop-128-mp3'],
+  ['soma-u80s', 'SomaFM Underground 80s', 'Lata 80. · pop i synthpop', 'https://ice1.somafm.com/u80s-128-mp3'],
+  ['rp-rock', 'Radio Paradise Rock', 'Lata 80. i później · rockowe hity', 'https://stream.radioparadise.com/rock-128'],
+  ['soma-groovesalad', 'SomaFM Groove Salad', 'Chillout · downtempo', 'https://ice1.somafm.com/groovesalad-128-mp3'],
+  ['soma-dronezone', 'SomaFM Drone Zone', 'Chillout · ambient', 'https://ice1.somafm.com/dronezone-128-mp3'],
+  ['swiss-jazz', 'Radio Swiss Jazz', 'Jazz · klasyczny', 'https://stream.srg-ssr.ch/m/rsj/mp3_128'],
+  ['soma-sonicuniverse', 'SomaFM Sonic Universe', 'Jazz · nowoczesny', 'https://ice1.somafm.com/sonicuniverse-128-mp3'],
+  ['swiss-classic', 'Radio Swiss Classic', 'Klasyka · orkiestrowa', 'https://stream.srg-ssr.ch/m/rsc_de/mp3_128'],
+  ['rp-mellow', 'Radio Paradise Mellow', 'Spokojna · do pracy i odpoczynku', 'https://stream.radioparadise.com/mellow-128'],
+];
+
 // Stacje z prowadzącymi. Pozostałe kanały RMF, FRESH i Antyradia grają samą muzykę.
 const zProwadzacymi = new Set([
   'rmf-5', 'rmf-6', 'rmf-7', 'rmf-190', 'rmf-152', 'rmf-162',
@@ -152,6 +169,8 @@ eska.forEach(([kod, nazwa]) => lista.push(oznacz({
 })));
 inne.forEach(([id, nazwa, grupa, adresy]) => lista.push(oznacz({ id, nazwa, grupa, adresy })));
 wlasne.forEach(([id, nazwa, grupa, adresy]) => lista.push(oznacz({ id, nazwa, grupa, adresy, wlasna: true })));
+muzyka.forEach(([id, nazwa, gatunek, adres]) => lista.push(Object.assign(
+  oznacz({ id, nazwa, grupa: 'Muzyka bez gadania', adresy: [adres], wlasna: true }), { gatunek, bezGadania: true })));
 dodajRmf('Lokalne', rmfLokalne);
 
 // Pierwsza grupa na liście: największe stacje ogólnopolskie, w tej kolejności.

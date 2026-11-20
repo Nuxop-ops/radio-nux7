@@ -9,14 +9,15 @@ const TEMATY = [
   { id: 'swiat', nazwa: 'Świat' },
   { id: 'polska', nazwa: 'Polska' },
   { id: 'zdarzenia', nazwa: 'Wypadki i zdarzenia' },
-  { id: 'nauka', nazwa: 'Nauka i technologie' },
+  { id: 'nauka', nazwa: 'Technologie, AI i nauka' },
+  { id: 'podroze', nazwa: 'Podróże i ciekawostki' },
+  { id: 'uroda', nazwa: 'Uroda i styl' },
   { id: 'kultura', nazwa: 'Kultura i rozrywka' },
   { id: 'gospodarka', nazwa: 'Gospodarka' },
-  { id: 'polityka', nazwa: 'Polityka i konflikty' },
   { id: 'sport', nazwa: 'Sport' },
 ];
 // Tematy zaznaczone, dopóki użytkownik sam nie wybierze.
-const DOMYSLNE = ['swiat', 'polska', 'zdarzenia', 'nauka', 'kultura'];
+const DOMYSLNE = ['swiat', 'polska', 'zdarzenia', 'nauka', 'podroze', 'kultura'];
 
 // Kanał, który nie odpowiada, jest pomijany i nie psuje reszty.
 const KANALY = [
@@ -33,9 +34,30 @@ const KANALY = [
   ['Polsat News', 'kultura', 'https://www.polsatnews.pl/rss/kultura.xml'],
   ['Polsat News', 'sport', 'https://www.polsatnews.pl/rss/sport.xml'],
   ['Nauka w Polsce', 'nauka', 'https://naukawpolsce.pl/rss.xml'],
+  // Technologie i sztuczna inteligencja.
+  ['Antyweb', 'nauka', 'https://antyweb.pl/feed'],
+  ['Spider\'s Web', 'nauka', 'https://spidersweb.pl/feed'],
+  ['CHIP', 'nauka', 'https://www.chip.pl/feed'],
+  ['Kopalnia Wiedzy', 'nauka', 'https://kopalniawiedzy.pl/rss.xml'],
+  ['Crazy Nauka', 'nauka', 'https://www.crazynauka.pl/feed/'],
+  // Podróże i ciekawostki z ciekawych miejsc.
+  ['Focus', 'podroze', 'https://www.focus.pl/feed'],
+  ['National Geographic', 'podroze', 'https://www.national-geographic.pl/rss'],
+  ['Fly4free', 'podroze', 'https://www.fly4free.pl/feed/'],
+  ['Podróże', 'podroze', 'https://www.podroze.pl/rss'],
+  // Uroda, kosmetyki i styl.
+  ['Hello Zdrowie', 'uroda', 'https://www.hellozdrowie.pl/feed/'],
+  ['Elle', 'uroda', 'https://www.elle.pl/rss'],
+  ['Glamour', 'uroda', 'https://www.glamour.pl/rss'],
+  ['Wizaż', 'uroda', 'https://wizaz.pl/rss'],
+  ['Vogue', 'uroda', 'https://www.vogue.pl/rss'],
 ];
 
+// Wiadomości o polityce, konfliktach i religii w ogóle nie trafiają do radia.
 const POLITYKA = /sejm|senat|\bpis\b|\bpis-|koalicj|opozycj|\bpos[eł]{2}\b|posł[aóo]|posłank|sonda[żz]|\bparti|tusk|kaczyński|nawrock|konfederacj|\blewic|\bpsl\b|wotum|komisj[aię] śledcz|\bwet[oa]\b|kampani[aię] wyborcz|rzecznik rządu|\bpolity[ck]|marszał[ek]{2} sejmu|ministe?r|premier|\brząd(?:u|owi|em|zie)?\b|prezydent (?:powoł|podpis|zawetow|odmówi)|ustaw[ayęi]\b|głosowani|prezyden|kancler|parlament|wybor(?:y|ów|ach|cz)|referend|zełensk|putin|trump|biden|macron|merz|orb[aá]n|łukaszenk|netanjahu|erdo[gğ]an|kreml|biały dom|białego domu|\bnato\b|\bue\b|uni[iaę] europejsk|komisj[aię] europejsk|sankcj|rozejm|zawieszeni\S+ broni|rozmow\S+ pokojow|plan\S* pokojow|negocjacj|wojsk|armi[aię]\b|żołnierz|rakiet|dron(?:y|ów|ami)?\b|ostrzał|ofensyw|okupac|inwazj|na froncie|linii frontu|dyploma|ambasad|sojusz|traktat|szczyt\w* (?:nato|ue|g7|g20|klimat)|artykuł 5|hamas|hezbollah|strefie gazy|strefy gazy/i;
+// Krótsza lista dla kanałów tematycznych, żeby nie wycinać np. tekstów o dronach.
+const POLITYKA_WPROST = /\bsejm|\bsenat\b|\bpis\b|koalicj|opozycj|sonda[żz]|\bparti|tusk|kaczyński|nawrock|konfederacj|\bpolity[ck]|premier|prezyden|ministe?r|\brząd(?:u|owi|em|zie)?\b|wybor(?:y|ów|ach|cz)|zełensk|putin|trump|kreml|sankcj/i;
+const RELIGIA = /kości[oó]ł|papie[żs]|bisku|ksi[ąę]d[zż]|ksi[ęe]ż[yaom]|parafi|\bmsz[aęy]\b|watykan|religi|\bwiar[ayęzo]\b|duchowo|duchown|modlitw|pielgrzym|episkopat|zakonn|islam|meczet|synagog|rabin|imam|świętokradz|sekt[ayę]\b|kardyna|proboszcz|katolic|chrześcija|muzułma/i;
 const ZDARZENIA = /wypad|zderz|pożar|zgin[ęąe]|nie żyj|ofiar|katastrof|trzęsieni|powód[źz]|podtopie|ewakuac|wybuch|zagin|poszukiwa|uton|tragedi|rann[yaie]|ratown|akcja ratun|policj|zatrzyman|napad|nożownik|strzelanin|huragan|tornado|lawin|wichur|śmierteln|potrąc|dachowa/i;
 const SPORT = /\bmecz|ekstraklas|\blig[iaę]\b|piłkar|\btrener|mundial|\bgol[ae]?\b|tenis|świątek|lewandowsk|siatk|żużl|skoki narciarskie|formuł[ay] 1|olimpi|mistrzostw|\bmedal|kolarz|bokser|\bnba\b/i;
 const PRZYNETY = /nie uwierzysz|zobacz,? co|\bquiz\b|\[wideo\]|\[zdjęcia\]|sprawdź,? czy|tego nie wiedzia/i;
@@ -81,10 +103,15 @@ function obraz(wpis) {
   return null;
 }
 
+// Kanały tematyczne (technologie, podróże, uroda, sport) zostają w swoim temacie.
+const WLASNY_TEMAT = new Set(['sport', 'nauka', 'podroze', 'uroda']);
+
+// Zwraca temat wiadomości albo null, gdy wiadomość ma być pominięta.
 function temat(zKanalu, tytul, wstep) {
-  if (zKanalu === 'sport') return 'sport';
   const calosc = tytul + ' ' + wstep;
-  if (POLITYKA.test(calosc)) return 'polityka';
+  if (RELIGIA.test(calosc)) return null;
+  if (WLASNY_TEMAT.has(zKanalu)) return POLITYKA_WPROST.test(calosc) ? null : zKanalu;
+  if (POLITYKA.test(calosc)) return null;
   if (ZDARZENIA.test(calosc)) return 'zdarzenia';
   if (SPORT.test(tytul)) return 'sport';
   return zKanalu;
@@ -105,10 +132,12 @@ function zKanalu(tresc, zrodlo, tematKanalu) {
     // Część portali powtarza we wstępie sam tytuł.
     const prosto = n => n.toLowerCase().replace(/[^a-ząćęłńóśźż0-9]+/g, '');
     if (prosto(wstep) === prosto(tytul) || prosto(tytul).startsWith(prosto(wstep))) wstep = '';
+    const jaki = temat(tematKanalu, tytul, wstep);
+    if (!jaki) continue;
     wynik.push({
       id: crypto.createHash('sha1').update(adres).digest('hex').slice(0, 12),
       tytul: skroc(tytul, 160), wstep, obraz: obraz(wpis), zrodlo, adres,
-      czas: new Date(czas).toISOString(), temat: temat(tematKanalu, tytul, wstep),
+      czas: new Date(czas).toISOString(), temat: jaki,
     });
   }
   return wynik;

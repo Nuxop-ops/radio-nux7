@@ -206,6 +206,7 @@ async function odswiezNazwyZPosrednika() {
 }
 
 function opisStacji(stacja) {
+  if (stacja.gatunek) return stacja.gatunek;
   const czesci = [];
   if (stacja.bezGadania) czesci.push('bez prowadzących');
   if (stacja.jezyk === 'polski') czesci.push('po polsku');
