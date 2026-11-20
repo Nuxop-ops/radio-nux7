@@ -20,7 +20,9 @@ fi
 echo "2/5 Pobieram pliki strony"
 mkdir -p "$KATALOG/www"
 curl -fsSL "$ZRODLO/docker-compose.yml" -o "$KATALOG/docker-compose.yml"
-curl -fsSL "$ZRODLO/www/index.html" -o "$KATALOG/www/index.html"
+for PLIK in index.html logo.png ikona.png; do
+  curl -fsSL "$ZRODLO/www/$PLIK" -o "$KATALOG/www/$PLIK"
+done
 if [ ! -f "$KATALOG/www/wersja.json" ]; then
   curl -fsSL "$ZRODLO/www/wersja.json" -o "$KATALOG/www/wersja.json"
 fi

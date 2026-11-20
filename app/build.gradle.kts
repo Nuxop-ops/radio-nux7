@@ -28,7 +28,7 @@ android {
     flavorDimensions += "distribution"
 
     defaultConfig {
-        applicationId = "de.darksoon.radiowave"
+        applicationId = "com.nux7.radio"
         versionCode = appVersionCode
         versionName = appVersionName
     }

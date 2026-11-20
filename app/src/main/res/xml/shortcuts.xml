@@ -9,7 +9,7 @@
         <intent
             android:action="de.darksoon.radiowave.action.OPEN_SEARCH"
             android:targetClass="de.darksoon.radiowave.MainActivity"
-            android:targetPackage="de.darksoon.radiowave" />
+            android:targetPackage="com.nux7.radio" />
     </shortcut>
 
     <shortcut
@@ -21,7 +21,7 @@
         <intent
             android:action="de.darksoon.radiowave.action.OPEN_FAVORITES"
             android:targetClass="de.darksoon.radiowave.MainActivity"
-            android:targetPackage="de.darksoon.radiowave" />
+            android:targetPackage="com.nux7.radio" />
     </shortcut>
 
     <shortcut
@@ -33,7 +33,7 @@
         <intent
             android:action="de.darksoon.radiowave.action.OPEN_PLAYER"
             android:targetClass="de.darksoon.radiowave.MainActivity"
-            android:targetPackage="de.darksoon.radiowave" />
+            android:targetPackage="com.nux7.radio" />
     </shortcut>
 
     <shortcut
@@ -45,6 +45,6 @@
         <intent
             android:action="de.darksoon.radiowave.action.OPEN_SETTINGS"
             android:targetClass="de.darksoon.radiowave.MainActivity"
-            android:targetPackage="de.darksoon.radiowave" />
+            android:targetPackage="com.nux7.radio" />
     </shortcut>
 </shortcuts>
