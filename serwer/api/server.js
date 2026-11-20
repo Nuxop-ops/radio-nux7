@@ -165,16 +165,29 @@ async function znajdzAdresRmf(stacja) {
 // Stacje spoza RMF, u których żaden adres nie nadaje. Sprawdzane razem z adresami RMF.
 let martweStacje = new Set();
 async function sprawdzPozostale() {
-  const martwe = new Set();
-  const kolejka = wszystkieStacje.filter(s => !s.rmfId && (s.adresy || []).length);
-  const pracownik = async () => {
-    for (let stacja = kolejka.shift(); stacja; stacja = kolejka.shift()) {
-      let gra = false;
-      for (const adres of stacja.adresy) { if (await adresGra(adres, 7000)) { gra = true; break; } }
-      if (!gra) martwe.add(stacja.id);
-    }
+  const czyGra = async stacja => {
+    for (const adres of stacja.adresy) { if (await adresGra(adres, 7000)) return true; }
+    return false;
   };
-  await Promise.all([1, 2, 3, 4].map(pracownik));
+  const przebieg = async stacje => {
+    const martwe = [];
+    const kolejka = stacje.slice();
+    const pracownik = async () => {
+      for (let stacja = kolejka.shift(); stacja; stacja = kolejka.shift()) {
+        if (!(await czyGra(stacja))) martwe.push(stacja);
+      }
+    };
+    await Promise.all([1, 2, 3, 4].map(pracownik));
+    return martwe;
+  };
+  // Stacja znika z listy dopiero wtedy, gdy nie odpowie dwa razy z rzędu. Chwilowa
+  // przerwa u nadawcy nie powinna chować dobrej stacji na kilka godzin.
+  let podejrzane = await przebieg(wszystkieStacje.filter(s => !s.rmfId && (s.adresy || []).length));
+  if (podejrzane.length) {
+    await new Promise(gotowe => setTimeout(gotowe, 20000));
+    podejrzane = await przebieg(podejrzane);
+  }
+  const martwe = new Set(podejrzane.map(s => s.id));
   // Gdyby padło prawie wszystko, to raczej kłopot z siecią serwera niż ze stacjami.
   if (martwe.size <= 15) martweStacje = martwe;
   log('Pozostałe stacje: nie nadaje', martwe.size, martwe.size ? '(' + [...martwe].join(', ') + ')' : '');
