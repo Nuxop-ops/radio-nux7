@@ -135,7 +135,8 @@ function adresGra(adres, limitCzasu = 5000) {
       zadanie.destroy();
     });
     zadanie.on('timeout', () => { zadanie.destroy(); wynik(false); });
-    zadanie.on('error', () => wynik(false));
+    // Starsze serwery radiowe odpowiadają „ICY 200 OK", czego Node nie rozumie, ale stacja gra.
+    zadanie.on('error', e => wynik(e.code === 'HPE_INVALID_CONSTANT'));
   });
 }
 
@@ -149,6 +150,24 @@ async function znajdzAdresRmf(stacja) {
     if (await adresGra(adres)) return adres;
   }
   return null;
+}
+
+// Stacje spoza RMF, u których żaden adres nie nadaje. Sprawdzane razem z adresami RMF.
+let martweStacje = new Set();
+async function sprawdzPozostale() {
+  const martwe = new Set();
+  const kolejka = wszystkieStacje.filter(s => !s.rmfId && (s.adresy || []).length);
+  const pracownik = async () => {
+    for (let stacja = kolejka.shift(); stacja; stacja = kolejka.shift()) {
+      let gra = false;
+      for (const adres of stacja.adresy) { if (await adresGra(adres, 7000)) { gra = true; break; } }
+      if (!gra) martwe.add(stacja.id);
+    }
+  };
+  await Promise.all([1, 2, 3, 4].map(pracownik));
+  // Gdyby padło prawie wszystko, to raczej kłopot z siecią serwera niż ze stacjami.
+  if (martwe.size <= 15) martweStacje = martwe;
+  log('Pozostałe stacje: nie nadaje', martwe.size, martwe.size ? '(' + [...martwe].join(', ') + ')' : '');
 }
 
 let odswiezanieTrwa = false;
@@ -169,6 +188,7 @@ async function odswiezAdresyRmf() {
     await Promise.all([1, 2, 3, 4, 5, 6].map(pracownik));
     fs.writeFileSync(PLIK_ADRESOW, JSON.stringify(adresyRmf));
     log('Adresy RMF: działa', dzialajace, 'z', wszystkieStacje.filter(s => s.rmfId).length);
+    await sprawdzPozostale();
   } finally {
     odswiezanieTrwa = false;
   }
@@ -203,7 +223,7 @@ function listaStacji(uzytkownik, dlaAdmina = false) {
       stacja.nazwa = nazwyZPosrednika[wzor.id];
     }
     // Stacja, której pośrednik nie widzi jako działającej, jest ukryta.
-    const nieDziala = nazwyZPosrednika && !(wzor.id in nazwyZPosrednika);
+    const nieDziala = martweStacje.has(wzor.id) || (!wzor.wlasna && nazwyZPosrednika && !(wzor.id in nazwyZPosrednika));
     const adresNadawcy = wzor.rmfId ? adresyRmf[wzor.id] : (wzor.adresy || [])[0];
     if (dlaAdmina) {
       wynik.push({
@@ -224,7 +244,7 @@ function listaStacji(uzytkownik, dlaAdmina = false) {
     wynik.push({
       id: stacja.id, nazwa: stacja.nazwa, grupa: stacja.grupa, opis: opisStacji(stacja),
       jezyk: stacja.jezyk, bezGadania: !!stacja.bezGadania,
-      logo: stacja.bezLogo ? null : ADRES_PUBLICZNY + '/api/logo/' + stacja.id,
+      logo: stacja.bezLogo || wzor.wlasna ? null : ADRES_PUBLICZNY + '/api/logo/' + stacja.id,
       adres,
     });
   }
@@ -341,6 +361,8 @@ async function obsluz(req, res) {
     // Stacje RMF: pośrednik bierze pierwszy adres z listy RMF, który bywa martwy,
     // więc podajemy dźwięk z adresu sprawdzonego przez nas.
     if (adresyRmf[strumien[1]]) return zAdresu(req, res, adresyRmf[strumien[1]], przezPosrednika);
+    const wlasna = wszystkieStacje.find(s => s.id === strumien[1] && s.wlasna);
+    if (wlasna) return zAdresu(req, res, wlasna.adresy[0], () => blad(res, 502, 'Stacja nie odpowiada.'));
     return przezPosrednika();
   }
 

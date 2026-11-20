@@ -32,9 +32,11 @@ const KANALY = [
   ['Polsat News', 'nauka', 'https://www.polsatnews.pl/rss/technologie.xml'],
   ['Polsat News', 'kultura', 'https://www.polsatnews.pl/rss/kultura.xml'],
   ['Polsat News', 'sport', 'https://www.polsatnews.pl/rss/sport.xml'],
+  ['TVN24', 'polska', 'https://tvn24.pl/najnowsze.xml'],
+  ['Nauka w Polsce', 'nauka', 'https://naukawpolsce.pl/rss.xml'],
 ];
 
-const POLITYKA = /sejm|senat|\bpis\b|\bpis-|koalicj|opozycj|\bpos[eł]{2}\b|posł[aóo]|posłank|sonda[żz]|\bparti|tusk|kaczyński|nawrock|konfederacj|\blewic|\bpsl\b|wotum|komisj[aię] śledcz|\bwet[oa]\b|kampani[aię] wyborcz|rzecznik rządu|\bpolity[ck]|marszał[ek]{2} sejmu|ministe?r/i;
+const POLITYKA = /sejm|senat|\bpis\b|\bpis-|koalicj|opozycj|\bpos[eł]{2}\b|posł[aóo]|posłank|sonda[żz]|\bparti|tusk|kaczyński|nawrock|konfederacj|\blewic|\bpsl\b|wotum|komisj[aię] śledcz|\bwet[oa]\b|kampani[aię] wyborcz|rzecznik rządu|\bpolity[ck]|marszał[ek]{2} sejmu|ministe?r|premier|\brząd(?:u|owi|em|zie)?\b|prezydent (?:powoł|podpis|zawetow|odmówi)|ustaw[ayęi]\b|głosowani/i;
 const ZDARZENIA = /wypad|zderz|pożar|zgin[ęąe]|nie żyj|ofiar|katastrof|trzęsieni|powód[źz]|podtopie|ewakuac|wybuch|zagin|poszukiwa|uton|tragedi|rann[yaie]|ratown|akcja ratun|policj|zatrzyman|napad|nożownik|strzelanin|huragan|tornado|lawin|wichur|śmierteln|potrąc|dachowa/i;
 const SPORT = /\bmecz|ekstraklas|\blig[iaę]\b|piłkar|\btrener|mundial|\bgol[ae]?\b|tenis|świątek|lewandowsk|siatk|żużl|skoki narciarskie|formuł[ay] 1|olimpi|mistrzostw|\bmedal|kolarz|bokser|\bnba\b/i;
 const PRZYNETY = /nie uwierzysz|zobacz,? co|\bquiz\b|\[wideo\]|\[zdjęcia\]|sprawdź,? czy|tego nie wiedzia/i;
@@ -100,7 +102,10 @@ function zKanalu(tresc, zrodlo, tematKanalu) {
     if (!tytul || !adres || PRZYNETY.test(tytul)) continue;
     const czas = Date.parse(tekst(pole(wpis, 'pubDate') || pole(wpis, 'updated') || pole(wpis, 'published') || pole(wpis, 'dc:date')));
     if (!Number.isFinite(czas)) continue;
-    const wstep = skroc(tekst(pole(wpis, 'description') || pole(wpis, 'summary')), 200);
+    let wstep = skroc(tekst(pole(wpis, 'description') || pole(wpis, 'summary')), 200);
+    // Część portali powtarza we wstępie sam tytuł.
+    const prosto = n => n.toLowerCase().replace(/[^a-ząćęłńóśźż0-9]+/g, '');
+    if (prosto(wstep) === prosto(tytul) || prosto(tytul).startsWith(prosto(wstep))) wstep = '';
     wynik.push({
       id: crypto.createHash('sha1').update(adres).digest('hex').slice(0, 12),
       tytul: skroc(tytul, 160), wstep, obraz: obraz(wpis), zrodlo, adres,

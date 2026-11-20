@@ -114,11 +114,16 @@ const inne = [
   ['vox', 'VOX FM', 'Inne polskie', ['https://ic1.smcdn.pl/3990-1.mp3']],
 ];
 
+// Stacje, których nie zna pośrednik stacji. Serwer podaje je prosto od nadawcy.
+const wlasne = [
+  ['plus', 'Radio Plus', 'Inne polskie', ['https://pl.cdn.eurozet.pl/plu-waw.mp3']],
+];
+
 // Stacje z prowadzącymi. Pozostałe kanały RMF, FRESH i Antyradia grają samą muzykę.
 const zProwadzacymi = new Set([
   'rmf-5', 'rmf-6', 'rmf-7', 'rmf-190', 'rmf-152', 'rmf-162',
   'zet', 'meloradio', 'chillizet', 'antyradio', 'pr1', 'pr2', 'pr3', 'pr4',
-  'r357', 'nowyswiat', 'zlote', 'tokfm', 'rockradio', 'vox', 'eska-2380', 'eska-5380',
+  'r357', 'nowyswiat', 'zlote', 'tokfm', 'rockradio', 'vox', 'plus', 'eska-2380', 'eska-5380',
 ]);
 
 const POLSKIE = /polsk|\bpl\b|prl|disco polo|lady pank|prywatka|szanty|kolędy|piosenka literacka|made in poland|teraz polski/i;
@@ -146,12 +151,13 @@ eska.forEach(([kod, nazwa]) => lista.push(oznacz({
   id: 'eska-' + kod, nazwa, grupa: 'ESKA', adresy: ['https://ic1.smcdn.pl/' + kod + '-1.mp3'],
 })));
 inne.forEach(([id, nazwa, grupa, adresy]) => lista.push(oznacz({ id, nazwa, grupa, adresy })));
+wlasne.forEach(([id, nazwa, grupa, adresy]) => lista.push(oznacz({ id, nazwa, grupa, adresy, wlasna: true })));
 dodajRmf('Lokalne', rmfLokalne);
 
 // Pierwsza grupa na liście: największe stacje ogólnopolskie, w tej kolejności.
 const NAJPOPULARNIEJSZE = [
   'rmf-5', 'zet', 'eska-2380', 'rmf-6', 'antyradio', 'rmf-7', 'rmf-190',
-  'eska-5380', 'vox', 'zlote',
+  'eska-5380', 'plus', 'vox', 'zlote',
 ];
 const naPoczatek = NAJPOPULARNIEJSZE.map(id => lista.find(s => s.id === id)).filter(Boolean);
 naPoczatek.forEach(s => { s.grupa = 'Najpopularniejsze'; });
