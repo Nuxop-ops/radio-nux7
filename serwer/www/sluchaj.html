@@ -116,6 +116,11 @@ h1 { margin: 10px 0 0; font-family: var(--szeryf); font-weight: 500; font-size: 
 .ile-glosno { flex: none; height: 18px; margin: 10px 0 auto; font-size: 12px; letter-spacing: 0.14em; color: var(--cichy); opacity: 0; transition: opacity 0.4s ease; }
 .ile-glosno.widac { opacity: 1; }
 
+#wstep { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; background: radial-gradient(ellipse at 50% 38%, #19191c, #080809 70%); pointer-events: none; animation: wstep-znika 0.42s ease 1.8s both; }
+#wstep img { width: min(74vw, 420px); height: auto; clip-path: inset(0 100% 0 0); animation: wstep-pisze 1.3s cubic-bezier(0.4, 0, 0.2, 1) 0.15s both; }
+@keyframes wstep-pisze { to { clip-path: inset(0 0 0 0); } }
+@keyframes wstep-znika { to { opacity: 0; visibility: hidden; } }
+@media (prefers-reduced-motion: reduce) { #wstep { display: none; } }
 .tematy { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; }
 .tematy button { min-height: 40px; padding: 0 16px; border-radius: 20px; font-size: 13px; font-weight: 500; }
 .tematy button[aria-pressed="true"] { background: var(--akcent); border-color: transparent; color: var(--na-akcencie); font-weight: 600; -webkit-backdrop-filter: none; backdrop-filter: none; }
@@ -231,6 +236,8 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
   <path fill="none" stroke="#000" stroke-width="3" vector-effect="non-scaling-stroke" d="M210 0L150 130L0 190M150 130L260 210L390 150M260 210L190 370L0 330M190 370L300 440L390 420M190 370L140 560L0 520M300 440L280 620L140 560M280 620L390 680M140 560L110 760L0 720M110 760L90 844M280 620L250 844"/>
 </svg>
 
+<div id="wstep" aria-hidden="true"><img src="napis.png" alt="" width="420" height="141"></div>
+<script>try { if (sessionStorage.getItem('nux7-wstep')) document.getElementById('wstep').remove(); else sessionStorage.setItem('nux7-wstep', '1'); } catch (e) {}</script>
 <div class="aplikacja">
   <nav class="pasek szklo" aria-label="Zakładki">
     <a href="./" aria-label="Strona główna Radia NUX7"><img src="ikona.png" alt="" width="44" height="44"></a>

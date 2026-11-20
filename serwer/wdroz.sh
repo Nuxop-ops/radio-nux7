@@ -34,7 +34,7 @@ fi
 echo "2/6 Pobieram pliki"
 mkdir -p "$KATALOG/www" "$KATALOG/api"
 curl -fsSL "$ZRODLO/docker-compose.yml" -o "$KATALOG/docker-compose.yml"
-for PLIK in index.html logo.png ikona.png wersja.json; do
+for PLIK in index.html logo.png ikona.png napis.png wersja.json; do
   curl -fsSL "$ZRODLO/www/$PLIK" -o "$KATALOG/www/$PLIK"
 done
 # Poniższe pliki są tylko w nowszych wersjach; przy cofaniu do starszej są usuwane.
