@@ -54,7 +54,7 @@ h1 { margin: 10px 0 0; font-family: var(--szeryf); font-weight: 500; font-size: 
 .kolko.gra { color: var(--tekst); }
 .logo { flex: none; width: 46px; height: 46px; border-radius: 24%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.3); display: grid; place-items: center; font-size: 10px; font-weight: 600; letter-spacing: 0.05em; overflow: hidden; }
 .logo.duze { width: 72px; height: 72px; font-size: 13px; }
-.logo.wielkie { width: 200px; height: 200px; font-size: 34px; border-width: 2px; border-color: var(--akcent); }
+.logo.wielkie { width: 168px; height: 168px; font-size: 34px; border-width: 2px; border-color: var(--akcent); }
 .gra > .logo, .gra .logo.duze { border: 1.5px solid var(--akcent); }
 .logo img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.25s ease; }
 
@@ -91,7 +91,33 @@ h1 { margin: 10px 0 0; font-family: var(--szeryf); font-weight: 500; font-size: 
 .okragly { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; }
 .na-zywo { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 600; letter-spacing: 0.28em; color: var(--akcent); }
 .na-zywo i { width: 6px; height: 6px; border-radius: 50%; background: var(--akcent); }
-.pierscien { margin: auto 0; width: 256px; height: 256px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--ramka); background: rgba(255,255,255,0.05); }
+.pierscien { position: relative; margin: auto 0; width: 272px; height: 272px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--ramka); background: rgba(255,255,255,0.05); cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
+.pierscien:active { cursor: grabbing; }
+.pierscien svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.pierscien .tor { fill: none; stroke: rgba(255,255,255,0.2); stroke-width: 4; stroke-linecap: round; }
+.pierscien .poziom { fill: none; stroke: var(--akcent); stroke-width: 4; stroke-linecap: round; }
+.pierscien .galka { fill: var(--akcent); stroke: var(--na-akcencie); stroke-width: 2; }
+.pierscien .kreski { stroke: rgba(255,255,255,0.28); stroke-width: 1.5; stroke-linecap: round; }
+.pierscien .logo.wielkie { pointer-events: none; }
+.ile-glosno { height: 18px; margin: -6px 0 10px; font-size: 12px; letter-spacing: 0.14em; color: var(--cichy); opacity: 0; transition: opacity 0.4s ease; }
+.ile-glosno.widac { opacity: 1; }
+
+.tematy { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; }
+.tematy button { min-height: 40px; padding: 0 16px; border-radius: 20px; font-size: 13px; font-weight: 500; }
+.tematy button[aria-pressed="true"] { background: var(--akcent); border-color: transparent; color: var(--na-akcencie); font-weight: 600; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.wiadomosci { margin-top: 4px; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+.wiadomosc { display: flex; flex-direction: column; border-radius: 28px; overflow: hidden; text-decoration: none; color: var(--tekst); margin-top: 0; }
+.wiadomosc.glowna { grid-column: 1 / -1; }
+.wiadomosc .zdjecie { aspect-ratio: 16 / 9; background: linear-gradient(135deg, rgba(255,255,255,0.14), rgba(0,0,0,0.3)); overflow: hidden; }
+.wiadomosc.glowna .zdjecie { aspect-ratio: auto; height: clamp(170px, 30vw, 320px); }
+.wiadomosc .zdjecie img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.wiadomosc .opis { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 6px; }
+.wiadomosc .skad { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; color: var(--akcent); text-transform: uppercase; }
+.wiadomosc .skad span { color: var(--cichy); font-weight: 400; letter-spacing: 0; text-transform: none; }
+.wiadomosc b { font-family: var(--szeryf); font-weight: 600; font-size: 21px; line-height: 1.15; }
+.wiadomosc.glowna b { font-size: clamp(25px, 3vw, 34px); }
+.wiadomosc .wstep { font-size: 13px; line-height: 1.45; color: var(--cichy); }
+.wiadomosc:hover b { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 .odtwarzacz .panel { width: min(560px, 100%); text-align: center; padding: 24px 16px 20px; margin: 0; }
 .odtwarzacz h2 { margin: 0; font-family: var(--szeryf); font-weight: 500; font-size: 38px; line-height: 1.05; }
 .odtwarzacz p { margin: 4px 0 0; color: var(--cichy); font-size: 14px; }
@@ -160,6 +186,7 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
     <button class="zakladka" type="button" data-zakladka="start"></button>
     <button class="zakladka" type="button" data-zakladka="stacje"></button>
     <button class="zakladka" type="button" data-zakladka="ulubione"></button>
+    <button class="zakladka" type="button" data-zakladka="wiadomosci"></button>
     <button class="zakladka dol" type="button" data-zakladka="opcje"></button>
   </nav>
 
@@ -179,6 +206,7 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
         <button class="zakladka" type="button" data-zakladka="start"></button>
         <button class="zakladka" type="button" data-zakladka="stacje"></button>
         <button class="zakladka" type="button" data-zakladka="ulubione"></button>
+        <button class="zakladka" type="button" data-zakladka="wiadomosci"></button>
         <button class="zakladka" type="button" data-zakladka="opcje"></button>
       </nav>
     </div>
@@ -200,7 +228,16 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
     <div class="na-zywo"><i></i><span id="duzy-stan">NA ŻYWO</span></div>
     <button class="okragly szklo" id="do-opcji" type="button" aria-label="Opcje"></button>
   </div>
-  <div class="pierscien"><span class="logo wielkie" id="duze-logo"></span></div>
+  <div class="pierscien" id="pokretlo" role="slider" tabindex="0" aria-label="Głośność" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
+    <svg viewBox="0 0 272 272" aria-hidden="true">
+      <g class="kreski" id="pokretlo-kreski"></g>
+      <path class="tor" id="pokretlo-tor"></path>
+      <path class="poziom" id="pokretlo-poziom"></path>
+      <circle class="galka" id="pokretlo-galka" r="8"></circle>
+    </svg>
+    <span class="logo wielkie" id="duze-logo"></span>
+  </div>
+  <div class="ile-glosno" id="ile-glosno" aria-hidden="true"></div>
   <div class="panel szklo">
     <h2 id="duza-nazwa"></h2>
     <p id="duzy-opis"></p>
@@ -242,6 +279,7 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
     start: '<path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/>',
     stacje: '<path d="M5 7h14M5 12h14M5 17h9"/>',
     ulubione: '<path d="M12 20s-7-4.400-7-10a4 4 0 0 1 7-2.500A4 4 0 0 1 19 10c0 5.600-7 10-7 10z"/>',
+    wiadomosci: '<rect x="4" y="5" width="16" height="14" rx="2"/><path d="M8 9h8M8 13h8M8 16h5"/>',
     opcje: '<path d="M4 7h9M19 7h1M4 17h1M11 17h9"/><circle cx="16" cy="7" r="2.500"/><circle cx="8" cy="17" r="2.500"/>',
     szukaj: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.800-3.800"/>',
     wdol: '<path d="M6 9l6 6 6-6"/>'
@@ -252,7 +290,7 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
     poprzednia: '<path d="M19 6v12l-9-6z"/><rect x="5" y="6" width="2.200" height="12" rx="1"/>',
     nastepna: '<path d="M5 6v12l9-6z"/><rect x="16.800" y="6" width="2.200" height="12" rx="1"/>'
   };
-  var NAZWY = { start: 'Start', stacje: 'Stacje', ulubione: 'Ulubione', opcje: 'Opcje' };
+  var NAZWY = { start: 'Start', stacje: 'Stacje', ulubione: 'Ulubione', wiadomosci: 'Wiadomości', opcje: 'Opcje' };
   var MOTYWY = [['zloto', 'Złoto', '#e3c27e'], ['platyna', 'Platyna', '#e4e8ec'], ['miedz', 'Miedź', '#d9916a'], ['szmaragd', 'Szmaragd', '#5fb898'], ['szafir', 'Szafir', '#86adeb']];
   var FILTRY = [['wszystkie', 'Wszystkie'], ['bezgadania', 'Bez gadania'], ['polski', 'Tylko po polsku'], ['angielski', 'Tylko po angielsku']];
 
@@ -580,6 +618,14 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
     p2.appendChild(wierszKonta);
     tresc.appendChild(p2);
 
+    if (nowiny) {
+      tresc.appendChild(el('p', 'etykieta zlota', 'WIADOMOŚCI'));
+      var p4 = panel();
+      p4.appendChild(el('div', '', 'Tematy, o których chcesz czytać'));
+      p4.appendChild(wyborTematow(null));
+      tresc.appendChild(p4);
+    }
+
     tresc.appendChild(el('p', 'etykieta zlota', 'APLIKACJA NA TELEFON'));
     var p3 = panel();
     var w3 = el('div', 'opcja');
@@ -593,9 +639,146 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
     tresc.appendChild(p3);
   }
 
+  // ---------- Wiadomości ----------
+
+  var nowiny = null, nowinyPobrano = 0, tematNowin = 'wszystkie';
+  function wybraneTematy() {
+    var zapis = pamiec('nux7-tematy');
+    if (zapis === null || !nowiny) return nowiny ? nowiny.domyslne.slice() : [];
+    var znane = nowiny.tematy.map(function (t) { return t.id; });
+    return lista('nux7-tematy').filter(function (t) { return znane.indexOf(t) >= 0; });
+  }
+  function jakDawno(czas) {
+    var minuty = Math.max(0, Math.round((Date.now() - Date.parse(czas)) / 60000));
+    if (minuty < 2) return 'przed chwilą';
+    if (minuty < 60) return minuty + ' min temu';
+    var godziny = Math.round(minuty / 60);
+    if (godziny < 24) return godziny + ' godz. temu';
+    return godziny < 48 ? 'wczoraj' : 'przedwczoraj';
+  }
+  // Przyciski do zaznaczania, o czym użytkownik chce czytać.
+  function wyborTematow(poZmianie) {
+    var pole = el('div', 'tematy');
+    var wybrane = wybraneTematy();
+    nowiny.tematy.forEach(function (t) {
+      var b = el('button', 'szklo', t.nazwa);
+      b.type = 'button';
+      b.setAttribute('aria-pressed', wybrane.indexOf(t.id) >= 0 ? 'true' : 'false');
+      b.addEventListener('click', function () {
+        var teraz = wybraneTematy();
+        var gdzie = teraz.indexOf(t.id);
+        if (gdzie >= 0) teraz.splice(gdzie, 1); else teraz.push(t.id);
+        pamiec('nux7-tematy', JSON.stringify(teraz));
+        b.setAttribute('aria-pressed', gdzie >= 0 ? 'false' : 'true');
+        if (poZmianie) poZmianie();
+      });
+      pole.appendChild(b);
+    });
+    return pole;
+  }
+  function kartaWiadomosci(w, glowna) {
+    var a = el('a', 'wiadomosc szklo' + (glowna ? ' glowna' : ''));
+    a.href = w.adres;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    if (w.obraz) {
+      var ramka = el('div', 'zdjecie');
+      var obraz = document.createElement('img');
+      obraz.alt = '';
+      obraz.loading = 'lazy';
+      obraz.referrerPolicy = 'no-referrer';
+      obraz.onerror = function () { ramka.remove(); };
+      obraz.src = w.obraz;
+      ramka.appendChild(obraz);
+      a.appendChild(ramka);
+    }
+    var opis = el('div', 'opis');
+    var skad = el('div', 'skad', w.zrodlo + ' ');
+    skad.appendChild(el('span', '', '· ' + jakDawno(w.czas)));
+    opis.appendChild(skad);
+    opis.appendChild(el('b', '', w.tytul));
+    if (w.wstep && (glowna || !w.obraz)) opis.appendChild(el('div', 'wstep', w.wstep));
+    a.appendChild(opis);
+    return a;
+  }
+  function widokWiadomosci() {
+    tresc.appendChild(el('div', 'marka', 'RADIO NUX7'));
+    tresc.appendChild(el('h1', '', 'Wiadomości'));
+    var miejsce = el('div');
+    tresc.appendChild(miejsce);
+
+    function pokaz() {
+      miejsce.textContent = '';
+      if (!nowiny) return;
+      // Przy pierwszym wejściu pytamy, co kogo interesuje.
+      if (pamiec('nux7-tematy') === null) {
+        var pytanie = panel('CO CIĘ INTERESUJE?', true);
+        pytanie.appendChild(el('div', 'pusto', 'Zaznacz tematy, o których chcesz czytać. Zmienisz to w każdej chwili w Opcjach.'));
+        pytanie.appendChild(wyborTematow(null));
+        var gotowe = el('button', 'przycisk', 'Gotowe');
+        gotowe.type = 'button';
+        gotowe.style.marginTop = '16px';
+        gotowe.addEventListener('click', function () {
+          pamiec('nux7-tematy', JSON.stringify(wybraneTematy()));
+          pokaz();
+        });
+        pytanie.appendChild(gotowe);
+        miejsce.appendChild(pytanie);
+        return;
+      }
+      var wybrane = wybraneTematy();
+      if (tematNowin !== 'wszystkie' && wybrane.indexOf(tematNowin) < 0) tematNowin = 'wszystkie';
+      var przyciski = el('div', 'tematy');
+      [{ id: 'wszystkie', nazwa: 'Wszystkie' }].concat(nowiny.tematy.filter(function (t) { return wybrane.indexOf(t.id) >= 0; })).forEach(function (t) {
+        var b = el('button', 'szklo', t.nazwa);
+        b.type = 'button';
+        b.setAttribute('aria-pressed', tematNowin === t.id ? 'true' : 'false');
+        b.addEventListener('click', function () { tematNowin = t.id; pokaz(); });
+        przyciski.appendChild(b);
+      });
+      miejsce.appendChild(przyciski);
+
+      var pasujace = nowiny.wiadomosci.filter(function (w) {
+        return tematNowin === 'wszystkie' ? wybrane.indexOf(w.temat) >= 0 : w.temat === tematNowin;
+      }).slice(0, 60);
+      if (!pasujace.length) {
+        var pusty = panel();
+        pusty.appendChild(el('div', 'pusto', wybrane.length ? 'W tych tematach nie ma teraz nowych wiadomości.' : 'Nie masz zaznaczonego żadnego tematu. Wybierz tematy w Opcjach.'));
+        miejsce.appendChild(pusty);
+        return;
+      }
+      var siatka = el('div', 'wiadomosci');
+      siatka.style.marginTop = '16px';
+      var glowna = -1;
+      for (var i = 0; i < pasujace.length && i < 6; i++) if (pasujace[i].obraz) { glowna = i; break; }
+      if (glowna >= 0) siatka.appendChild(kartaWiadomosci(pasujace[glowna], true));
+      pasujace.forEach(function (w, numer) { if (numer !== glowna) siatka.appendChild(kartaWiadomosci(w, false)); });
+      miejsce.appendChild(siatka);
+      var stopka = el('p', 'pusto', 'Tytuły i zdjęcia pochodzą z portali. Dotknięcie otwiera artykuł na stronie źródła.');
+      stopka.style.margin = '18px 6px 0';
+      miejsce.appendChild(stopka);
+    }
+
+    if (nowiny) pokaz(); else miejsce.appendChild(el('p', 'pusto', 'Wczytuję wiadomości…'));
+    if (!nowiny || Date.now() - nowinyPobrano > 5 * 60000) {
+      fetch('/api/wiadomosci').then(function (o) { if (!o.ok) throw new Error(); return o.json(); }).then(function (d) {
+        nowiny = d;
+        nowinyPobrano = Date.now();
+        if (zakladka === 'wiadomosci') pokaz();
+      }).catch(function () {
+        if (!nowiny && zakladka === 'wiadomosci') {
+          miejsce.textContent = '';
+          var blad = panel();
+          blad.appendChild(el('div', 'pusto', 'Nie udało się pobrać wiadomości. Spróbuj ponownie za chwilę.'));
+          miejsce.appendChild(blad);
+        }
+      });
+    }
+  }
+
   function rysuj() {
     tresc.textContent = '';
-    ({ start: widokStart, stacje: widokStacje, ulubione: widokUlubione, opcje: widokOpcje })[zakladka]();
+    ({ start: widokStart, stacje: widokStacje, ulubione: widokUlubione, wiadomosci: widokWiadomosci, opcje: widokOpcje })[zakladka]();
     document.querySelectorAll('[data-zakladka]').forEach(function (b) {
       if (b.dataset.zakladka === zakladka) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
     });
@@ -691,14 +874,80 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
   document.getElementById('poprzednia').addEventListener('click', function () { przeskocz(-1); });
   document.getElementById('nastepna').addEventListener('click', function () { przeskocz(1); });
   document.getElementById('duze-serce').addEventListener('click', function () { if (grana) przelaczUlubiona(grana.id); });
-  // Głośność jest pamiętana osobno na każdym urządzeniu.
+  // Głośność: suwak w pasku i pokrętło wokół logo. Pamiętana osobno na każdym urządzeniu.
   (function () {
     var suwak = document.getElementById('glosnosc');
+    var pokretlo = document.getElementById('pokretlo');
+    var napis = document.getElementById('ile-glosno');
+    var SRODEK = 136, PROMIEN = 122, POCZATEK = 135, ZAKRES = 270, gasnie = null;
+    function punkt(kat, promien) {
+      var r = kat * Math.PI / 180;
+      return [SRODEK + promien * Math.cos(r), SRODEK + promien * Math.sin(r)];
+    }
+    function luk(doKata) {
+      var a = punkt(POCZATEK, PROMIEN), b = punkt(doKata, PROMIEN);
+      return 'M' + a[0].toFixed(2) + ' ' + a[1].toFixed(2) + ' A' + PROMIEN + ' ' + PROMIEN + ' 0 ' + (doKata - POCZATEK > 180 ? 1 : 0) + ' 1 ' + b[0].toFixed(2) + ' ' + b[1].toFixed(2);
+    }
+    var kreski = '';
+    for (var k = 0; k <= 10; k++) {
+      var p1 = punkt(POCZATEK + ZAKRES * k / 10, 106), p2 = punkt(POCZATEK + ZAKRES * k / 10, 112);
+      kreski += '<line x1="' + p1[0].toFixed(1) + '" y1="' + p1[1].toFixed(1) + '" x2="' + p2[0].toFixed(1) + '" y2="' + p2[1].toFixed(1) + '"/>';
+    }
+    document.getElementById('pokretlo-kreski').innerHTML = kreski;
+    document.getElementById('pokretlo-tor').setAttribute('d', luk(POCZATEK + ZAKRES));
+
+    function ustaw(wartosc, pokazNapis) {
+      var v = Math.min(1, Math.max(0, wartosc));
+      dzwiek.volume = v;
+      suwak.value = v;
+      pamiec('nux7-glosnosc', String(v));
+      var kat = POCZATEK + ZAKRES * v;
+      document.getElementById('pokretlo-poziom').setAttribute('d', v > 0.005 ? luk(kat) : '');
+      var g = punkt(kat, PROMIEN);
+      var galka = document.getElementById('pokretlo-galka');
+      galka.setAttribute('cx', g[0].toFixed(2));
+      galka.setAttribute('cy', g[1].toFixed(2));
+      pokretlo.setAttribute('aria-valuenow', Math.round(v * 100));
+      pokretlo.setAttribute('aria-valuetext', Math.round(v * 100) + ' procent');
+      if (pokazNapis) {
+        napis.textContent = 'GŁOŚNOŚĆ ' + Math.round(v * 100) + '%';
+        napis.classList.add('widac');
+        clearTimeout(gasnie);
+        gasnie = setTimeout(function () { napis.classList.remove('widac'); }, 1400);
+      }
+    }
     var zapisana = parseFloat(pamiec('nux7-glosnosc'));
-    if (zapisana >= 0 && zapisana <= 1) { suwak.value = zapisana; dzwiek.volume = zapisana; }
-    suwak.addEventListener('input', function (z) {
-      dzwiek.volume = Number(z.target.value);
-      pamiec('nux7-glosnosc', z.target.value);
+    ustaw(zapisana >= 0 && zapisana <= 1 ? zapisana : 1, false);
+
+    suwak.addEventListener('input', function (z) { ustaw(Number(z.target.value), false); });
+
+    // Kręcenie: liczy się kąt palca albo myszy względem środka pokrętła.
+    function zeWskaznika(z) {
+      var r = pokretlo.getBoundingClientRect();
+      var kat = Math.atan2(z.clientY - (r.top + r.height / 2), z.clientX - (r.left + r.width / 2)) * 180 / Math.PI;
+      var odPoczatku = (kat - POCZATEK + 720) % 360;
+      // Przerwa na dole pokrętła: przyciągamy do bliższego końca.
+      if (odPoczatku > ZAKRES) odPoczatku = odPoczatku > ZAKRES + (360 - ZAKRES) / 2 ? 0 : ZAKRES;
+      ustaw(odPoczatku / ZAKRES, true);
+    }
+    var kreci = false;
+    pokretlo.addEventListener('pointerdown', function (z) {
+      kreci = true;
+      pokretlo.setPointerCapture(z.pointerId);
+      zeWskaznika(z);
+    });
+    pokretlo.addEventListener('pointermove', function (z) { if (kreci) zeWskaznika(z); });
+    pokretlo.addEventListener('pointerup', function () { kreci = false; });
+    pokretlo.addEventListener('pointercancel', function () { kreci = false; });
+    pokretlo.addEventListener('wheel', function (z) {
+      z.preventDefault();
+      ustaw(dzwiek.volume + (z.deltaY < 0 ? 0.05 : -0.05), true);
+    }, { passive: false });
+    pokretlo.addEventListener('keydown', function (z) {
+      var krok = { ArrowUp: 0.05, ArrowRight: 0.05, ArrowDown: -0.05, ArrowLeft: -0.05, PageUp: 0.2, PageDown: -0.2 }[z.key];
+      if (z.key === 'Home') { z.preventDefault(); ustaw(0, true); }
+      else if (z.key === 'End') { z.preventDefault(); ustaw(1, true); }
+      else if (krok) { z.preventDefault(); ustaw(dzwiek.volume + krok, true); }
     });
   })();
   document.getElementById('otworz').addEventListener('click', function () { document.getElementById('odtwarzacz').hidden = false; });

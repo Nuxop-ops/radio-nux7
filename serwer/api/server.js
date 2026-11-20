@@ -9,6 +9,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const wszystkieStacje = require('./stacje');
+const wiadomosci = require('./wiadomosci');
 
 const PORT = Number(process.env.PORT || 8032);
 const DANE = process.env.DANE || path.join(__dirname, 'dane');
@@ -343,6 +344,12 @@ async function obsluz(req, res) {
     return przezPosrednika();
   }
 
+  if (sciezka === '/api/wiadomosci' && metoda === 'GET') {
+    const dane = JSON.stringify(wiadomosci.odpowiedz());
+    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'public, max-age=120', 'X-Content-Type-Options': 'nosniff' });
+    return res.end(dane);
+  }
+
   if (sciezka === '/api/stacje' && metoda === 'GET') {
     return json(res, 200, { stacje: listaStacji(uzytkownikZZapytania(req)) });
   }
@@ -484,4 +491,8 @@ serwer.listen(PORT, '127.0.0.1', () => {
   log('Serwer Radia NUX7 działa na porcie', PORT, '| stacji na liście:', wszystkieStacje.length);
   odswiezNazwyZPosrednika().then(odswiezAdresyRmf);
   setInterval(() => odswiezNazwyZPosrednika().then(odswiezAdresyRmf), 6 * 3600 * 1000).unref();
+  if (!BEZ_SIECI) {
+    wiadomosci.odswiez(log).catch(() => {});
+    setInterval(() => wiadomosci.odswiez(log).catch(() => {}), 15 * 60 * 1000).unref();
+  }
 });
