@@ -4,123 +4,224 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#070707">
-<title>Słuchaj – Radio NUX7</title>
-<meta name="description" content="Słuchaj polskich stacji radiowych w przeglądarce.">
+<title>Radio NUX7 – słuchaj w przeglądarce</title>
+<meta name="description" content="Polskie stacje radiowe w przeglądarce. Ten sam wygląd i te same ulubione co w aplikacji Radio NUX7.">
 <link rel="icon" type="image/png" href="ikona.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap">
 <style>
 :root {
-  --tlo: #0b0a09; --tekst: #f5f2ec; --cichy: #cfcac0; --akcent: #e3c27e; --na-akcencie: #171208;
-  --szklo: rgba(255,255,255,0.07); --ramka: rgba(255,255,255,0.18); --linia: rgba(255,255,255,0.12);
+  --tlo: #0b0a09; --tekst: #f5f2ec; --cichy: #d6d2ca; --akcent: #e3c27e; --na-akcencie: #171208;
+  --ramka: rgba(255,255,255,0.22); --linia: rgba(255,255,255,0.14);
   --szeryf: "Cormorant Garamond", Georgia, serif;
 }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--tlo); color: var(--tekst); font: 16px/1.5 Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
-a { color: var(--akcent); }
-button, input { font: inherit; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--tlo); color: var(--tekst); font: 16px/1.5 Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; overflow: hidden; }
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
 :focus-visible { outline: 2px solid var(--tekst); outline-offset: 2px; }
-.srodek { width: min(1100px, 100% - 32px); margin-inline: auto; }
-header { position: sticky; top: 0; z-index: 5; background: rgba(11,10,9,0.8); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border-bottom: 1px solid var(--linia); }
-header .srodek { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 64px; }
-.marka { display: flex; align-items: center; gap: 12px; color: var(--tekst); text-decoration: none; font-weight: 600; }
-.marka img { width: 38px; height: 38px; border-radius: 10px; }
-.przycisk { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 20px; border-radius: 22px; border: 0; background: var(--akcent); color: var(--na-akcencie); font-weight: 600; cursor: pointer; text-decoration: none; }
-.przycisk.drugi { background: transparent; border: 1px solid var(--ramka); color: var(--tekst); }
-h1 { margin: 36px 0 0; font-family: var(--szeryf); font-weight: 500; font-size: clamp(38px, 6vw, 60px); line-height: 1.02; }
-.wstep { margin: 10px 0 0; color: var(--cichy); max-width: 40em; }
-.narzedzia { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
-.szukaj { flex: 1 1 260px; display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 18px; border-radius: 24px; background: var(--szklo); border: 1px solid var(--ramka); }
-.szukaj input { flex: 1; min-width: 0; height: 44px; border: 0; outline: 0; background: transparent; color: var(--tekst); }
-.szukaj input::placeholder { color: var(--cichy); }
-.filtry { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-.filtry button { min-height: 44px; padding: 0 16px; border-radius: 22px; border: 1px solid var(--ramka); background: var(--szklo); color: var(--tekst); cursor: pointer; font-size: 14px; }
-.filtry button[aria-pressed="true"] { background: var(--akcent); color: var(--na-akcencie); border-color: transparent; font-weight: 600; }
-h2 { margin: 34px 0 12px; font-size: 12px; font-weight: 600; letter-spacing: 0.24em; color: var(--akcent); }
-.siatka { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 10px; }
-.stacja { display: flex; align-items: center; gap: 4px; border-radius: 18px; background: var(--szklo); border: 1px solid var(--ramka); padding-right: 4px; }
-.stacja.gra { border-color: var(--akcent); }
-.stacja .wlacz { flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; padding: 10px 6px 10px 10px; border: 0; background: transparent; color: var(--tekst); text-align: left; cursor: pointer; border-radius: 18px; }
-.logo { flex: none; width: 46px; height: 46px; border-radius: 50%; background: #000 center/cover no-repeat; border: 1px solid var(--ramka); display: grid; place-items: center; font-size: 10px; font-weight: 600; letter-spacing: 0.04em; overflow: hidden; }
-.logo img { width: 100%; height: 100%; object-fit: contain; background: #fff; opacity: 0; transition: opacity 0.25s ease; }
-.nazwy { min-width: 0; }
-.nazwy b { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; font-family: var(--szeryf); font-weight: 600; font-size: 19px; line-height: 1.15; overflow: hidden; }
-.nazwy span { display: block; font-size: 12px; color: var(--cichy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.stacja.gra .nazwy span { color: var(--akcent); }
-.serce { flex: none; width: 44px; height: 44px; border: 0; border-radius: 50%; background: transparent; color: var(--cichy); cursor: pointer; display: grid; place-items: center; }
-.serce[aria-pressed="true"] { color: var(--akcent); }
-.serce[aria-pressed="true"] svg { fill: currentColor; }
-.pusto { margin-top: 28px; padding: 24px; border-radius: 20px; background: var(--szklo); border: 1px solid var(--ramka); color: var(--cichy); }
-main { padding-bottom: 150px; }
-.odtwarzacz { position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 6; max-width: 760px; margin-inline: auto; display: flex; align-items: center; gap: 14px; padding: 10px 12px; border-radius: 40px; background: rgba(30,29,27,0.86); border: 1px solid rgba(255,255,255,0.26); -webkit-backdrop-filter: blur(22px); backdrop-filter: blur(22px); box-shadow: 0 18px 44px rgba(0,0,0,0.6); }
-.odtwarzacz .nazwy { flex: 1; }
-.kolo { flex: none; width: 52px; height: 52px; border-radius: 50%; border: 0; background: var(--akcent); color: var(--na-akcencie); cursor: pointer; display: grid; place-items: center; }
-.glosnosc { width: 110px; accent-color: var(--akcent); }
-dialog { width: min(420px, 100% - 32px); padding: 28px 24px; border-radius: 28px; border: 1px solid var(--ramka); background: #171614; color: var(--tekst); }
-dialog::backdrop { background: rgba(0,0,0,0.7); }
-dialog h3 { margin: 0; font-family: var(--szeryf); font-weight: 500; font-size: 34px; }
-dialog label { display: block; margin-top: 18px; font-size: 11px; font-weight: 600; letter-spacing: 0.2em; color: var(--cichy); }
-dialog input { width: 100%; height: 48px; border: 0; border-bottom: 1px solid rgba(255,255,255,0.45); background: transparent; color: var(--tekst); outline: 0; }
-dialog .przycisk { width: 100%; margin-top: 22px; min-height: 52px; }
-.komunikat { min-height: 1.5em; margin: 12px 0 0; font-size: 14px; color: #f0a8a0; }
-.link { background: none; border: 0; padding: 0; color: var(--akcent); cursor: pointer; text-decoration: underline; }
 [hidden] { display: none !important; }
-@media (max-width: 560px) { .glosnosc { display: none; } .przycisk.maly-ukryj { display: none; } }
+.tlo { position: fixed; inset: 0; width: 100%; height: 100%; }
+
+.szklo { background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.07)); border: 1px solid var(--ramka); -webkit-backdrop-filter: blur(22px) saturate(120%); backdrop-filter: blur(22px) saturate(120%); }
+
+/* Układ: na komputerze pasek zakładek z boku, na telefonie na dole, jak w aplikacji. */
+.aplikacja { position: relative; height: 100%; display: grid; grid-template-columns: 104px 1fr; grid-template-rows: 1fr auto; }
+.pasek { grid-row: 1 / span 2; margin: 16px 0 16px 16px; border-radius: 32px; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px 8px; }
+.pasek img { width: 44px; height: 44px; border-radius: 12px; margin-bottom: 14px; }
+.zakladka { width: 100%; min-height: 64px; border: 0; border-radius: 22px; background: transparent; color: var(--cichy); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 11px; font-weight: 500; }
+.zakladka[aria-current="page"] { color: var(--akcent); }
+.zakladka.dol { margin-top: auto; }
+.widok { overflow-y: auto; padding: 28px 32px 24px; }
+.srodek { max-width: 980px; margin-inline: auto; }
+.dolny { padding: 0 32px 16px; }
+.dolny .srodek { display: flex; flex-direction: column; gap: 10px; }
+
+.marka { font-size: 12px; font-weight: 600; letter-spacing: 0.32em; color: var(--akcent); }
+h1 { margin: 10px 0 0; font-family: var(--szeryf); font-weight: 500; font-size: clamp(38px, 5vw, 54px); line-height: 1.05; }
+.panel { margin-top: 16px; padding: 16px; border-radius: 28px; }
+.naglowek { display: flex; align-items: center; justify-content: space-between; min-height: 28px; }
+.etykieta { margin: 0; font-size: 11px; font-weight: 600; letter-spacing: 0.24em; color: var(--cichy); }
+.etykieta.zlota { color: var(--akcent); margin: 24px 6px 0; }
+.link { border: 0; background: none; padding: 8px; color: var(--akcent); font-size: 13px; border-radius: 12px; }
+.pusto { margin: 8px 0 4px; color: var(--cichy); font-size: 14px; }
+
+.kolka { display: flex; flex-wrap: wrap; gap: 14px 22px; margin-top: 10px; }
+.kolko { width: 84px; border: 0; background: none; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 12px; color: var(--cichy); border-radius: 16px; }
+.kolko span:last-child { max-width: 84px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kolko.gra { color: var(--tekst); }
+.logo { flex: none; width: 46px; height: 46px; border-radius: 50%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.3); display: grid; place-items: center; font-size: 10px; font-weight: 600; letter-spacing: 0.05em; overflow: hidden; }
+.logo.duze { width: 72px; height: 72px; font-size: 13px; }
+.logo.wielkie { width: 200px; height: 200px; font-size: 34px; border-width: 2px; border-color: var(--akcent); }
+.gra > .logo, .gra .logo.duze { border: 1.5px solid var(--akcent); }
+.logo img { width: 100%; height: 100%; object-fit: contain; background: #fff; opacity: 0; transition: opacity 0.25s ease; }
+
+.wiersze { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); column-gap: 28px; }
+.wiersz { display: flex; align-items: center; min-height: 66px; border-top: 1px solid var(--linia); }
+.wiersz .wlacz { flex: 1; min-width: 0; min-height: 66px; display: flex; align-items: center; gap: 14px; border: 0; background: none; padding: 0; text-align: left; border-radius: 14px; }
+.nazwy { min-width: 0; flex: 1; }
+.nazwy b { display: block; font-family: var(--szeryf); font-weight: 600; font-size: 21px; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nazwy span { display: block; font-size: 12px; color: var(--cichy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gra .nazwy span { color: var(--akcent); }
+.ikona-przycisk { flex: none; width: 48px; height: 48px; border: 0; border-radius: 50%; background: none; color: var(--cichy); display: grid; place-items: center; }
+.ikona-przycisk[aria-pressed="true"] { color: var(--akcent); }
+.ikona-przycisk[aria-pressed="true"] svg { fill: currentColor; }
+.graj-znak { flex: none; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--ramka); display: grid; place-items: center; color: var(--akcent); margin-right: 4px; }
+
+.szukaj { margin-top: 16px; display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 18px; border-radius: 26px; }
+.szukaj input { flex: 1; min-width: 0; height: 48px; border: 0; outline: 0; background: transparent; }
+.szukaj input::placeholder { color: var(--cichy); }
+.filtry { margin-top: 12px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.filtry button { min-height: 44px; border-radius: 22px; font-size: 13px; font-weight: 500; }
+.filtry button[aria-pressed="true"] { background: var(--akcent); border-color: transparent; color: var(--na-akcencie); font-weight: 600; -webkit-backdrop-filter: none; backdrop-filter: none; }
+
+.mini { display: flex; align-items: center; gap: 12px; min-height: 68px; padding: 0 10px; border-radius: 34px; background: linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0.12)); }
+.mini .otworz { flex: 1; min-width: 0; min-height: 68px; display: flex; align-items: center; gap: 12px; border: 0; background: none; padding: 0; text-align: left; }
+.mini .nazwy b { font-family: inherit; font-size: 15px; font-weight: 500; }
+.mini .nazwy span { color: var(--akcent); }
+.kolo { flex: none; width: 48px; height: 48px; border-radius: 50%; border: 0; background: var(--akcent); color: var(--na-akcencie); display: grid; place-items: center; }
+.kolo.wielkie { width: 80px; height: 80px; }
+.glosnosc { width: 120px; accent-color: var(--akcent); }
+.pasek-dolny { display: none; }
+
+.odtwarzacz { position: fixed; inset: 0; z-index: 5; display: flex; flex-direction: column; align-items: center; padding: 24px; }
+.odtwarzacz .gora { width: min(560px, 100%); display: flex; align-items: center; justify-content: space-between; }
+.okragly { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; }
+.na-zywo { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 600; letter-spacing: 0.28em; color: var(--akcent); }
+.na-zywo i { width: 6px; height: 6px; border-radius: 50%; background: var(--akcent); }
+.pierscien { margin: auto 0; width: 256px; height: 256px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--ramka); background: rgba(255,255,255,0.05); }
+.odtwarzacz .panel { width: min(560px, 100%); text-align: center; padding: 24px 16px 20px; margin: 0; }
+.odtwarzacz h2 { margin: 0; font-family: var(--szeryf); font-weight: 500; font-size: 38px; line-height: 1.05; }
+.odtwarzacz p { margin: 4px 0 0; color: var(--cichy); font-size: 14px; }
+.sterowanie { margin-top: 22px; display: flex; align-items: center; justify-content: space-between; }
+
+.opcja { display: flex; align-items: center; gap: 12px; min-height: 60px; }
+.opcja + .opcja { border-top: 1px solid var(--linia); }
+.motywy { display: flex; gap: 6px 18px; flex-wrap: wrap; margin-top: 12px; }
+.motyw { width: 66px; border: 0; background: none; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 12px; color: var(--cichy); border-radius: 14px; }
+.motyw i { width: 56px; height: 56px; border-radius: 50%; border: 2px solid transparent; display: grid; place-items: center; }
+.motyw i::after { content: ""; width: 42px; height: 42px; border-radius: 50%; background: var(--k); }
+.motyw[aria-pressed="true"] { color: var(--tekst); font-weight: 600; }
+.motyw[aria-pressed="true"] i { border-color: var(--tekst); }
+.pole-imie { width: 100%; max-width: 420px; height: 48px; border: 0; border-bottom: 1px solid rgba(255,255,255,0.45); background: transparent; outline: 0; font-size: 16px; }
+.podglad { margin: 4px 0 0; font-family: var(--szeryf); font-weight: 500; font-size: 24px; }
+.przycisk { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 24px; border-radius: 24px; border: 0; background: var(--akcent); color: var(--na-akcencie); font-weight: 600; text-decoration: none; }
+.przycisk.drugi { background: transparent; border: 1px solid var(--ramka); color: var(--tekst); }
+
+dialog { width: min(420px, 100% - 32px); padding: 32px 24px 24px; border-radius: 28px; border: 1px solid var(--ramka); background: #1a1917; color: var(--tekst); }
+dialog::backdrop { background: rgba(0,0,0,0.7); }
+dialog h3 { margin: 0; font-family: var(--szeryf); font-weight: 500; font-size: 38px; line-height: 1.05; }
+dialog label { display: block; margin-top: 18px; font-size: 11px; font-weight: 600; letter-spacing: 0.2em; color: var(--cichy); }
+dialog input { width: 100%; height: 48px; border: 0; border-bottom: 1px solid rgba(255,255,255,0.45); background: transparent; outline: 0; }
+dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
+.komunikat { min-height: 1.5em; margin: 12px 0 0; font-size: 14px; color: #f0a8a0; }
+
+@media (max-width: 760px) {
+  .aplikacja { grid-template-columns: 1fr; }
+  .pasek { display: none; }
+  .widok { padding: 22px 16px 16px; }
+  .dolny { padding: 0 16px 12px; }
+  .pasek-dolny { display: flex; min-height: 64px; border-radius: 32px; padding: 0 8px; }
+  .pasek-dolny .zakladka { flex: 1; }
+  .filtry { grid-template-columns: repeat(2, 1fr); }
+  .glosnosc { display: none; }
+  .kolka { justify-content: space-between; gap: 14px 8px; }
+  .kolko { width: 76px; }
+}
 </style>
 </head>
 <body>
 
-<header>
-  <div class="srodek">
-    <a class="marka" href="./"><img src="ikona.png" alt="" width="38" height="38">Radio NUX7</a>
-    <div style="display:flex; gap:10px; align-items:center">
-      <span id="kto" style="font-size:14px; color:var(--cichy)" hidden></span>
-      <button class="przycisk drugi" id="zaloguj" type="button">Zaloguj się</button>
-      <button class="przycisk drugi" id="wyloguj" type="button" hidden>Wyloguj</button>
+<svg class="tlo" aria-hidden="true" viewBox="0 0 390 844" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="p1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2a2a2a"/><stop offset="1" stop-color="#0e0e0e"/></linearGradient>
+    <linearGradient id="p2" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#232323"/><stop offset="1" stop-color="#0a0a0a"/></linearGradient>
+    <linearGradient id="p3" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#1b1b1b"/><stop offset="1" stop-color="#333333"/></linearGradient>
+  </defs>
+  <polygon points="0,0 210,0 150,130 0,190" fill="url(#p1)"/>
+  <polygon points="210,0 390,0 390,150 260,210 150,130" fill="url(#p2)"/>
+  <polygon points="0,190 150,130 260,210 190,370 0,330" fill="url(#p3)"/>
+  <polygon points="260,210 390,150 390,420 300,440 190,370" fill="url(#p1)"/>
+  <polygon points="0,330 190,370 140,560 0,520" fill="url(#p2)"/>
+  <polygon points="190,370 300,440 280,620 140,560" fill="url(#p3)"/>
+  <polygon points="300,440 390,420 390,680 280,620" fill="url(#p2)"/>
+  <polygon points="0,520 140,560 110,760 0,720" fill="url(#p1)"/>
+  <polygon points="140,560 280,620 250,844 90,844 110,760" fill="url(#p2)"/>
+  <polygon points="280,620 390,680 390,844 250,844" fill="url(#p3)"/>
+  <polygon points="0,720 110,760 90,844 0,844" fill="url(#p3)"/>
+  <path fill="none" stroke="#000" stroke-width="3" vector-effect="non-scaling-stroke" d="M210 0L150 130L0 190M150 130L260 210L390 150M260 210L190 370L0 330M190 370L300 440L390 420M190 370L140 560L0 520M300 440L280 620L140 560M280 620L390 680M140 560L110 760L0 720M110 760L90 844M280 620L250 844"/>
+</svg>
+
+<div class="aplikacja">
+  <nav class="pasek szklo" aria-label="Zakładki">
+    <a href="./" aria-label="Strona główna Radia NUX7"><img src="ikona.png" alt="" width="44" height="44"></a>
+    <button class="zakladka" type="button" data-zakladka="start"></button>
+    <button class="zakladka" type="button" data-zakladka="stacje"></button>
+    <button class="zakladka" type="button" data-zakladka="ulubione"></button>
+    <button class="zakladka dol" type="button" data-zakladka="opcje"></button>
+  </nav>
+
+  <main class="widok" id="widok"><div class="srodek" id="tresc"></div></main>
+
+  <div class="dolny">
+    <div class="srodek">
+      <div class="mini szklo" id="mini" hidden>
+        <button class="otworz" id="otworz" type="button" aria-label="Otwórz odtwarzacz">
+          <span class="logo" id="mini-logo"></span>
+          <span class="nazwy"><b id="mini-nazwa"></b><span id="mini-stan">Na żywo</span></span>
+        </button>
+        <input class="glosnosc" id="glosnosc" type="range" min="0" max="1" step="0.05" value="1" aria-label="Głośność">
+        <button class="kolo" id="mini-graj" type="button" aria-label="Pauza"></button>
+      </div>
+      <nav class="pasek-dolny szklo" aria-label="Zakładki">
+        <button class="zakladka" type="button" data-zakladka="start"></button>
+        <button class="zakladka" type="button" data-zakladka="stacje"></button>
+        <button class="zakladka" type="button" data-zakladka="ulubione"></button>
+        <button class="zakladka" type="button" data-zakladka="opcje"></button>
+      </nav>
     </div>
   </div>
-</header>
-
-<main class="srodek">
-  <h1>Słuchaj w przeglądarce</h1>
-  <p class="wstep">Wybierz stację i słuchaj na komputerze. Po zalogowaniu ulubione stacje są te same co w aplikacji.</p>
-
-  <div class="narzedzia">
-    <label class="szukaj">
-      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#cfcac0" stroke-width="1.6" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.800-3.800"/></svg>
-      <span style="position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)">Szukaj stacji</span>
-      <input id="szukaj" type="search" placeholder="Szukaj stacji lub gatunku" autocomplete="off">
-    </label>
-  </div>
-  <div class="filtry" role="group" aria-label="Filtry">
-    <button type="button" data-filtr="wszystkie" aria-pressed="true">Wszystkie</button>
-    <button type="button" data-filtr="ulubione" aria-pressed="false">Ulubione</button>
-    <button type="button" data-filtr="bezgadania" aria-pressed="false">Bez gadania</button>
-    <button type="button" data-filtr="polski" aria-pressed="false">Tylko po polsku</button>
-    <button type="button" data-filtr="angielski" aria-pressed="false">Tylko po angielsku</button>
-  </div>
-
-  <div id="lista" aria-live="polite"></div>
-</main>
-
-<div class="odtwarzacz" id="odtwarzacz" hidden>
-  <div class="logo" id="gra-logo"></div>
-  <div class="nazwy"><b id="gra-nazwa"></b><span id="gra-stan">Na żywo</span></div>
-  <input class="glosnosc" id="glosnosc" type="range" min="0" max="1" step="0.05" value="1" aria-label="Głośność">
-  <button class="kolo" id="graj-pauza" type="button" aria-label="Pauza">
-    <svg id="ikona-pauza" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
-    <svg id="ikona-graj" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" hidden><path d="M8 5v14l11-7z"/></svg>
-  </button>
 </div>
+
+<section class="odtwarzacz" id="odtwarzacz" aria-label="Odtwarzacz" hidden>
+  <svg class="tlo" aria-hidden="true" viewBox="0 0 390 844" preserveAspectRatio="xMidYMid slice" style="z-index:-1">
+    <rect width="390" height="844" fill="#0b0a09"/>
+    <polygon points="0,0 210,0 150,130 0,190" fill="url(#p1)"/><polygon points="210,0 390,0 390,150 260,210 150,130" fill="url(#p2)"/>
+    <polygon points="0,190 150,130 260,210 190,370 0,330" fill="url(#p3)"/><polygon points="260,210 390,150 390,420 300,440 190,370" fill="url(#p1)"/>
+    <polygon points="0,330 190,370 140,560 0,520" fill="url(#p2)"/><polygon points="190,370 300,440 280,620 140,560" fill="url(#p3)"/>
+    <polygon points="300,440 390,420 390,680 280,620" fill="url(#p2)"/><polygon points="0,520 140,560 110,760 0,720" fill="url(#p1)"/>
+    <polygon points="140,560 280,620 250,844 90,844 110,760" fill="url(#p2)"/><polygon points="280,620 390,680 390,844 250,844" fill="url(#p3)"/>
+    <polygon points="0,720 110,760 90,844 0,844" fill="url(#p3)"/>
+  </svg>
+  <div class="gora">
+    <button class="okragly szklo" id="zwin" type="button" aria-label="Zwiń odtwarzacz"></button>
+    <div class="na-zywo"><i></i><span id="duzy-stan">NA ŻYWO</span></div>
+    <button class="okragly szklo" id="do-opcji" type="button" aria-label="Opcje"></button>
+  </div>
+  <div class="pierscien"><span class="logo wielkie" id="duze-logo"></span></div>
+  <div class="panel szklo">
+    <h2 id="duza-nazwa"></h2>
+    <p id="duzy-opis"></p>
+    <div class="sterowanie">
+      <button class="ikona-przycisk" id="duze-serce" type="button"></button>
+      <button class="ikona-przycisk" id="poprzednia" type="button" aria-label="Poprzednia stacja" style="color:var(--tekst)"></button>
+      <button class="kolo wielkie" id="duzy-graj" type="button" aria-label="Pauza"></button>
+      <button class="ikona-przycisk" id="nastepna" type="button" aria-label="Następna stacja" style="color:var(--tekst)"></button>
+      <span style="width:48px"></span>
+    </div>
+  </div>
+</section>
+
 <audio id="dzwiek" preload="none"></audio>
 
 <dialog id="okno">
-  <form method="dialog" id="formularz">
+  <form id="formularz">
     <h3 id="okno-tytul">Witaj ponownie</h3>
-    <div id="pole-imie" hidden>
-      <label for="imie">IMIĘ</label>
-      <input id="imie" type="text" autocomplete="given-name" maxlength="30">
+    <div id="pole-imie-rej" hidden>
+      <label for="imie-rej">IMIĘ</label>
+      <input id="imie-rej" type="text" autocomplete="given-name" maxlength="30">
     </div>
     <label for="email">E-MAIL</label>
     <input id="email" type="email" autocomplete="email" required>
@@ -129,29 +230,68 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 52px; }
     <p class="komunikat" id="komunikat" role="alert"></p>
     <button class="przycisk" id="wyslij" type="submit">Zaloguj się</button>
     <p style="margin:16px 0 0; text-align:center; font-size:14px; color:var(--cichy)">
-      <span id="pytanie">Nie masz konta?</span> <button class="link" id="zmien-tryb" type="button">Utwórz konto</button>
+      <span id="pytanie">Nie masz konta?</span> <button class="link" id="zmien-tryb" type="button" style="text-decoration:underline">Utwórz konto</button>
     </p>
-    <p style="margin:10px 0 0; text-align:center"><button class="link" id="zamknij" type="button" style="color:var(--cichy)">Zamknij</button></p>
+    <p style="margin:6px 0 0; text-align:center"><button class="link" id="zamknij" type="button" style="color:var(--cichy)">Zamknij</button></p>
   </form>
 </dialog>
 
 <script>
 (function () {
-  var stacje = [], konto = null, grana = null, filtr = 'wszystkie';
-  var wiersze = {}; // id stacji -> elementy jej wiersza na liście
-  var dzwiek = document.getElementById('dzwiek');
-  var lista = document.getElementById('lista');
+  var IKONY = {
+    start: '<path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/>',
+    stacje: '<path d="M5 7h14M5 12h14M5 17h9"/>',
+    ulubione: '<path d="M12 20s-7-4.400-7-10a4 4 0 0 1 7-2.500A4 4 0 0 1 19 10c0 5.600-7 10-7 10z"/>',
+    opcje: '<path d="M4 7h9M19 7h1M4 17h1M11 17h9"/><circle cx="16" cy="7" r="2.500"/><circle cx="8" cy="17" r="2.500"/>',
+    szukaj: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.800-3.800"/>',
+    wdol: '<path d="M6 9l6 6 6-6"/>'
+  };
+  var PELNE = {
+    graj: '<path d="M8 5v14l11-7z"/>',
+    pauza: '<rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/>',
+    poprzednia: '<path d="M19 6v12l-9-6z"/><rect x="5" y="6" width="2.200" height="12" rx="1"/>',
+    nastepna: '<path d="M5 6v12l9-6z"/><rect x="16.800" y="6" width="2.200" height="12" rx="1"/>'
+  };
+  var NAZWY = { start: 'Start', stacje: 'Stacje', ulubione: 'Ulubione', opcje: 'Opcje' };
+  var MOTYWY = [['zloto', 'Złoto', '#e3c27e'], ['platyna', 'Platyna', '#e4e8ec'], ['miedz', 'Miedź', '#d9916a'], ['szmaragd', 'Szmaragd', '#5fb898'], ['szafir', 'Szafir', '#86adeb']];
+  var FILTRY = [['wszystkie', 'Wszystkie'], ['bezgadania', 'Bez gadania'], ['polski', 'Tylko po polsku'], ['angielski', 'Tylko po angielsku']];
 
+  var stacje = [], wczytano = false, konto = null, grana = null, zakladka = 'start', filtr = 'wszystkie', szukane = '';
+  var niegra = false; // stacja nie odpowiedziała
+  var dzwiek = document.getElementById('dzwiek');
+  var tresc = document.getElementById('tresc');
+
+  function ikona(sciezki, rozmiar) {
+    return '<svg aria-hidden="true" width="' + rozmiar + '" height="' + rozmiar + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">' + sciezki + '</svg>';
+  }
+  function pelna(sciezki, rozmiar) {
+    return '<svg aria-hidden="true" width="' + rozmiar + '" height="' + rozmiar + '" viewBox="0 0 24 24" fill="currentColor">' + sciezki + '</svg>';
+  }
+  function el(znacznik, klasa, tekst) {
+    var e = document.createElement(znacznik);
+    if (klasa) e.className = klasa;
+    if (tekst !== undefined) e.textContent = tekst;
+    return e;
+  }
   function pamiec(nazwa, wartosc) {
     try {
       if (wartosc === undefined) return localStorage.getItem(nazwa);
       if (wartosc === null) localStorage.removeItem(nazwa); else localStorage.setItem(nazwa, wartosc);
     } catch (e) { return null; }
   }
+  function lista(nazwa) { try { return JSON.parse(pamiec(nazwa) || '[]'); } catch (e) { return []; } }
   function klucz() { return pamiec('nux7-klucz'); }
+  // Bez konta i bez własnego wyboru pokazujemy cztery stacje na start, jak w aplikacji.
   function ulubione() {
     if (konto) return konto.ulubione || [];
-    try { return JSON.parse(pamiec('nux7-ulubione') || '[]'); } catch (e) { return []; }
+    return pamiec('nux7-ulubione') === null ? ['rmf-5', 'zet', 'eska-2380', 'antyradio'] : lista('nux7-ulubione');
+  }
+  function imie() { return konto ? (konto.imie || '') : (pamiec('nux7-imie') || ''); }
+  function znajdz(id) { for (var i = 0; i < stacje.length; i++) if (stacje[i].id === id) return stacje[i]; return null; }
+  function powitanie() {
+    var godzina = new Date().getHours();
+    var pora = godzina >= 5 && godzina < 18 ? 'Dzień dobry' : 'Dobry wieczór';
+    return imie().trim() ? pora + ', ' + imie().trim() : pora;
   }
 
   function api(sciezka, opcje) {
@@ -167,96 +307,331 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 52px; }
   }
 
   function skrot(nazwa) {
-    return nazwa.replace(/^(Radio|RMF|ESKA|Antyradio)\s+/i, '').slice(0, 4).toUpperCase() || nazwa.slice(0, 3).toUpperCase();
+    return (nazwa.replace(/^(Radio|RMF|ESKA|Antyradio|Polskie Radio)\s+/i, '') || nazwa).slice(0, 4).toUpperCase();
   }
-  function logo(element, stacja) {
+  function wstawLogo(element, stacja) {
     element.textContent = '';
-    if (stacja.logo) {
-      var obraz = document.createElement('img');
-      obraz.alt = '';
-      obraz.loading = 'lazy';
-      obraz.onload = function () { obraz.style.opacity = '1'; };
-      obraz.src = stacja.logo;
-      obraz.onerror = function () { element.textContent = skrot(stacja.nazwa); };
-      element.appendChild(obraz);
+    if (!stacja.logo) { element.textContent = skrot(stacja.nazwa); return; }
+    var obraz = document.createElement('img');
+    obraz.alt = '';
+    obraz.onload = function () { obraz.style.opacity = '1'; };
+    obraz.onerror = function () { element.textContent = skrot(stacja.nazwa); };
+    obraz.src = stacja.logo;
+    element.appendChild(obraz);
+  }
+
+  // ---------- Elementy listy ----------
+
+  function wiersz(stacja, zSercem) {
+    var w = el('div', 'wiersz');
+    w.dataset.stacja = stacja.id;
+    var wlacz = el('button', 'wlacz');
+    wlacz.type = 'button';
+    wlacz.setAttribute('aria-label', 'Włącz ' + stacja.nazwa);
+    var znak = el('span', 'logo');
+    wstawLogo(znak, stacja);
+    var nazwy = el('span', 'nazwy');
+    nazwy.appendChild(el('b', '', stacja.nazwa));
+    var opis = el('span', '', stacja.opis);
+    opis.dataset.opis = stacja.opis;
+    nazwy.appendChild(opis);
+    wlacz.appendChild(znak);
+    wlacz.appendChild(nazwy);
+    wlacz.addEventListener('click', function () { graj(stacja); });
+    w.appendChild(wlacz);
+    if (zSercem) {
+      var serce = el('button', 'ikona-przycisk');
+      serce.type = 'button';
+      serce.dataset.serce = stacja.id;
+      serce.innerHTML = ikona(IKONY.ulubione, 20);
+      serce.addEventListener('click', function () { przelaczUlubiona(stacja.id); });
+      w.appendChild(serce);
     } else {
-      element.textContent = skrot(stacja.nazwa);
+      var graj2 = el('span', 'graj-znak');
+      graj2.innerHTML = pelna(PELNE.graj, 14);
+      w.appendChild(graj2);
     }
+    return w;
   }
 
-  function pokaz() {
-    var fraza = document.getElementById('szukaj').value.trim().toLowerCase();
-    var moje = ulubione();
-    var widoczne = stacje.filter(function (s) {
-      if (filtr === 'ulubione' && moje.indexOf(s.id) < 0) return false;
-      if (filtr === 'bezgadania' && !s.bezGadania) return false;
-      if (filtr === 'polski' && s.jezyk !== 'polski') return false;
-      if (filtr === 'angielski' && s.jezyk !== 'angielski') return false;
-      return !fraza || (s.nazwa + ' ' + s.grupa + ' ' + s.opis).toLowerCase().indexOf(fraza) >= 0;
-    });
-    lista.textContent = '';
-    wiersze = {};
-    if (!widoczne.length) {
-      var pusto = document.createElement('p');
-      pusto.className = 'pusto';
-      pusto.textContent = stacje.length ? 'Nie ma stacji pasujących do wyboru.' : 'Wczytuję listę stacji…';
-      lista.appendChild(pusto);
-      return;
+  function panel(tytul, zloty) {
+    var p = el('section', 'panel szklo');
+    if (tytul) {
+      var n = el('div', 'naglowek');
+      var e = el('h2', 'etykieta', tytul);
+      if (zloty) e.style.color = 'var(--akcent)';
+      n.appendChild(e);
+      p.appendChild(n);
+      p.naglowek = n;
     }
-    var grupy = {};
-    widoczne.forEach(function (s) { (grupy[s.grupa] = grupy[s.grupa] || []).push(s); });
-    Object.keys(grupy).forEach(function (nazwaGrupy) {
-      var tytul = document.createElement('h2');
-      tytul.textContent = nazwaGrupy.toUpperCase();
-      lista.appendChild(tytul);
-      var siatka = document.createElement('div');
-      siatka.className = 'siatka';
-      grupy[nazwaGrupy].forEach(function (s) {
-        var gra = grana && grana.id === s.id;
-        var wiersz = document.createElement('div');
-        wiersz.className = 'stacja' + (gra ? ' gra' : '');
+    return p;
+  }
 
-        var wlacz = document.createElement('button');
-        wlacz.type = 'button';
-        wlacz.className = 'wlacz';
-        var znak = document.createElement('span');
-        znak.className = 'logo';
-        logo(znak, s);
-        var nazwy = document.createElement('span');
-        nazwy.className = 'nazwy';
-        var nazwa = document.createElement('b');
-        nazwa.textContent = s.nazwa;
-        var opis = document.createElement('span');
-        opis.textContent = gra ? 'Gra teraz' : s.opis;
-        nazwy.appendChild(nazwa); nazwy.appendChild(opis);
-        wlacz.appendChild(znak); wlacz.appendChild(nazwy);
-        wlacz.addEventListener('click', function () { graj(s); });
+  // ---------- Widoki ----------
 
-        var serce = document.createElement('button');
-        serce.type = 'button';
-        serce.className = 'serce';
-        var lubiana = moje.indexOf(s.id) >= 0;
-        serce.setAttribute('aria-pressed', lubiana ? 'true' : 'false');
-        serce.setAttribute('aria-label', (lubiana ? 'Usuń z ulubionych: ' : 'Dodaj do ulubionych: ') + s.nazwa);
-        serce.innerHTML = '<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 20s-7-4.400-7-10a4 4 0 0 1 7-2.500A4 4 0 0 1 19 10c0 5.600-7 10-7 10z"/></svg>';
-        serce.addEventListener('click', function () { przelaczUlubiona(s.id); });
+  function widokStart() {
+    tresc.appendChild(el('div', 'marka', 'RADIO NUX7'));
+    tresc.appendChild(el('h1', '', powitanie()));
 
-        wiersz.appendChild(wlacz); wiersz.appendChild(serce);
-        wiersze[s.id] = { wiersz: wiersz, opis: opis, serce: serce, stacja: s };
-        siatka.appendChild(wiersz);
+    var moje = ulubione().map(znajdz).filter(Boolean);
+    var p1 = panel('ULUBIONE');
+    var wszystkie = el('button', 'link', 'Wszystkie');
+    wszystkie.type = 'button';
+    wszystkie.addEventListener('click', function () { idz('ulubione'); });
+    p1.naglowek.appendChild(wszystkie);
+    if (!moje.length) {
+      p1.appendChild(el('p', 'pusto', wczytano ? 'Dodaj ulubione stacje serduszkiem na liście stacji.' : 'Wczytuję stacje…'));
+    } else {
+      var kolka = el('div', 'kolka');
+      moje.slice(0, 10).forEach(function (s) {
+        var k = el('button', 'kolko');
+        k.type = 'button';
+        k.dataset.stacja = s.id;
+        k.setAttribute('aria-label', 'Włącz ' + s.nazwa);
+        var znak = el('span', 'logo duze');
+        wstawLogo(znak, s);
+        k.appendChild(znak);
+        k.appendChild(el('span', '', s.nazwa));
+        k.addEventListener('click', function () { graj(s); });
+        kolka.appendChild(k);
       });
-      lista.appendChild(siatka);
-    });
+      p1.appendChild(kolka);
+    }
+    tresc.appendChild(p1);
+
+    var ostatnie = lista('nux7-ostatnie').map(znajdz).filter(Boolean);
+    if (ostatnie.length) {
+      var p2 = panel('OSTATNIO SŁUCHANE');
+      var w = el('div', 'wiersze');
+      ostatnie.slice(0, 6).forEach(function (s) { w.appendChild(wiersz(s, false)); });
+      p2.appendChild(w);
+      tresc.appendChild(p2);
+    }
   }
 
-  // Zaznacza graną stację bez rysowania całej listy od nowa.
-  function oznaczGrana() {
-    Object.keys(wiersze).forEach(function (id) {
-      var w = wiersze[id];
-      var gra = !!grana && grana.id === id;
-      w.wiersz.classList.toggle('gra', gra);
-      w.opis.textContent = gra ? 'Gra teraz' : w.stacja.opis;
+  function widokStacje() {
+    tresc.appendChild(el('div', 'marka', 'RADIO NUX7'));
+    tresc.appendChild(el('h1', '', 'Stacje'));
+
+    var pole = el('label', 'szukaj szklo');
+    pole.innerHTML = '<span style="color:var(--cichy); display:grid">' + ikona(IKONY.szukaj, 20) + '</span>';
+    var wpis = document.createElement('input');
+    wpis.type = 'search';
+    wpis.placeholder = 'Szukaj stacji lub gatunku';
+    wpis.setAttribute('aria-label', 'Szukaj stacji lub gatunku');
+    wpis.autocomplete = 'off';
+    wpis.value = szukane;
+    pole.appendChild(wpis);
+    tresc.appendChild(pole);
+
+    var filtry = el('div', 'filtry');
+    FILTRY.forEach(function (f) {
+      var b = el('button', 'szklo', f[1]);
+      b.type = 'button';
+      b.setAttribute('aria-pressed', filtr === f[0] ? 'true' : 'false');
+      b.addEventListener('click', function () {
+        filtr = f[0];
+        Array.prototype.forEach.call(filtry.children, function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+        rysujListe();
+      });
+      filtry.appendChild(b);
     });
+    tresc.appendChild(filtry);
+
+    var miejsce = el('div');
+    tresc.appendChild(miejsce);
+
+    function rysujListe() {
+      miejsce.textContent = '';
+      var fraza = szukane.trim().toLowerCase();
+      var widoczne = stacje.filter(function (s) {
+        if (filtr === 'bezgadania' && !s.bezGadania) return false;
+        if (filtr === 'polski' && s.jezyk !== 'polski') return false;
+        if (filtr === 'angielski' && s.jezyk !== 'angielski') return false;
+        return !fraza || (s.nazwa + ' ' + s.grupa + ' ' + s.opis).toLowerCase().indexOf(fraza) >= 0;
+      });
+      if (!widoczne.length) {
+        var p = panel();
+        p.appendChild(el('p', 'pusto', wczytano ? 'Nie ma stacji pasujących do wyboru.' : 'Wczytuję stacje…'));
+        miejsce.appendChild(p);
+        return;
+      }
+      var grupy = {}, kolejnosc = [];
+      widoczne.forEach(function (s) { if (!grupy[s.grupa]) { grupy[s.grupa] = []; kolejnosc.push(s.grupa); } grupy[s.grupa].push(s); });
+      kolejnosc.forEach(function (nazwa) {
+        var p = panel(nazwa.toUpperCase(), true);
+        var w = el('div', 'wiersze');
+        grupy[nazwa].forEach(function (s) { w.appendChild(wiersz(s, true)); });
+        p.appendChild(w);
+        miejsce.appendChild(p);
+      });
+      zaznacz();
+    }
+    wpis.addEventListener('input', function () { szukane = wpis.value; rysujListe(); });
+    rysujListe();
+  }
+
+  function widokUlubione() {
+    tresc.appendChild(el('div', 'marka', 'RADIO NUX7'));
+    tresc.appendChild(el('h1', '', 'Ulubione'));
+    var moje = ulubione().map(znajdz).filter(Boolean);
+    var p = panel();
+    if (!moje.length) {
+      p.appendChild(el('p', 'pusto', wczytano ? 'Nie masz jeszcze ulubionych. Dotknij serduszka przy stacji na liście Stacje.' : 'Wczytuję stacje…'));
+    } else {
+      var w = el('div', 'wiersze');
+      moje.forEach(function (s) { w.appendChild(wiersz(s, true)); });
+      p.appendChild(w);
+    }
+    tresc.appendChild(p);
+  }
+
+  function widokOpcje() {
+    tresc.appendChild(el('div', 'marka', 'RADIO NUX7'));
+    tresc.appendChild(el('h1', '', 'Opcje'));
+
+    tresc.appendChild(el('p', 'etykieta zlota', 'WYGLĄD'));
+    var p1 = panel();
+    p1.appendChild(el('div', '', 'Motyw kolorystyczny'));
+    var motywy = el('div', 'motywy');
+    var wybrany = pamiec('nux7-motyw') || 'zloto';
+    MOTYWY.forEach(function (m) {
+      var b = el('button', 'motyw');
+      b.type = 'button';
+      b.style.setProperty('--k', m[2]);
+      b.setAttribute('aria-pressed', wybrany === m[0] ? 'true' : 'false');
+      b.appendChild(el('i'));
+      b.appendChild(el('span', '', m[1]));
+      b.addEventListener('click', function () {
+        pamiec('nux7-motyw', m[0]);
+        ustawMotyw();
+        Array.prototype.forEach.call(motywy.children, function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      });
+      motywy.appendChild(b);
+    });
+    p1.appendChild(motywy);
+    var kreska = el('div');
+    kreska.style.cssText = 'height:1px; background:var(--linia); margin:18px 0 16px';
+    p1.appendChild(kreska);
+    var etykieta = el('label', '', 'Imię w powitaniu');
+    etykieta.htmlFor = 'imie-opcje';
+    etykieta.style.display = 'block';
+    p1.appendChild(etykieta);
+    var pole = el('input', 'pole-imie');
+    pole.id = 'imie-opcje';
+    pole.type = 'text';
+    pole.maxLength = 30;
+    pole.placeholder = 'Wpisz swoje imię';
+    pole.value = imie();
+    p1.appendChild(pole);
+    var opis = el('p', '', 'Tak przywitamy Cię na ekranie Start');
+    opis.style.cssText = 'margin:12px 0 0; font-size:13px; color:var(--cichy)';
+    p1.appendChild(opis);
+    var podglad = el('p', 'podglad', powitanie());
+    p1.appendChild(podglad);
+    var zapis;
+    pole.addEventListener('input', function () {
+      if (konto) {
+        konto.imie = pole.value;
+        clearTimeout(zapis);
+        zapis = setTimeout(function () { api('konto', { method: 'PUT', body: JSON.stringify({ imie: pole.value }) }).catch(function () {}); }, 600);
+      } else {
+        pamiec('nux7-imie', pole.value);
+      }
+      podglad.textContent = powitanie();
+    });
+    tresc.appendChild(p1);
+
+    tresc.appendChild(el('p', 'etykieta zlota', 'KONTO'));
+    var p2 = panel();
+    var wierszKonta = el('div', 'opcja');
+    var tekst = el('div');
+    tekst.style.flex = '1';
+    if (konto) {
+      tekst.appendChild(el('div', '', konto.imie || konto.email));
+      var mniejszy = el('div', '', konto.email + (konto.przezSerwer ? ' · gra przez serwer' : '') + (konto.premium ? ' · premium' : ''));
+      mniejszy.style.cssText = 'font-size:13px; color:var(--cichy)';
+      tekst.appendChild(mniejszy);
+      var wyloguj = el('button', 'przycisk drugi', 'Wyloguj');
+      wyloguj.type = 'button';
+      wyloguj.addEventListener('click', function () {
+        api('konto/wyloguj', { method: 'POST' }).catch(function () {});
+        pamiec('nux7-klucz', null);
+        konto = null;
+        wczytajStacje();
+      });
+      wierszKonta.appendChild(tekst);
+      wierszKonta.appendChild(wyloguj);
+    } else {
+      tekst.textContent = 'Zaloguj się, aby mieć te same ulubione co w aplikacji.';
+      var zaloguj = el('button', 'przycisk', 'Zaloguj się');
+      zaloguj.type = 'button';
+      zaloguj.addEventListener('click', function () { rejestracja = false; ustawTryb(); okno.showModal(); });
+      wierszKonta.appendChild(tekst);
+      wierszKonta.appendChild(zaloguj);
+    }
+    p2.appendChild(wierszKonta);
+    tresc.appendChild(p2);
+
+    tresc.appendChild(el('p', 'etykieta zlota', 'APLIKACJA NA TELEFON'));
+    var p3 = panel();
+    var w3 = el('div', 'opcja');
+    var t3 = el('div', '', 'Radio NUX7 na Androida, także do Android Auto.');
+    t3.style.flex = '1';
+    var a3 = el('a', 'przycisk drugi', 'Pobierz');
+    a3.href = './#instalacja';
+    w3.appendChild(t3);
+    w3.appendChild(a3);
+    p3.appendChild(w3);
+    tresc.appendChild(p3);
+  }
+
+  function rysuj() {
+    tresc.textContent = '';
+    ({ start: widokStart, stacje: widokStacje, ulubione: widokUlubione, opcje: widokOpcje })[zakladka]();
+    document.querySelectorAll('[data-zakladka]').forEach(function (b) {
+      if (b.dataset.zakladka === zakladka) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+    });
+    zaznacz();
+  }
+  function idz(nowa) {
+    zakladka = nowa;
+    document.getElementById('odtwarzacz').hidden = true;
+    rysuj();
+    document.getElementById('widok').scrollTop = 0;
+  }
+
+  // Zaznacza graną stację i serduszka bez rysowania wszystkiego od nowa.
+  function zaznacz() {
+    var gra = !dzwiek.paused;
+    var moje = ulubione();
+    document.querySelectorAll('[data-stacja]').forEach(function (e) {
+      var ta = !!grana && grana.id === e.dataset.stacja;
+      e.classList.toggle('gra', ta);
+      var opis = e.querySelector('[data-opis]');
+      if (opis) opis.textContent = ta && niegra ? 'Stacja nie odpowiada' : (ta && gra ? 'Gra teraz' : opis.dataset.opis);
+    });
+    document.querySelectorAll('[data-serce]').forEach(function (e) {
+      var lubiana = moje.indexOf(e.dataset.serce) >= 0;
+      var s = znajdz(e.dataset.serce);
+      e.setAttribute('aria-pressed', lubiana ? 'true' : 'false');
+      e.setAttribute('aria-label', (lubiana ? 'Usuń z ulubionych: ' : 'Dodaj do ulubionych: ') + (s ? s.nazwa : ''));
+    });
+    document.getElementById('mini').hidden = !grana;
+    if (grana) {
+      var stan = niegra ? 'Stacja nie odpowiada' : (gra ? 'Na żywo' : 'Zatrzymane');
+      document.getElementById('mini-stan').textContent = stan;
+      document.getElementById('duzy-stan').textContent = stan.toUpperCase();
+      ['mini-graj', 'duzy-graj'].forEach(function (id) {
+        var p = document.getElementById(id);
+        p.innerHTML = pelna(gra ? PELNE.pauza : PELNE.graj, id === 'duzy-graj' ? 30 : 20);
+        p.setAttribute('aria-label', gra ? 'Pauza' : 'Graj');
+      });
+      var serce = document.getElementById('duze-serce');
+      var lubiana = moje.indexOf(grana.id) >= 0;
+      serce.setAttribute('aria-pressed', lubiana ? 'true' : 'false');
+      serce.setAttribute('aria-label', lubiana ? 'Usuń z ulubionych' : 'Dodaj do ulubionych');
+    }
   }
 
   function przelaczUlubiona(id) {
@@ -269,113 +644,117 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 52px; }
     } else {
       pamiec('nux7-ulubione', JSON.stringify(moje));
     }
-    var w = wiersze[id];
-    if (filtr === 'ulubione' || !w) { pokaz(); return; }
-    var lubiana = moje.indexOf(id) >= 0;
-    w.serce.setAttribute('aria-pressed', lubiana ? 'true' : 'false');
-    w.serce.setAttribute('aria-label', (lubiana ? 'Usuń z ulubionych: ' : 'Dodaj do ulubionych: ') + w.stacja.nazwa);
+    if (zakladka === 'ulubione') rysuj(); else zaznacz();
   }
 
-  function stanPrzycisku() {
-    var gra = !dzwiek.paused;
-    document.getElementById('ikona-pauza').hidden = !gra;
-    document.getElementById('ikona-graj').hidden = gra;
-    document.getElementById('graj-pauza').setAttribute('aria-label', gra ? 'Pauza' : 'Graj');
-    document.getElementById('gra-stan').textContent = gra ? 'Na żywo' : 'Zatrzymane';
-  }
+  // ---------- Odtwarzanie ----------
 
   function graj(stacja) {
     grana = stacja;
-    document.getElementById('odtwarzacz').hidden = false;
-    document.getElementById('gra-nazwa').textContent = stacja.nazwa;
-    logo(document.getElementById('gra-logo'), stacja);
+    niegra = false;
+    document.getElementById('mini-nazwa').textContent = stacja.nazwa;
+    document.getElementById('duza-nazwa').textContent = stacja.nazwa;
+    document.getElementById('duzy-opis').textContent = stacja.opis;
+    wstawLogo(document.getElementById('mini-logo'), stacja);
+    wstawLogo(document.getElementById('duze-logo'), stacja);
     dzwiek.src = stacja.adres;
-    dzwiek.play().catch(function () {
-      document.getElementById('gra-stan').textContent = 'Stacja nie odpowiada';
-    });
+    dzwiek.play().catch(function (e) { if (e && e.name !== 'AbortError') { niegra = true; zaznacz(); } });
     document.title = stacja.nazwa + ' – Radio NUX7';
-    oznaczGrana();
+    var ostatnie = lista('nux7-ostatnie').filter(function (x) { return x !== stacja.id; });
+    ostatnie.unshift(stacja.id);
+    pamiec('nux7-ostatnie', JSON.stringify(ostatnie.slice(0, 6)));
+    zaznacz();
   }
-
-  document.getElementById('graj-pauza').addEventListener('click', function () {
+  function grajPauza() {
     if (!grana) return;
-    if (dzwiek.paused) { dzwiek.src = grana.adres; dzwiek.play().catch(function () {}); } else { dzwiek.pause(); }
-  });
-  dzwiek.addEventListener('play', stanPrzycisku);
-  dzwiek.addEventListener('pause', stanPrzycisku);
-  dzwiek.addEventListener('error', function () { document.getElementById('gra-stan').textContent = 'Stacja nie odpowiada'; });
+    if (dzwiek.paused || niegra) { niegra = false; dzwiek.src = grana.adres; dzwiek.play().catch(function (e) { if (e && e.name !== 'AbortError') { niegra = true; zaznacz(); } }); } else { dzwiek.pause(); }
+  }
+  function przeskocz(oIle) {
+    if (!grana || !stacje.length) return;
+    var numer = stacje.indexOf(znajdz(grana.id));
+    if (numer < 0) return;
+    graj(stacje[(numer + oIle + stacje.length) % stacje.length]);
+  }
+  dzwiek.addEventListener('play', zaznacz);
+  dzwiek.addEventListener('pause', zaznacz);
+  dzwiek.addEventListener('error', function () { if (grana) { niegra = true; zaznacz(); } });
+  dzwiek.addEventListener('playing', function () { niegra = false; zaznacz(); });
+  document.getElementById('mini-graj').addEventListener('click', grajPauza);
+  document.getElementById('duzy-graj').addEventListener('click', grajPauza);
+  document.getElementById('poprzednia').addEventListener('click', function () { przeskocz(-1); });
+  document.getElementById('nastepna').addEventListener('click', function () { przeskocz(1); });
+  document.getElementById('duze-serce').addEventListener('click', function () { if (grana) przelaczUlubiona(grana.id); });
   document.getElementById('glosnosc').addEventListener('input', function (z) { dzwiek.volume = Number(z.target.value); });
-  document.getElementById('szukaj').addEventListener('input', pokaz);
-  document.querySelectorAll('[data-filtr]').forEach(function (p) {
-    p.addEventListener('click', function () {
-      filtr = p.dataset.filtr;
-      document.querySelectorAll('[data-filtr]').forEach(function (x) { x.setAttribute('aria-pressed', x === p ? 'true' : 'false'); });
-      pokaz();
-    });
+  document.getElementById('otworz').addEventListener('click', function () { document.getElementById('odtwarzacz').hidden = false; });
+  document.getElementById('zwin').addEventListener('click', function () { document.getElementById('odtwarzacz').hidden = true; });
+  document.getElementById('do-opcji').addEventListener('click', function () { idz('opcje'); });
+  document.addEventListener('keydown', function (z) {
+    if (z.key === 'Escape') document.getElementById('odtwarzacz').hidden = true;
   });
+
+  // ---------- Wygląd stałych elementów ----------
+
+  function ustawMotyw() {
+    var id = pamiec('nux7-motyw') || 'zloto';
+    var kolor = '#e3c27e';
+    MOTYWY.forEach(function (m) { if (m[0] === id) kolor = m[2]; });
+    document.documentElement.style.setProperty('--akcent', kolor);
+  }
+  document.querySelectorAll('[data-zakladka]').forEach(function (b) {
+    b.innerHTML = ikona(IKONY[b.dataset.zakladka], 22) + '<span>' + NAZWY[b.dataset.zakladka] + '</span>';
+    b.addEventListener('click', function () { idz(b.dataset.zakladka); });
+  });
+  document.getElementById('zwin').innerHTML = ikona(IKONY.wdol, 22);
+  document.getElementById('do-opcji').innerHTML = ikona(IKONY.opcje, 20);
+  document.getElementById('duze-serce').innerHTML = ikona(IKONY.ulubione, 26);
+  document.getElementById('poprzednia').innerHTML = pelna(PELNE.poprzednia, 28);
+  document.getElementById('nastepna').innerHTML = pelna(PELNE.nastepna, 28);
+
+  // ---------- Dane ----------
 
   function wczytajStacje() {
     return api('stacje').then(function (d) {
       // Przeglądarka nie odtworzy adresów bez szyfrowania na tej stronie.
       stacje = (d.stacje || []).filter(function (s) { return s.adres.indexOf('https://') === 0; });
-      pokaz();
-    }).catch(function (e) {
-      lista.textContent = '';
-      var p = document.createElement('p');
-      p.className = 'pusto';
-      p.textContent = 'Nie udało się wczytać listy stacji. ' + e.message;
-      lista.appendChild(p);
-    });
+      wczytano = true;
+      if (grana) grana = znajdz(grana.id) || grana;
+      rysuj();
+    }).catch(function () { wczytano = true; rysuj(); });
   }
 
-  function pokazKonto() {
-    var kto = document.getElementById('kto');
-    document.getElementById('zaloguj').hidden = !!konto;
-    document.getElementById('wyloguj').hidden = !konto;
-    kto.hidden = !konto;
-    kto.textContent = konto ? (konto.imie || konto.email) : '';
-  }
+  // ---------- Logowanie ----------
 
-  // Logowanie i rejestracja
   var okno = document.getElementById('okno'), rejestracja = false;
   function ustawTryb() {
     document.getElementById('okno-tytul').textContent = rejestracja ? 'Utwórz konto' : 'Witaj ponownie';
     document.getElementById('wyslij').textContent = rejestracja ? 'Utwórz konto' : 'Zaloguj się';
     document.getElementById('pytanie').textContent = rejestracja ? 'Masz już konto?' : 'Nie masz konta?';
     document.getElementById('zmien-tryb').textContent = rejestracja ? 'Zaloguj się' : 'Utwórz konto';
-    document.getElementById('pole-imie').hidden = !rejestracja;
+    document.getElementById('pole-imie-rej').hidden = !rejestracja;
     document.getElementById('haslo').autocomplete = rejestracja ? 'new-password' : 'current-password';
     document.getElementById('komunikat').textContent = '';
   }
-  document.getElementById('zaloguj').addEventListener('click', function () { rejestracja = false; ustawTryb(); okno.showModal(); });
   document.getElementById('zmien-tryb').addEventListener('click', function () { rejestracja = !rejestracja; ustawTryb(); });
   document.getElementById('zamknij').addEventListener('click', function () { okno.close(); });
   document.getElementById('formularz').addEventListener('submit', function (z) {
     z.preventDefault();
     var dane = { email: document.getElementById('email').value, haslo: document.getElementById('haslo').value };
-    if (rejestracja) dane.imie = document.getElementById('imie').value;
+    if (rejestracja) dane.imie = document.getElementById('imie-rej').value || imie();
     api(rejestracja ? 'konto/rejestracja' : 'konto/logowanie', { method: 'POST', body: JSON.stringify(dane) })
       .then(function (d) {
         pamiec('nux7-klucz', d.klucz);
         konto = d.konto;
         document.getElementById('haslo').value = '';
         okno.close();
-        pokazKonto();
         return wczytajStacje();
       })
       .catch(function (e) { document.getElementById('komunikat').textContent = e.message; });
   });
-  document.getElementById('wyloguj').addEventListener('click', function () {
-    api('konto/wyloguj', { method: 'POST' }).catch(function () {});
-    pamiec('nux7-klucz', null);
-    konto = null;
-    pokazKonto();
-    wczytajStacje();
-  });
 
-  pokaz();
+  ustawMotyw();
+  rysuj();
   (klucz() ? api('konto').then(function (d) { konto = d.konto; }).catch(function () { pamiec('nux7-klucz', null); }) : Promise.resolve())
-    .then(function () { pokazKonto(); return wczytajStacje(); });
+    .then(wczytajStacje);
 })();
 </script>
 </body>
