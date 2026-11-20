@@ -44,13 +44,11 @@ const KANALY = [
   ['Focus', 'podroze', 'https://www.focus.pl/feed'],
   ['National Geographic', 'podroze', 'https://www.national-geographic.pl/rss'],
   ['Fly4free', 'podroze', 'https://www.fly4free.pl/feed/'],
-  ['Podróże', 'podroze', 'https://www.podroze.pl/rss'],
   // Uroda, kosmetyki i styl.
   ['Hello Zdrowie', 'uroda', 'https://www.hellozdrowie.pl/feed/'],
   ['Elle', 'uroda', 'https://www.elle.pl/rss'],
   ['Glamour', 'uroda', 'https://www.glamour.pl/rss'],
   ['Wizaż', 'uroda', 'https://wizaz.pl/rss'],
-  ['Vogue', 'uroda', 'https://www.vogue.pl/rss'],
 ];
 
 // Wiadomości o polityce, konfliktach i religii w ogóle nie trafiają do radia.

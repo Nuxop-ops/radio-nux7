@@ -124,16 +124,26 @@ function pobierz(adres, limitCzasu = 10000) {
 const doPosrednika = () => (KLUCZ_POSREDNIKA ? '?k=' + encodeURIComponent(KLUCZ_POSREDNIKA) : '');
 
 // Sprawdza, czy pod adresem faktycznie nadaje stacja (odpowiedź 200 z dźwiękiem).
-function adresGra(adres, limitCzasu = 5000) {
+function adresGra(adres, limitCzasu = 5000, przekierowania = 0) {
   return new Promise(resolve => {
-    const lib = adres.startsWith('https') ? https : http;
     let koniec = false;
     const wynik = ok => { if (!koniec) { koniec = true; resolve(ok); } };
-    const zadanie = lib.get(adres, { headers: { 'User-Agent': 'RadioNUX7/1.0' }, timeout: limitCzasu }, odp => {
-      const typ = String(odp.headers['content-type'] || '');
-      wynik(odp.statusCode === 200 && /audio|mpeg|aac|ogg|octet-stream/i.test(typ));
-      zadanie.destroy();
-    });
+    let zadanie;
+    try {
+      zadanie = (adres.startsWith('https') ? https : http).get(adres, { headers: { 'User-Agent': 'RadioNUX7/1.0' }, timeout: limitCzasu }, odp => {
+        const kod = odp.statusCode;
+        // Wielu nadawców najpierw odsyła do jednego ze swoich serwerów.
+        if (kod >= 300 && kod < 400 && odp.headers.location && przekierowania < 3) {
+          zadanie.destroy();
+          let dalej;
+          try { dalej = new URL(odp.headers.location, adres).href; } catch (e) { return wynik(false); }
+          return adresGra(dalej, limitCzasu, przekierowania + 1).then(wynik);
+        }
+        const typ = String(odp.headers['content-type'] || '');
+        wynik(kod === 200 && /audio|mpeg|aac|ogg|octet-stream/i.test(typ));
+        zadanie.destroy();
+      });
+    } catch (e) { return wynik(false); }
     zadanie.on('timeout', () => { zadanie.destroy(); wynik(false); });
     // Starsze serwery radiowe odpowiadają „ICY 200 OK", czego Node nie rozumie, ale stacja gra.
     zadanie.on('error', e => wynik(e.code === 'HPE_INVALID_CONSTANT'));
@@ -351,6 +361,9 @@ function ikonyZeStrony(html, adresStrony) {
   kandydaci.sort((x, y) => y.bok - x.bok);
   const adresy = kandydaci.filter(k => k.bok >= 120).map(k => k.href);
   adresy.push('/apple-touch-icon.png');
+  // Ostatnia deska ratunku: obrazek, którym strona przedstawia się w mediach społecznościowych.
+  const og = html.match(/<meta[^>]+property=["']og:image["'][^>]*content=["']([^"']+)["']/i) || html.match(/<meta[^>]+content=["']([^"']+)["'][^>]*property=["']og:image["']/i);
+  if (og) adresy.push(og[1]);
   return adresy.map(a => { try { return new URL(a.replace(/&amp;/g, '&'), adresStrony).href; } catch (e) { return null; } }).filter(Boolean);
 }
 
