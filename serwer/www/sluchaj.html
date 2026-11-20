@@ -257,6 +257,7 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
   var FILTRY = [['wszystkie', 'Wszystkie'], ['bezgadania', 'Bez gadania'], ['polski', 'Tylko po polsku'], ['angielski', 'Tylko po angielsku']];
 
   var stacje = [], wczytano = false, konto = null, grana = null, zakladka = 'start', filtr = 'wszystkie', szukane = '';
+  var FILTRY = ['wszystkie', 'bezgadania', 'polski', 'angielski'];
   var niegra = false; // stacja nie odpowiedziała
   var dzwiek = document.getElementById('dzwiek');
   var tresc = document.getElementById('tresc');
@@ -280,6 +281,7 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
     } catch (e) { return null; }
   }
   function lista(nazwa) { try { return JSON.parse(pamiec(nazwa) || '[]'); } catch (e) { return []; } }
+  if (FILTRY.indexOf(pamiec('nux7-filtr')) >= 0) filtr = pamiec('nux7-filtr');
   function klucz() { return pamiec('nux7-klucz'); }
   // Bez konta i bez własnego wyboru pokazujemy cztery stacje na start, jak w aplikacji.
   function ulubione() {
@@ -436,6 +438,7 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
       b.setAttribute('aria-pressed', filtr === f[0] ? 'true' : 'false');
       b.addEventListener('click', function () {
         filtr = f[0];
+        pamiec('nux7-filtr', filtr);
         Array.prototype.forEach.call(filtry.children, function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
         rysujListe();
       });
@@ -689,7 +692,16 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
   document.getElementById('poprzednia').addEventListener('click', function () { przeskocz(-1); });
   document.getElementById('nastepna').addEventListener('click', function () { przeskocz(1); });
   document.getElementById('duze-serce').addEventListener('click', function () { if (grana) przelaczUlubiona(grana.id); });
-  document.getElementById('glosnosc').addEventListener('input', function (z) { dzwiek.volume = Number(z.target.value); });
+  // Głośność jest pamiętana osobno na każdym urządzeniu.
+  (function () {
+    var suwak = document.getElementById('glosnosc');
+    var zapisana = parseFloat(pamiec('nux7-glosnosc'));
+    if (zapisana >= 0 && zapisana <= 1) { suwak.value = zapisana; dzwiek.volume = zapisana; }
+    suwak.addEventListener('input', function (z) {
+      dzwiek.volume = Number(z.target.value);
+      pamiec('nux7-glosnosc', z.target.value);
+    });
+  })();
   document.getElementById('otworz').addEventListener('click', function () { document.getElementById('odtwarzacz').hidden = false; });
   document.getElementById('zwin').addEventListener('click', function () { document.getElementById('odtwarzacz').hidden = true; });
   document.getElementById('do-opcji').addEventListener('click', function () { idz('opcje'); });
