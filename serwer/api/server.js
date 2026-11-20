@@ -18,6 +18,8 @@ const POSREDNIK = (process.env.POSREDNIK || 'http://127.0.0.1:8790').replace(/\/
 const KLUCZ_POSREDNIKA = process.env.KLUCZ_POSREDNIKA || process.env.TOKEN || '';
 const RMF_ADRESY = process.env.RMF_ADRESY || 'https://www.rmfon.pl/stacje/flash_aac_{id}.xml.txt';
 const BEZ_SIECI = process.env.BEZ_SIECI === '1';
+// Najwyższa liczba kont. Po jej osiągnięciu rejestracja jest zamknięta.
+const LIMIT_KONT = Number(process.env.LIMIT_KONT) || 20;
 
 const PLIK_BAZY = path.join(DANE, 'baza.json');
 const PLIK_ADRESOW = path.join(DANE, 'adresy-rmf.json');
@@ -31,6 +33,13 @@ fs.mkdirSync(DANE, { recursive: true });
 let baza = { uzytkownicy: [], stacje: {} };
 if (fs.existsSync(PLIK_BAZY)) {
   baza = Object.assign(baza, JSON.parse(fs.readFileSync(PLIK_BAZY, 'utf8')));
+}
+// Jednorazowo: słuchanie przez serwer włączone wszystkim istniejącym kontom.
+// Później można je wyłączać pojedynczo w panelu admina.
+if (!baza.serwerDlaWszystkich) {
+  baza.uzytkownicy.forEach(u => { u.przezSerwer = true; });
+  baza.serwerDlaWszystkich = true;
+  zapiszBaze();
 }
 function zapiszBaze() {
   const tymczasowy = PLIK_BAZY + '.nowy';
@@ -346,9 +355,10 @@ async function obsluz(req, res) {
     if (!poprawnyEmail(email)) return blad(res, 400, 'Podaj poprawny adres e-mail.');
     if (haslo.length < 8 || haslo.length > 200) return blad(res, 400, 'Hasło musi mieć co najmniej 8 znaków.');
     if (baza.uzytkownicy.some(u => u.email === email)) return blad(res, 409, 'Konto z tym adresem już istnieje.');
+    if (baza.uzytkownicy.length >= LIMIT_KONT) return blad(res, 403, 'Rejestracja jest zamknięta. Wszystkie miejsca są już zajęte.');
     const uzytkownik = {
       id: crypto.randomBytes(8).toString('hex'), email, haslo: skrotHasla(haslo),
-      imie: String(dane.imie || '').trim().slice(0, 30), przezSerwer: false, premium: false, admin: false,
+      imie: String(dane.imie || '').trim().slice(0, 30), przezSerwer: true, premium: false, admin: false,
       ulubione: [], utworzono: new Date().toISOString(), klucze: [],
     };
     const klucz = nowyKlucz(uzytkownik);
