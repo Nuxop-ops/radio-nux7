@@ -3,7 +3,8 @@
 # Uruchamiać z sudo. Cofnięcie zmian: cofnij.sh z tego samego katalogu.
 set -euo pipefail
 
-ZRODLO="https://raw.githubusercontent.com/Nuxop-ops/radio-nux7/main/serwer"
+# Pierwszy argument pozwala wskazać inną wersję plików (do cofania zmian).
+ZRODLO="${1:-https://raw.githubusercontent.com/Nuxop-ops/radio-nux7/main/serwer}"
 KATALOG="/opt/nux7-www"
 CADDYFILE="/opt/proxy/Caddyfile"
 KOPIA="/opt/kopie/Caddyfile.przed-nux7-www"
@@ -23,6 +24,10 @@ curl -fsSL "$ZRODLO/docker-compose.yml" -o "$KATALOG/docker-compose.yml"
 for PLIK in index.html logo.png ikona.png wersja.json; do
   curl -fsSL "$ZRODLO/www/$PLIK" -o "$KATALOG/www/$PLIK"
 done
+# Plik aplikacji jest tylko w nowszych wersjach strony.
+if ! curl -fsSL "$ZRODLO/www/radio-nux7.apk" -o "$KATALOG/www/radio-nux7.apk"; then
+  rm -f "$KATALOG/www/radio-nux7.apk"
+fi
 
 echo "3/5 Uruchamiam stronę"
 docker compose -f "$KATALOG/docker-compose.yml" up -d
