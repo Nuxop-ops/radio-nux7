@@ -245,7 +245,9 @@ function listaStacji(uzytkownik, dlaAdmina = false) {
     wynik.push({
       id: stacja.id, nazwa: stacja.nazwa, grupa: stacja.grupa, opis: opisStacji(stacja),
       jezyk: stacja.jezyk, bezGadania: !!stacja.bezGadania,
-      logo: stacja.bezLogo || wzor.wlasna ? null : ADRES_PUBLICZNY + '/api/logo/' + stacja.id,
+      // Numer w adresie zmienia się razem z logo, żeby telefon i przeglądarka pobrały nowe.
+      logo: stacja.bezLogo || (wzor.wlasna && !wlasneLoga[wzor.id]) ? null
+        : ADRES_PUBLICZNY + '/api/logo/' + stacja.id + (wlasneLoga[wzor.id] ? '?w=' + wlasneLoga[wzor.id].plik.slice(0, 8) : ''),
       adres,
     });
   }
@@ -302,6 +304,137 @@ function zAdresu(req, res, adres, zapasowo, przekierowania = 0) {
   res.on('close', () => zadanie.destroy());
 }
 
+// ---------- Własne loga stacji ----------
+
+// Pośrednik ma dla wielu stacji tylko malutką ikonkę. Dla stacji ze znaną stroną
+// serwer sam pobiera logo (ikonę strony w dużym rozmiarze) i trzyma je w plikach.
+const KATALOG_LOGO = path.join(DANE, 'loga');
+const PLIK_LOGO = path.join(DANE, 'loga.json');
+let wlasneLoga = {}; // id stacji -> { plik, typ, kiedy }
+try { wlasneLoga = JSON.parse(fs.readFileSync(PLIK_LOGO, 'utf8')); } catch (e) { wlasneLoga = {}; }
+
+function pobierzPlik(adres, limit = 1500000, przekierowania = 0) {
+  return new Promise((resolve, reject) => {
+    let zadanie;
+    try {
+      zadanie = (adres.startsWith('https') ? https : http).get(adres, {
+        headers: { 'User-Agent': 'Mozilla/5.0 (Linux; Android 14) RadioNUX7/1.0', Accept: '*/*' }, timeout: 10000,
+      }, odp => {
+        if (odp.statusCode >= 300 && odp.statusCode < 400 && odp.headers.location && przekierowania < 4) {
+          odp.resume();
+          return pobierzPlik(new URL(odp.headers.location, adres).href, limit, przekierowania + 1).then(resolve, reject);
+        }
+        if (odp.statusCode !== 200) { odp.resume(); return reject(new Error('odpowiedź ' + odp.statusCode)); }
+        const kawalki = [];
+        let rozmiar = 0;
+        odp.on('data', k => { kawalki.push(k); rozmiar += k.length; if (rozmiar > limit) zadanie.destroy(new Error('za duży plik')); });
+        odp.on('end', () => resolve({ dane: Buffer.concat(kawalki), typ: String(odp.headers['content-type'] || '').split(';')[0].trim(), adres }));
+        odp.on('error', reject);
+      });
+    } catch (e) { return reject(e); }
+    zadanie.on('timeout', () => zadanie.destroy(new Error('brak odpowiedzi')));
+    zadanie.on('error', reject);
+  });
+}
+
+// Szuka na stronie stacji największej kwadratowej ikony.
+function ikonyZeStrony(html, adresStrony) {
+  const kandydaci = [];
+  for (const znacznik of html.match(/<link\b[^>]*>/gi) || []) {
+    const rel = (znacznik.match(/\brel=["']?([^"'>]+)/i) || [])[1] || '';
+    const href = (znacznik.match(/\bhref=["']([^"']+)["']/i) || [])[1];
+    if (!href || !/icon/i.test(rel) || /mask-icon/i.test(rel)) continue;
+    const bok = Number(((znacznik.match(/\bsizes=["']?(\d+)x\d+/i) || [])[1]) || (/apple-touch/i.test(rel) ? 180 : 16));
+    if (/\.svg(\?|$)/i.test(href)) continue;
+    kandydaci.push({ bok: bok + (/apple-touch/i.test(rel) ? 1 : 0), href });
+  }
+  kandydaci.sort((x, y) => y.bok - x.bok);
+  const adresy = kandydaci.filter(k => k.bok >= 120).map(k => k.href);
+  adresy.push('/apple-touch-icon.png');
+  return adresy.map(a => { try { return new URL(a.replace(/&amp;/g, '&'), adresStrony).href; } catch (e) { return null; } }).filter(Boolean);
+}
+
+async function logoZAdresow(adresy) {
+  for (const adres of adresy) {
+    try {
+      const plik = await pobierzPlik(adres);
+      const obraz = /^image\/(png|jpeg|webp)$/.test(plik.typ);
+      if (obraz && plik.dane.length > 1500) return plik;
+    } catch (e) { /* próbujemy następny adres */ }
+  }
+  return null;
+}
+
+let logaTrwaja = false;
+async function odswiezLoga() {
+  if (BEZ_SIECI || logaTrwaja) return;
+  logaTrwaja = true;
+  try {
+    fs.mkdirSync(KATALOG_LOGO, { recursive: true });
+    const tydzien = 7 * 24 * 3600 * 1000;
+    const zeStron = new Map(); // adres strony -> pobrane logo albo null
+    let nowe = 0;
+    for (const stacja of wszystkieStacje) {
+      if (!stacja.strona && !stacja.logoAdres) continue;
+      const obecne = wlasneLoga[stacja.id];
+      if (obecne && Date.now() - obecne.kiedy < tydzien && fs.existsSync(path.join(KATALOG_LOGO, obecne.plik))) continue;
+      let logo = stacja.logoAdres ? await logoZAdresow([stacja.logoAdres]) : null;
+      if (!logo && stacja.strona) {
+        if (!zeStron.has(stacja.strona)) {
+          let znalezione = null;
+          try {
+            const strona = await pobierzPlik(stacja.strona, 3000000);
+            znalezione = await logoZAdresow(ikonyZeStrony(strona.dane.toString('utf8'), strona.adres));
+          } catch (e) { /* strona nie odpowiedziała */ }
+          zeStron.set(stacja.strona, znalezione);
+        }
+        logo = zeStron.get(stacja.strona);
+      }
+      if (!logo) continue;
+      const nazwa = crypto.createHash('sha1').update(logo.dane).digest('hex').slice(0, 16);
+      fs.writeFileSync(path.join(KATALOG_LOGO, nazwa), logo.dane);
+      wlasneLoga[stacja.id] = { plik: nazwa, typ: logo.typ, kiedy: Date.now() };
+      nowe++;
+    }
+    fs.writeFileSync(PLIK_LOGO, JSON.stringify(wlasneLoga));
+    const bez = wszystkieStacje.filter(s => (s.strona || s.logoAdres) && !wlasneLoga[s.id]).map(s => s.nazwa || s.id);
+    log('Loga stacji: własnych', Object.keys(wlasneLoga).length, '| pobrano teraz', nowe, bez.length ? '| bez logo: ' + [...new Set(bez)].join(', ') : '');
+  } finally {
+    logaTrwaja = false;
+  }
+}
+
+// ---------- Szczegóły utworu ----------
+
+// Okładka, album i rok z publicznej wyszukiwarki muzyki iTunes. Wyniki trzymamy w pamięci.
+const szczegolyUtworow = new Map();
+async function szczegolyUtworu(wykonawca, tytul) {
+  const klucz = (wykonawca + '|' + tytul).toLowerCase();
+  if (szczegolyUtworow.has(klucz)) return szczegolyUtworow.get(klucz);
+  let wynik = null;
+  if (!BEZ_SIECI) {
+    try {
+      const odp = await pobierzPlik('https://itunes.apple.com/search?media=music&entity=song&limit=5&country=PL&term=' + encodeURIComponent((wykonawca + ' ' + tytul).trim()), 400000);
+      const prosto = n => String(n || '').toLowerCase().normalize('NFD').replace(/[^a-z0-9]+/g, '');
+      const trafienia = JSON.parse(odp.dane.toString('utf8')).results || [];
+      const t = trafienia.find(x => prosto(x.trackName).includes(prosto(tytul).slice(0, 12)) || prosto(tytul).includes(prosto(x.trackName).slice(0, 12))) || null;
+      if (t) {
+        wynik = {
+          tytul: String(t.trackName || '').slice(0, 160), wykonawca: String(t.artistName || '').slice(0, 160),
+          album: String(t.collectionName || '').slice(0, 160), rok: String(t.releaseDate || '').slice(0, 4),
+          gatunek: String(t.primaryGenreName || '').slice(0, 60),
+          dlugosc: t.trackTimeMillis ? Math.round(t.trackTimeMillis / 1000) : 0,
+          okladka: /^https:\/\//.test(t.artworkUrl100 || '') ? t.artworkUrl100.replace(/100x100bb/, '600x600bb') : null,
+          adres: /^https:\/\//.test(t.trackViewUrl || '') ? t.trackViewUrl : null,
+        };
+      }
+    } catch (e) { return null; }
+  }
+  if (szczegolyUtworow.size > 800) szczegolyUtworow.clear();
+  szczegolyUtworow.set(klucz, wynik);
+  return wynik;
+}
+
 // ---------- Co teraz gra ----------
 
 // Pośrednik stacji zna tytuł utworu tylko dla części stacji (głównie RMF).
@@ -310,10 +443,8 @@ const teraz = new Map(); // id stacji -> { kiedy, utwor, ostatnie: [] }
 function rozdziel(napis) {
   const czysty = String(napis || '').replace(/\s+/g, ' ').trim().slice(0, 160);
   if (!czysty) return null;
-  const gdzie = czysty.indexOf(' - ');
-  return gdzie > 0
-    ? { wykonawca: czysty.slice(0, gdzie), tytul: czysty.slice(gdzie + 3) }
-    : { wykonawca: '', tytul: czysty };
+  const m = czysty.match(/^(.+?) (?:-|–|\/) (.+)$/);
+  return m ? { wykonawca: m[1].trim(), tytul: m[2].trim() } : { wykonawca: '', tytul: czysty };
 }
 async function coGra(id) {
   let wpis = teraz.get(id);
@@ -383,6 +514,11 @@ async function obsluz(req, res) {
   if (logo && metoda === 'GET') {
     const zmiany = baza.stacje[logo[1]] || {};
     if (zmiany.bezLogo || zmiany.ukryta) return blad(res, 404, 'Brak logo.');
+    const wlasne = wlasneLoga[logo[1]];
+    if (wlasne && fs.existsSync(path.join(KATALOG_LOGO, wlasne.plik))) {
+      res.writeHead(200, { 'Content-Type': wlasne.typ, 'Cache-Control': 'public, max-age=604800', 'X-Content-Type-Options': 'nosniff' });
+      return fs.createReadStream(path.join(KATALOG_LOGO, wlasne.plik)).pipe(res);
+    }
     return zPosrednika(req, res, '/logo/' + logo[1], { 'Cache-Control': 'public, max-age=604800' });
   }
 
@@ -404,6 +540,13 @@ async function obsluz(req, res) {
   if (gra && metoda === 'GET') {
     if (!wszystkieStacje.some(s => s.id === gra[1])) return blad(res, 404, 'Nie ma takiej stacji.');
     return json(res, 200, await coGra(gra[1]));
+  }
+
+  if (sciezka === '/api/utwor' && metoda === 'GET') {
+    const wykonawca = String(adres.searchParams.get('wykonawca') || '').slice(0, 120);
+    const tytul = String(adres.searchParams.get('tytul') || '').slice(0, 160);
+    if (!tytul) return blad(res, 400, 'Brak tytułu.');
+    return json(res, 200, { szczegoly: await szczegolyUtworu(wykonawca, tytul) });
   }
 
   if (sciezka === '/api/wiadomosci' && metoda === 'GET') {
@@ -553,6 +696,8 @@ serwer.listen(PORT, '127.0.0.1', () => {
   log('Serwer Radia NUX7 działa na porcie', PORT, '| stacji na liście:', wszystkieStacje.length);
   odswiezNazwyZPosrednika().then(odswiezAdresyRmf);
   setInterval(() => odswiezNazwyZPosrednika().then(odswiezAdresyRmf), 6 * 3600 * 1000).unref();
+  odswiezLoga().catch(() => {});
+  setInterval(() => odswiezLoga().catch(() => {}), 24 * 3600 * 1000).unref();
   if (!BEZ_SIECI) {
     wiadomosci.odswiez(log).catch(() => {});
     setInterval(() => wiadomosci.odswiez(log).catch(() => {}), 15 * 60 * 1000).unref();

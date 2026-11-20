@@ -137,8 +137,19 @@ h1 { margin: 10px 0 0; font-family: var(--szeryf); font-weight: 500; font-size: 
 .odtwarzacz .panel { width: min(560px, 100%); text-align: center; padding: 24px 16px 20px; margin: 0; }
 .odtwarzacz h2 { margin: 0; font-family: var(--szeryf); font-weight: 500; font-size: 38px; line-height: 1.05; }
 .odtwarzacz p { margin: 4px 0 0; color: var(--cichy); font-size: 14px; }
-.odtwarzacz .utwor { margin-top: 8px; font-family: var(--szeryf); font-style: italic; font-size: 22px; line-height: 1.15; color: var(--tekst); }
+.odtwarzacz .utwor { margin-top: 0; font-family: var(--szeryf); font-style: italic; font-size: 22px; line-height: 1.15; color: var(--tekst); }
 .odtwarzacz .wykonawca { font-size: 14px; color: var(--cichy); }
+.co-gra { display: block; width: 100%; margin-top: 6px; padding: 6px 8px; border: 0; border-radius: 16px; background: none; color: inherit; text-align: center; }
+.co-gra > span { display: block; }
+.co-gra small { display: block; margin-top: 4px; font-size: 11px; color: var(--akcent); }
+.co-gra:hover { background: rgba(255,255,255,0.06); }
+.szczegoly-uklad { display: flex; gap: 16px; align-items: flex-start; margin-top: 10px; }
+.szczegoly-uklad img { flex: none; width: 108px; height: 108px; border-radius: 16px; object-fit: cover; border: 1px solid var(--ramka); }
+.szczegoly-uklad dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; font-size: 14px; }
+.szczegoly-uklad dt { color: var(--cichy); }
+.szczegoly-uklad dd { margin: 0; }
+.szczegoly-linki { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+.szczegoly-linki a { min-height: 40px; padding: 0 16px; font-size: 13px; }
 .grane { width: min(560px, 100%); text-align: left !important; padding: 16px !important; margin-top: 12px !important; }
 .grane ol { margin: 6px 0 0; padding: 0; list-style: none; max-height: 220px; overflow: auto; }
 .grane li { display: flex; gap: 12px; padding: 8px 0; border-top: 1px solid var(--linia); font-size: 14px; }
@@ -301,7 +312,7 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
   <div class="panel szklo">
     <h2 id="duza-nazwa"></h2>
     <p id="duzy-opis"></p>
-    <div id="co-gra" hidden><div class="utwor" id="utwor"></div><div class="wykonawca" id="wykonawca"></div></div>
+    <button class="co-gra" id="co-gra" type="button" aria-expanded="false" hidden><span class="utwor" id="utwor"></span><span class="wykonawca" id="wykonawca"></span><small>Dotknij, żeby zobaczyć więcej</small></button>
     <div class="fala stoi" id="fala" aria-hidden="true"></div>
     <div class="sterowanie">
       <button class="ikona-przycisk" id="duze-serce" type="button"></button>
@@ -312,6 +323,7 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
     </div>
     <p class="wylacznik-opis" id="wylacznik-opis" hidden></p>
   </div>
+  <div class="panel szklo grane" id="szczegoly" hidden></div>
   <div class="panel szklo grane" id="grane" hidden><h3 class="etykieta" style="color:var(--akcent)">OSTATNIO GRANE</h3><ol id="grane-lista"></ol></div>
   <div class="kafelki">
     <button class="kafel szklo" id="kafel-grane" type="button" aria-expanded="false"><span class="znak" id="kafel-grane-znak"></span><span><small>OSTATNIO GRANE</small><b id="kafel-grane-napis">Zobacz utwory</b></span></button>
@@ -919,6 +931,10 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
   var coGra = null;
   function pokazCoGra() {
     var u = coGra && coGra.utwor;
+    if (!u || szczegolyDla !== u.wykonawca + '|' + u.tytul) {
+      document.getElementById('szczegoly').hidden = true;
+      document.getElementById('co-gra').setAttribute('aria-expanded', 'false');
+    }
     document.getElementById('co-gra').hidden = !u;
     if (u) {
       document.getElementById('utwor').textContent = u.tytul;
@@ -942,6 +958,70 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
     });
     zaznacz();
   }
+  // Szczegóły utworu po kliknięciu tytułu: okładka, album, rok, gatunek.
+  var szczegolyDla = '';
+  function pokazSzczegoly() {
+    var pole = document.getElementById('szczegoly'), przycisk = document.getElementById('co-gra');
+    var u = coGra && coGra.utwor;
+    if (!u || !pole.hidden) { pole.hidden = true; przycisk.setAttribute('aria-expanded', 'false'); return; }
+    var klucz = u.wykonawca + '|' + u.tytul;
+    szczegolyDla = klucz;
+    pole.hidden = false;
+    przycisk.setAttribute('aria-expanded', 'true');
+    pole.textContent = '';
+    var naglowek = el('h3', 'etykieta', 'O UTWORZE');
+    naglowek.style.color = 'var(--akcent)';
+    pole.appendChild(naglowek);
+    var tresc = el('p', 'pusto', 'Szukam informacji…');
+    pole.appendChild(tresc);
+    function linki(dodatkowy) {
+      var pasek = el('div', 'szczegoly-linki');
+      var fraza = encodeURIComponent((u.wykonawca + ' ' + u.tytul).trim());
+      [['Szukaj w YouTube', 'https://www.youtube.com/results?search_query=' + fraza], ['Szukaj w Spotify', 'https://open.spotify.com/search/' + fraza]].concat(dodatkowy || []).forEach(function (l) {
+        var a = el('a', 'przycisk drugi', l[0]);
+        a.href = l[1];
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        pasek.appendChild(a);
+      });
+      pole.appendChild(pasek);
+    }
+    fetch('/api/utwor?wykonawca=' + encodeURIComponent(u.wykonawca) + '&tytul=' + encodeURIComponent(u.tytul)).then(function (o) { return o.ok ? o.json() : null; }).then(function (d) {
+      if (szczegolyDla !== klucz) return;
+      var sz = d && d.szczegoly;
+      tresc.remove();
+      if (!sz) {
+        pole.appendChild(el('p', 'pusto', 'Nie znalazłem więcej informacji o tym utworze.'));
+        linki();
+        return;
+      }
+      var uklad = el('div', 'szczegoly-uklad');
+      if (sz.okladka) {
+        var okladka = document.createElement('img');
+        okladka.alt = 'Okładka albumu';
+        okladka.referrerPolicy = 'no-referrer';
+        okladka.onerror = function () { okladka.remove(); };
+        okladka.src = sz.okladka;
+        uklad.appendChild(okladka);
+      }
+      var spis = el('dl');
+      function wiersz(nazwa, wartosc) { if (wartosc) { spis.appendChild(el('dt', '', nazwa)); spis.appendChild(el('dd', '', wartosc)); } }
+      wiersz('Tytuł', sz.tytul);
+      wiersz('Wykonawca', sz.wykonawca);
+      wiersz('Album', sz.album);
+      wiersz('Rok', sz.rok);
+      wiersz('Gatunek', sz.gatunek);
+      if (sz.dlugosc) wiersz('Długość', Math.floor(sz.dlugosc / 60) + ':' + ('0' + (sz.dlugosc % 60)).slice(-2));
+      uklad.appendChild(spis);
+      pole.appendChild(uklad);
+      linki(sz.adres ? [['Otwórz w Apple Music', sz.adres]] : []);
+    }).catch(function () {
+      if (szczegolyDla !== klucz) return;
+      tresc.textContent = 'Nie udało się pobrać informacji o utworze.';
+    });
+  }
+  document.getElementById('co-gra').addEventListener('click', pokazSzczegoly);
+
   function odswiezCoGra() {
     if (!grana || dzwiek.paused) return;
     var dla = grana.id;

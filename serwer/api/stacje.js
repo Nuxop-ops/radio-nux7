@@ -184,4 +184,29 @@ const uporzadkowana = naPoczatek.concat(lista.filter(s => !naPoczatek.includes(s
 lista.length = 0;
 lista.push(...uporzadkowana);
 
+// Strony stacji, z których serwer sam pobiera logo dobrej jakości.
+// Stacje RMF mają dobre logo z RMF ON, więc ich tu nie ma.
+const STRONY = {
+  zet: 'https://www.radiozet.pl/', meloradio: 'https://www.meloradio.pl/', chillizet: 'https://www.chillizet.pl/',
+  antyradio: 'https://www.antyradio.pl/', 'eska-2380': 'https://www.eska.pl/', 'eska-5380': 'https://www.eskarock.pl/',
+  pr1: 'https://www.polskieradio.pl/', pr2: 'https://www.polskieradio.pl/', pr3: 'https://www.polskieradio.pl/',
+  pr4: 'https://www.polskieradio.pl/', r357: 'https://radio357.pl/', nowyswiat: 'https://nowyswiat.online/',
+  zlote: 'https://www.zloteprzeboje.pl/', tokfm: 'https://www.tokfm.pl/', rockradio: 'https://www.rockradio.pl/',
+  vox: 'https://www.voxfm.pl/', plus: 'https://www.radioplus.pl/',
+  'swiss-pop': 'https://www.radioswisspop.ch/', 'swiss-jazz': 'https://www.radioswissjazz.ch/',
+  'swiss-classic': 'https://www.radioswissclassic.ch/', 'rp-rock': 'https://radioparadise.com/', 'rp-mellow': 'https://radioparadise.com/',
+};
+for (const stacja of lista) {
+  if (STRONY[stacja.id]) stacja.strona = STRONY[stacja.id];
+  else if (stacja.id.startsWith('antyradio-')) stacja.strona = STRONY.antyradio;
+  else if (/^eska-60/.test(stacja.id)) stacja.strona = STRONY['eska-5380'];
+  else if (stacja.id.startsWith('eska-')) stacja.strona = STRONY['eska-2380'];
+  else if (stacja.id.startsWith('soma-')) {
+    // SomaFM udostępnia logo każdego kanału pod stałym adresem.
+    const kanal = stacja.adresy[0].match(/somafm\.com\/([a-z0-9]+)-/)[1];
+    stacja.logoAdres = 'https://somafm.com/logos/512/' + kanal + '512.png';
+    stacja.strona = 'https://somafm.com/';
+  }
+}
+
 module.exports = lista;
