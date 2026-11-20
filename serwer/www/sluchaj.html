@@ -157,11 +157,10 @@ h1 { margin: 10px 0 0; font-family: var(--szeryf); font-weight: 500; font-size: 
 .grane li time { flex: none; width: 44px; color: var(--cichy); font-variant-numeric: tabular-nums; }
 .grane li span { color: var(--cichy); }
 .fala { margin: 18px auto 0; height: 36px; display: flex; align-items: center; justify-content: center; gap: 5px; max-width: 300px; }
-.fala i { flex: none; width: 2px; height: var(--h); border-radius: 1px; background: var(--akcent); transform-origin: center; animation: fala 1.1s ease-in-out infinite alternate; animation-delay: var(--d); }
+.fala i { flex: none; width: 2px; height: 36px; border-radius: 1px; background: var(--akcent); transform-origin: center; transform: scaleY(0.1); transition: transform 0.09s linear; }
 .fala i.dalej { background: rgba(214,210,202,0.45); }
-.fala.stoi i { animation-play-state: paused; transform: scaleY(0.3); }
-@keyframes fala { from { transform: scaleY(0.3); } to { transform: scaleY(1); } }
-@media (prefers-reduced-motion: reduce) { .fala i { animation: none; } }
+.fala.stoi i { transform: scaleY(0.1) !important; }
+@media (prefers-reduced-motion: reduce) { .fala i { transition: none; } }
 .kolo.wielkie { box-shadow: 0 10px 30px color-mix(in srgb, var(--akcent) 35%, transparent); }
 .wylacznik-opis { margin: 10px 0 0 !important; color: var(--akcent) !important; font-size: 13px !important; }
 .kafelki { flex: none; width: min(560px, 100%); margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -892,7 +891,7 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
       e.setAttribute('aria-pressed', lubiana ? 'true' : 'false');
       e.setAttribute('aria-label', (lubiana ? 'Usuń z ulubionych: ' : 'Dodaj do ulubionych: ') + (s ? s.nazwa : ''));
     });
-    document.getElementById('fala').classList.toggle('stoi', !grana || !gra || niegra);
+    document.getElementById('fala').classList.toggle('stoi', !grana || !gra || niegra || !pomiar);
     document.getElementById('mini').hidden = !grana;
     if (grana) {
       var stan = niegra ? 'Stacja nie odpowiada' : (gra ? 'Na żywo' : 'Zatrzymane');
@@ -1032,7 +1031,42 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
   setInterval(odswiezCoGra, 20000);
   dzwiek.addEventListener('playing', odswiezCoGra);
 
+  // ---------- Fala w rytm dźwięku ----------
+
+  // Przeglądarka pozwala mierzyć dźwięk tylko wtedy, gdy płynie on przez nasz serwer.
+  var pomiar = null;
+  function zNaszegoSerwera(adres) {
+    try { return new URL(adres, location.href).origin === location.origin; } catch (e) { return false; }
+  }
+  function wlaczPomiar() {
+    if (pomiar || !(window.AudioContext || window.webkitAudioContext)) return;
+    try {
+      var kontekst = new (window.AudioContext || window.webkitAudioContext)();
+      var analiza = kontekst.createAnalyser();
+      analiza.fftSize = 128;
+      analiza.smoothingTimeConstant = 0.75;
+      kontekst.createMediaElementSource(dzwiek).connect(analiza);
+      analiza.connect(kontekst.destination);
+      pomiar = { kontekst: kontekst, analiza: analiza, dane: new Uint8Array(analiza.frequencyBinCount) };
+      var slupki = document.getElementById('fala').children;
+      (function rysujFale() {
+        requestAnimationFrame(rysujFale);
+        if (dzwiek.paused || document.getElementById('odtwarzacz').hidden) return;
+        pomiar.analiza.getByteFrequencyData(pomiar.dane);
+        for (var n = 0; n < slupki.length; n++) {
+          // Niskie tony pośrodku, wyższe na boki, tak jak w projekcie.
+          var pasmo = Math.min(pomiar.dane.length - 1, 1 + Math.round(Math.abs(n - 16) * 1.9));
+          var sila = Math.pow(pomiar.dane[pasmo] / 255, 1.4);
+          slupki[n].style.transform = 'scaleY(' + Math.max(0.1, sila).toFixed(3) + ')';
+        }
+      })();
+    } catch (e) { pomiar = null; }
+  }
+
   function graj(stacja) {
+    // Po włączeniu pomiaru dźwięk spoza naszego serwera byłby niemy, więc wczytujemy stronę od nowa.
+    if (pomiar && !zNaszegoSerwera(stacja.adres)) { location.reload(); return; }
+    if (zNaszegoSerwera(stacja.adres)) { wlaczPomiar(); if (pomiar && pomiar.kontekst.state === 'suspended') pomiar.kontekst.resume(); }
     grana = stacja;
     niegra = false;
     coGra = null;
@@ -1052,6 +1086,7 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
   }
   function grajPauza() {
     if (!grana) return;
+    if (pomiar && pomiar.kontekst.state === 'suspended') pomiar.kontekst.resume();
     if (dzwiek.paused || niegra) { niegra = false; dzwiek.src = grana.adres; dzwiek.play().catch(function (e) { if (e && e.name !== 'AbortError') { niegra = true; zaznacz(); } }); } else { dzwiek.pause(); }
   }
   function przeskocz(oIle) {
@@ -1182,10 +1217,7 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
   document.getElementById('kafel-wiadomosci-znak').innerHTML = ikona(IKONY.wiadomosci, 22);
   (function () {
     var fala = document.getElementById('fala'), slupki = '';
-    for (var n = 0; n < 33; n++) {
-      var wys = Math.round(8 + 28 * Math.abs(Math.sin(n * 0.9 + 1.3)) * (1 - Math.abs(n - 16) / 33));
-      slupki += '<i' + (n > 20 ? ' class="dalej"' : '') + ' style="--h:' + wys + 'px;--d:-' + ((n * 137) % 1100) + 'ms"></i>';
-    }
+    for (var n = 0; n < 33; n++) slupki += '<i' + (Math.abs(n - 16) > 8 ? ' class="dalej"' : '') + '></i>';
     fala.innerHTML = slupki;
   })();
   document.getElementById('kafel-grane').addEventListener('click', function () {
