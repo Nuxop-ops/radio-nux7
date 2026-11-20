@@ -7,3 +7,22 @@ services:
       - "127.0.0.1:8031:80"
     volumes:
       - ./www:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+
+  # Katalog stacji, konta i panel admina. Słucha tylko lokalnie, na porcie 8032.
+  nux7-api:
+    image: node:22-alpine
+    container_name: nux7-api
+    restart: unless-stopped
+    network_mode: host
+    user: "1000:1000"
+    working_dir: /app
+    command: ["node", "server.js"]
+    environment:
+      PORT: "8032"
+      DANE: /dane
+      ADRES_PUBLICZNY: https://nux7.com
+      POSREDNIK: http://127.0.0.1:8790
+    volumes:
+      - ./api:/app:ro
+      - ./api-dane:/dane

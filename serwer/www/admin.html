@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0b0a09">
+<title>Panel admina – Radio NUX7</title>
+<link rel="icon" type="image/png" href="ikona.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap">
+<style>
+:root { --tlo: #0b0a09; --panel: #141310; --tekst: #f5f2ec; --cichy: #cfcac0; --akcent: #e3c27e; --na-akcencie: #171208; --linia: #26221b; --ramka: #3a342a; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--tlo); color: var(--tekst); font: 16px/1.5 Inter, system-ui, sans-serif; }
+button, input, select { font: inherit; }
+:focus-visible { outline: 2px solid var(--tekst); outline-offset: 2px; }
+.uklad { display: flex; flex-wrap: wrap; min-height: 100vh; }
+nav { flex: 1 1 220px; max-width: 100%; padding: 24px 16px; background: #121110; border-right: 1px solid var(--linia); display: flex; flex-direction: column; gap: 4px; }
+nav .marka { padding: 0 12px 20px; }
+nav .marka b { display: block; font-size: 12px; letter-spacing: 0.3em; color: var(--akcent); }
+nav .marka span { font-size: 14px; color: var(--cichy); }
+nav button { min-height: 44px; padding: 0 12px; border: 0; border-radius: 12px; background: transparent; color: var(--tekst); text-align: left; cursor: pointer; }
+nav button[aria-current="page"] { background: var(--akcent); color: var(--na-akcencie); font-weight: 600; }
+main { flex: 999 1 480px; min-width: 0; padding: 32px clamp(16px, 3vw, 40px); }
+.srodek { max-width: 1000px; }
+h1 { margin: 0; font-family: "Cormorant Garamond", Georgia, serif; font-weight: 500; font-size: 44px; line-height: 1.05; }
+.wstep { margin: 8px 0 0; color: var(--cichy); max-width: 40em; }
+.pole { display: flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 22px; background: #171512; border: 1px solid var(--ramka); margin-top: 24px; max-width: 420px; }
+.pole input { flex: 1; min-width: 0; height: 40px; border: 0; outline: 0; background: transparent; color: var(--tekst); }
+.pole input::placeholder { color: var(--cichy); }
+.tabela { margin-top: 20px; border-radius: 20px; background: var(--panel); border: 1px solid var(--linia); overflow-x: auto; }
+table { width: 100%; min-width: 720px; border-collapse: collapse; font-size: 15px; }
+th { padding: 16px 20px; text-align: left; font-size: 11px; font-weight: 600; letter-spacing: 0.18em; color: var(--cichy); }
+td { padding: 12px 20px; border-top: 1px solid var(--linia); vertical-align: middle; }
+td small { display: block; color: var(--cichy); font-size: 13px; }
+.znaczek { padding: 4px 12px; border-radius: 16px; border: 1px solid var(--ramka); font-size: 13px; white-space: nowrap; }
+.znaczek.zloty { border-color: var(--akcent); color: var(--akcent); }
+.przelacznik { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0; border: 0; background: transparent; color: var(--cichy); cursor: pointer; font-size: 14px; }
+.przelacznik i { width: 50px; height: 30px; border-radius: 16px; background: var(--linia); border: 1px solid #4a412f; display: flex; align-items: center; padding: 0 3px; }
+.przelacznik i::after { content: ""; width: 22px; height: 22px; border-radius: 50%; background: var(--cichy); transition: transform 0.15s ease; }
+.przelacznik[aria-checked="true"] { color: var(--tekst); }
+.przelacznik[aria-checked="true"] i { background: var(--akcent); border-color: var(--akcent); }
+.przelacznik[aria-checked="true"] i::after { background: var(--na-akcencie); transform: translateX(20px); }
+.przycisk { min-height: 44px; padding: 0 20px; border-radius: 22px; border: 0; background: var(--akcent); color: var(--na-akcencie); font-weight: 600; cursor: pointer; }
+.cichy-przycisk { min-height: 44px; padding: 0 14px; border-radius: 22px; border: 1px solid var(--ramka); background: transparent; color: var(--tekst); cursor: pointer; font-size: 14px; }
+.cichy-przycisk.grozny { border-color: #b4574c; color: #f0a8a0; }
+select { min-height: 44px; padding: 0 12px; border-radius: 12px; border: 1px solid var(--ramka); background: #171512; color: var(--tekst); }
+.karta { max-width: 440px; margin: 10vh auto 0; padding: 32px 28px; border-radius: 28px; background: var(--panel); border: 1px solid var(--linia); }
+.karta label { display: block; margin-top: 18px; font-size: 11px; font-weight: 600; letter-spacing: 0.2em; color: var(--cichy); }
+.karta input { width: 100%; height: 48px; border: 0; border-bottom: 1px solid #6a655b; background: transparent; color: var(--tekst); outline: 0; }
+.karta .przycisk { width: 100%; margin-top: 24px; min-height: 52px; }
+.komunikat { min-height: 1.5em; margin: 12px 0 0; font-size: 14px; color: #f0a8a0; }
+.uwaga { margin: 16px 0 0; font-size: 14px; color: var(--cichy); max-width: 46em; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+
+<div id="ekran-logowania" hidden>
+  <form class="karta" id="logowanie">
+    <h1>Panel admina</h1>
+    <p class="wstep">Zaloguj się kontem Radia NUX7.</p>
+    <label for="email">E-MAIL</label>
+    <input id="email" type="email" autocomplete="email" required>
+    <label for="haslo">HASŁO</label>
+    <input id="haslo" type="password" autocomplete="current-password" required>
+    <p class="komunikat" id="blad-logowania" role="alert"></p>
+    <button class="przycisk" type="submit">Zaloguj się</button>
+  </form>
+</div>
+
+<div id="ekran-aktywacji" hidden>
+  <form class="karta" id="aktywacja">
+    <h1>Aktywacja admina</h1>
+    <p class="wstep">To konto nie ma jeszcze dostępu do panelu. Wpisz jednorazowy kod z serwera.</p>
+    <label for="kod">KOD Z SERWERA</label>
+    <input id="kod" type="text" autocomplete="off" required>
+    <p class="komunikat" id="blad-aktywacji" role="alert"></p>
+    <button class="przycisk" type="submit">Aktywuj</button>
+    <p style="margin:16px 0 0; text-align:center"><button class="cichy-przycisk" id="wyloguj-2" type="button">Wyloguj</button></p>
+  </form>
+</div>
+
+<div class="uklad" id="panel" hidden>
+  <nav aria-label="Panel admina">
+    <div class="marka"><b>RADIO NUX7</b><span>Panel admina</span></div>
+    <button type="button" data-zakladka="uzytkownicy" aria-current="page">Użytkownicy</button>
+    <button type="button" data-zakladka="stacje">Stacje</button>
+    <button type="button" id="wyloguj" style="margin-top:auto; color:var(--cichy)">Wyloguj</button>
+  </nav>
+  <main>
+    <div class="srodek" id="zakladka-uzytkownicy">
+      <h1>Użytkownicy</h1>
+      <p class="wstep">Wszyscy słuchają tych samych stacji. Tutaj wybierasz, komu radio ma grać przez Twój serwer.</p>
+      <div class="pole"><input id="szukaj-uzytkownika" type="search" placeholder="Szukaj po imieniu lub e-mailu" aria-label="Szukaj użytkownika"></div>
+      <div class="tabela">
+        <table>
+          <thead><tr><th scope="col">UŻYTKOWNIK</th><th scope="col">PLAN</th><th scope="col">GRA PRZEZ MÓJ SERWER</th><th scope="col">PREMIUM OD ADMINA</th><th scope="col"><span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Działania</span></th></tr></thead>
+          <tbody id="lista-uzytkownikow"></tbody>
+        </table>
+      </div>
+      <p class="uwaga">Zmiana przełącznika działa od następnego włączenia stacji u użytkownika.</p>
+    </div>
+
+    <div class="srodek" id="zakladka-stacje" hidden>
+      <h1>Stacje</h1>
+      <p class="wstep">Ukryj stację albo jej logo, gdy poprosi o to nadawca. Popraw oznaczenia używane w filtrach.</p>
+      <div class="pole"><input id="szukaj-stacji" type="search" placeholder="Szukaj stacji" aria-label="Szukaj stacji"></div>
+      <div class="tabela">
+        <table>
+          <thead><tr><th scope="col">STACJA</th><th scope="col">UKRYTA</th><th scope="col">BEZ LOGO</th><th scope="col">BEZ GADANIA</th><th scope="col">JĘZYK PIOSENEK</th></tr></thead>
+          <tbody id="lista-stacji"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+(function () {
+  var uzytkownicy = [], stacje = [];
+  function pamiec(wartosc) {
+    try {
+      if (wartosc === undefined) return localStorage.getItem('nux7-klucz');
+      if (wartosc === null) localStorage.removeItem('nux7-klucz'); else localStorage.setItem('nux7-klucz', wartosc);
+    } catch (e) { return null; }
+  }
+  function api(sciezka, metoda, dane) {
+    var opcje = { method: metoda || 'GET', headers: { 'Content-Type': 'application/json' } };
+    if (pamiec()) opcje.headers.Authorization = 'Bearer ' + pamiec();
+    if (dane) opcje.body = JSON.stringify(dane);
+    return fetch('/api/' + sciezka, opcje).then(function (o) {
+      return o.json().catch(function () { return {}; }).then(function (d) {
+        if (!o.ok) throw new Error(d.blad || 'Nie udało się połączyć z serwerem.');
+        return d;
+      });
+    });
+  }
+  function ekran(nazwa) {
+    ['ekran-logowania', 'ekran-aktywacji', 'panel'].forEach(function (id) { document.getElementById(id).hidden = id !== nazwa; });
+  }
+  function el(znacznik, tekst, klasa) {
+    var e = document.createElement(znacznik);
+    if (tekst !== undefined) e.textContent = tekst;
+    if (klasa) e.className = klasa;
+    return e;
+  }
+  function przelacznik(wlaczony, opis, poZmianie) {
+    var p = el('button', undefined, 'przelacznik');
+    p.type = 'button';
+    p.setAttribute('role', 'switch');
+    p.setAttribute('aria-label', opis);
+    function ustaw(w) {
+      p.setAttribute('aria-checked', w ? 'true' : 'false');
+      p.textContent = '';
+      p.appendChild(el('i'));
+      p.appendChild(document.createTextNode(w ? 'Włączone' : 'Wyłączone'));
+    }
+    ustaw(wlaczony);
+    p.addEventListener('click', function () {
+      var nowy = p.getAttribute('aria-checked') !== 'true';
+      ustaw(nowy);
+      poZmianie(nowy).catch(function () { ustaw(!nowy); });
+    });
+    return p;
+  }
+
+  function pokazUzytkownikow() {
+    var fraza = document.getElementById('szukaj-uzytkownika').value.trim().toLowerCase();
+    var cialo = document.getElementById('lista-uzytkownikow');
+    cialo.textContent = '';
+    uzytkownicy.filter(function (u) { return !fraza || (u.imie + ' ' + u.email).toLowerCase().indexOf(fraza) >= 0; })
+      .forEach(function (u) {
+        var w = el('tr');
+        var kto = el('td');
+        kto.appendChild(el('span', u.imie || '(bez imienia)'));
+        kto.appendChild(el('small', u.email));
+        var plan = el('td');
+        plan.appendChild(el('span', u.admin ? 'Admin' : (u.premium ? 'Premium' : 'Darmowy'), 'znaczek' + (u.admin || u.premium ? ' zloty' : '')));
+        var serwer = el('td');
+        serwer.appendChild(przelacznik(u.przezSerwer, u.email + ': gra przez mój serwer', function (w2) {
+          return api('admin/uzytkownicy/' + u.id, 'PATCH', { przezSerwer: w2 }).then(function () { u.przezSerwer = w2; });
+        }));
+        var premium = el('td');
+        premium.appendChild(przelacznik(u.premium, u.email + ': premium od admina', function (w2) {
+          return api('admin/uzytkownicy/' + u.id, 'PATCH', { premium: w2 }).then(function () { u.premium = w2; pokazUzytkownikow(); });
+        }));
+        var dzialania = el('td');
+        dzialania.style.textAlign = 'right';
+        if (!u.admin) {
+          var usun = el('button', 'Usuń konto', 'cichy-przycisk');
+          usun.type = 'button';
+          usun.addEventListener('click', function () {
+            if (usun.dataset.pewny !== 'tak') {
+              usun.dataset.pewny = 'tak';
+              usun.textContent = 'Na pewno usunąć?';
+              usun.classList.add('grozny');
+              setTimeout(function () { usun.dataset.pewny = ''; usun.textContent = 'Usuń konto'; usun.classList.remove('grozny'); }, 4000);
+              return;
+            }
+            api('admin/uzytkownicy/' + u.id, 'DELETE').then(wczytajUzytkownikow);
+          });
+          dzialania.appendChild(usun);
+        }
+        [kto, plan, serwer, premium, dzialania].forEach(function (k) { w.appendChild(k); });
+        cialo.appendChild(w);
+      });
+    if (!cialo.children.length) {
+      var pusty = el('tr'); var k = el('td', 'Brak użytkowników.'); k.colSpan = 5; pusty.appendChild(k); cialo.appendChild(pusty);
+    }
+  }
+
+  function pokazStacje() {
+    var fraza = document.getElementById('szukaj-stacji').value.trim().toLowerCase();
+    var cialo = document.getElementById('lista-stacji');
+    cialo.textContent = '';
+    stacje.filter(function (s) { return !fraza || (s.nazwa + ' ' + s.grupa).toLowerCase().indexOf(fraza) >= 0; })
+      .forEach(function (s) {
+        var w = el('tr');
+        var kto = el('td');
+        kto.appendChild(el('span', s.nazwa));
+        kto.appendChild(el('small', s.grupa + (s.dziala ? '' : ' · nie odpowiada') + (s.maAdres ? '' : ' · brak adresu nadawcy')));
+        w.appendChild(kto);
+        ['ukryta', 'bezLogo', 'bezGadania'].forEach(function (pole) {
+          var k = el('td');
+          k.appendChild(przelacznik(s[pole], s.nazwa + ': ' + pole, function (w2) {
+            var zmiana = {}; zmiana[pole] = w2;
+            return api('admin/stacje/' + s.id, 'PATCH', zmiana).then(function () { s[pole] = w2; });
+          }));
+          w.appendChild(k);
+        });
+        var jezyk = el('td');
+        var wybor = el('select');
+        wybor.setAttribute('aria-label', s.nazwa + ': język piosenek');
+        [['mieszany', 'Mieszany'], ['polski', 'Tylko po polsku'], ['angielski', 'Tylko po angielsku']].forEach(function (o) {
+          var opcja = el('option', o[1]); opcja.value = o[0]; if (s.jezyk === o[0]) opcja.selected = true; wybor.appendChild(opcja);
+        });
+        wybor.addEventListener('change', function () {
+          var poprzedni = s.jezyk;
+          api('admin/stacje/' + s.id, 'PATCH', { jezyk: wybor.value }).then(function () { s.jezyk = wybor.value; })
+            .catch(function () { wybor.value = poprzedni; });
+        });
+        jezyk.appendChild(wybor);
+        w.appendChild(jezyk);
+        cialo.appendChild(w);
+      });
+  }
+
+  function wczytajUzytkownikow() {
+    return api('admin/uzytkownicy').then(function (d) { uzytkownicy = d.uzytkownicy; pokazUzytkownikow(); });
+  }
+  function wczytajStacje() {
+    return api('admin/stacje').then(function (d) { stacje = d.stacje; pokazStacje(); });
+  }
+
+  function start() {
+    if (!pamiec()) return ekran('ekran-logowania');
+    api('konto').then(function (d) {
+      if (!d.konto.admin) return ekran('ekran-aktywacji');
+      ekran('panel');
+      wczytajUzytkownikow();
+      wczytajStacje();
+    }).catch(function () { pamiec(null); ekran('ekran-logowania'); });
+  }
+
+  document.getElementById('logowanie').addEventListener('submit', function (z) {
+    z.preventDefault();
+    api('konto/logowanie', 'POST', { email: document.getElementById('email').value, haslo: document.getElementById('haslo').value })
+      .then(function (d) { pamiec(d.klucz); document.getElementById('haslo').value = ''; start(); })
+      .catch(function (e) { document.getElementById('blad-logowania').textContent = e.message; });
+  });
+  document.getElementById('aktywacja').addEventListener('submit', function (z) {
+    z.preventDefault();
+    api('admin/aktywuj', 'POST', { kod: document.getElementById('kod').value })
+      .then(start)
+      .catch(function (e) { document.getElementById('blad-aktywacji').textContent = e.message; });
+  });
+  function wyloguj() { api('konto/wyloguj', 'POST').catch(function () {}); pamiec(null); ekran('ekran-logowania'); }
+  document.getElementById('wyloguj').addEventListener('click', wyloguj);
+  document.getElementById('wyloguj-2').addEventListener('click', wyloguj);
+  document.querySelectorAll('[data-zakladka]').forEach(function (p) {
+    p.addEventListener('click', function () {
+      document.querySelectorAll('[data-zakladka]').forEach(function (x) { if (x === p) x.setAttribute('aria-current', 'page'); else x.removeAttribute('aria-current'); });
+      document.getElementById('zakladka-uzytkownicy').hidden = p.dataset.zakladka !== 'uzytkownicy';
+      document.getElementById('zakladka-stacje').hidden = p.dataset.zakladka !== 'stacje';
+    });
+  });
+  document.getElementById('szukaj-uzytkownika').addEventListener('input', pokazUzytkownikow);
+  document.getElementById('szukaj-stacji').addEventListener('input', pokazStacje);
+  start();
+})();
+</script>
+</body>
+</html>

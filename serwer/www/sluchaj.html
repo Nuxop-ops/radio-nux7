@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#070707">
+<title>Słuchaj – Radio NUX7</title>
+<meta name="description" content="Słuchaj polskich stacji radiowych w przeglądarce.">
+<link rel="icon" type="image/png" href="ikona.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap">
+<style>
+:root {
+  --tlo: #0b0a09; --tekst: #f5f2ec; --cichy: #cfcac0; --akcent: #e3c27e; --na-akcencie: #171208;
+  --szklo: rgba(255,255,255,0.07); --ramka: rgba(255,255,255,0.18); --linia: rgba(255,255,255,0.12);
+  --szeryf: "Cormorant Garamond", Georgia, serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--tlo); color: var(--tekst); font: 16px/1.5 Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+a { color: var(--akcent); }
+button, input { font: inherit; }
+:focus-visible { outline: 2px solid var(--tekst); outline-offset: 2px; }
+.srodek { width: min(1100px, 100% - 32px); margin-inline: auto; }
+header { position: sticky; top: 0; z-index: 5; background: rgba(11,10,9,0.8); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border-bottom: 1px solid var(--linia); }
+header .srodek { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 64px; }
+.marka { display: flex; align-items: center; gap: 12px; color: var(--tekst); text-decoration: none; font-weight: 600; }
+.marka img { width: 38px; height: 38px; border-radius: 10px; }
+.przycisk { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 20px; border-radius: 22px; border: 0; background: var(--akcent); color: var(--na-akcencie); font-weight: 600; cursor: pointer; text-decoration: none; }
+.przycisk.drugi { background: transparent; border: 1px solid var(--ramka); color: var(--tekst); }
+h1 { margin: 36px 0 0; font-family: var(--szeryf); font-weight: 500; font-size: clamp(38px, 6vw, 60px); line-height: 1.02; }
+.wstep { margin: 10px 0 0; color: var(--cichy); max-width: 40em; }
+.narzedzia { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+.szukaj { flex: 1 1 260px; display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 18px; border-radius: 24px; background: var(--szklo); border: 1px solid var(--ramka); }
+.szukaj input { flex: 1; min-width: 0; height: 44px; border: 0; outline: 0; background: transparent; color: var(--tekst); }
+.szukaj input::placeholder { color: var(--cichy); }
+.filtry { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.filtry button { min-height: 44px; padding: 0 16px; border-radius: 22px; border: 1px solid var(--ramka); background: var(--szklo); color: var(--tekst); cursor: pointer; font-size: 14px; }
+.filtry button[aria-pressed="true"] { background: var(--akcent); color: var(--na-akcencie); border-color: transparent; font-weight: 600; }
+h2 { margin: 34px 0 12px; font-size: 12px; font-weight: 600; letter-spacing: 0.24em; color: var(--akcent); }
+.siatka { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 10px; }
+.stacja { display: flex; align-items: center; gap: 4px; border-radius: 18px; background: var(--szklo); border: 1px solid var(--ramka); padding-right: 4px; }
+.stacja.gra { border-color: var(--akcent); }
+.stacja .wlacz { flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; padding: 10px 6px 10px 10px; border: 0; background: transparent; color: var(--tekst); text-align: left; cursor: pointer; border-radius: 18px; }
+.logo { flex: none; width: 46px; height: 46px; border-radius: 50%; background: #000 center/cover no-repeat; border: 1px solid var(--ramka); display: grid; place-items: center; font-size: 10px; font-weight: 600; letter-spacing: 0.04em; overflow: hidden; }
+.logo img { width: 100%; height: 100%; object-fit: contain; background: #fff; }
+.nazwy { min-width: 0; }
+.nazwy b { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; font-family: var(--szeryf); font-weight: 600; font-size: 19px; line-height: 1.15; overflow: hidden; }
+.nazwy span { display: block; font-size: 12px; color: var(--cichy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.stacja.gra .nazwy span { color: var(--akcent); }
+.serce { flex: none; width: 44px; height: 44px; border: 0; border-radius: 50%; background: transparent; color: var(--cichy); cursor: pointer; display: grid; place-items: center; }
+.serce[aria-pressed="true"] { color: var(--akcent); }
+.serce[aria-pressed="true"] svg { fill: currentColor; }
+.pusto { margin-top: 28px; padding: 24px; border-radius: 20px; background: var(--szklo); border: 1px solid var(--ramka); color: var(--cichy); }
+main { padding-bottom: 150px; }
+.odtwarzacz { position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 6; max-width: 760px; margin-inline: auto; display: flex; align-items: center; gap: 14px; padding: 10px 12px; border-radius: 40px; background: rgba(30,29,27,0.86); border: 1px solid rgba(255,255,255,0.26); -webkit-backdrop-filter: blur(22px); backdrop-filter: blur(22px); box-shadow: 0 18px 44px rgba(0,0,0,0.6); }
+.odtwarzacz .nazwy { flex: 1; }
+.kolo { flex: none; width: 52px; height: 52px; border-radius: 50%; border: 0; background: var(--akcent); color: var(--na-akcencie); cursor: pointer; display: grid; place-items: center; }
+.glosnosc { width: 110px; accent-color: var(--akcent); }
+dialog { width: min(420px, 100% - 32px); padding: 28px 24px; border-radius: 28px; border: 1px solid var(--ramka); background: #171614; color: var(--tekst); }
+dialog::backdrop { background: rgba(0,0,0,0.7); }
+dialog h3 { margin: 0; font-family: var(--szeryf); font-weight: 500; font-size: 34px; }
+dialog label { display: block; margin-top: 18px; font-size: 11px; font-weight: 600; letter-spacing: 0.2em; color: var(--cichy); }
+dialog input { width: 100%; height: 48px; border: 0; border-bottom: 1px solid rgba(255,255,255,0.45); background: transparent; color: var(--tekst); outline: 0; }
+dialog .przycisk { width: 100%; margin-top: 22px; min-height: 52px; }
+.komunikat { min-height: 1.5em; margin: 12px 0 0; font-size: 14px; color: #f0a8a0; }
+.link { background: none; border: 0; padding: 0; color: var(--akcent); cursor: pointer; text-decoration: underline; }
+[hidden] { display: none !important; }
+@media (max-width: 560px) { .glosnosc { display: none; } .przycisk.maly-ukryj { display: none; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="srodek">
+    <a class="marka" href="./"><img src="ikona.png" alt="" width="38" height="38">Radio NUX7</a>
+    <div style="display:flex; gap:10px; align-items:center">
+      <span id="kto" style="font-size:14px; color:var(--cichy)" hidden></span>
+      <button class="przycisk drugi" id="zaloguj" type="button">Zaloguj się</button>
+      <button class="przycisk drugi" id="wyloguj" type="button" hidden>Wyloguj</button>
+    </div>
+  </div>
+</header>
+
+<main class="srodek">
+  <h1>Słuchaj w przeglądarce</h1>
+  <p class="wstep">Wybierz stację i słuchaj na komputerze. Po zalogowaniu ulubione stacje są te same co w aplikacji.</p>
+
+  <div class="narzedzia">
+    <label class="szukaj">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#cfcac0" stroke-width="1.6" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.800-3.800"/></svg>
+      <span style="position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)">Szukaj stacji</span>
+      <input id="szukaj" type="search" placeholder="Szukaj stacji lub gatunku" autocomplete="off">
+    </label>
+  </div>
+  <div class="filtry" role="group" aria-label="Filtry">
+    <button type="button" data-filtr="wszystkie" aria-pressed="true">Wszystkie</button>
+    <button type="button" data-filtr="ulubione" aria-pressed="false">Ulubione</button>
+    <button type="button" data-filtr="bezgadania" aria-pressed="false">Bez gadania</button>
+    <button type="button" data-filtr="polski" aria-pressed="false">Tylko po polsku</button>
+    <button type="button" data-filtr="angielski" aria-pressed="false">Tylko po angielsku</button>
+  </div>
+
+  <div id="lista" aria-live="polite"></div>
+</main>
+
+<div class="odtwarzacz" id="odtwarzacz" hidden>
+  <div class="logo" id="gra-logo"></div>
+  <div class="nazwy"><b id="gra-nazwa"></b><span id="gra-stan">Na żywo</span></div>
+  <input class="glosnosc" id="glosnosc" type="range" min="0" max="1" step="0.05" value="1" aria-label="Głośność">
+  <button class="kolo" id="graj-pauza" type="button" aria-label="Pauza">
+    <svg id="ikona-pauza" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+    <svg id="ikona-graj" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" hidden><path d="M8 5v14l11-7z"/></svg>
+  </button>
+</div>
+<audio id="dzwiek" preload="none"></audio>
+
+<dialog id="okno">
+  <form method="dialog" id="formularz">
+    <h3 id="okno-tytul">Witaj ponownie</h3>
+    <div id="pole-imie" hidden>
+      <label for="imie">IMIĘ</label>
+      <input id="imie" type="text" autocomplete="given-name" maxlength="30">
+    </div>
+    <label for="email">E-MAIL</label>
+    <input id="email" type="email" autocomplete="email" required>
+    <label for="haslo">HASŁO</label>
+    <input id="haslo" type="password" autocomplete="current-password" required minlength="8">
+    <p class="komunikat" id="komunikat" role="alert"></p>
+    <button class="przycisk" id="wyslij" type="submit">Zaloguj się</button>
+    <p style="margin:16px 0 0; text-align:center; font-size:14px; color:var(--cichy)">
+      <span id="pytanie">Nie masz konta?</span> <button class="link" id="zmien-tryb" type="button">Utwórz konto</button>
+    </p>
+    <p style="margin:10px 0 0; text-align:center"><button class="link" id="zamknij" type="button" style="color:var(--cichy)">Zamknij</button></p>
+  </form>
+</dialog>
+
+<script>
+(function () {
+  var stacje = [], konto = null, grana = null, filtr = 'wszystkie';
+  var dzwiek = document.getElementById('dzwiek');
+  var lista = document.getElementById('lista');
+
+  function pamiec(nazwa, wartosc) {
+    try {
+      if (wartosc === undefined) return localStorage.getItem(nazwa);
+      if (wartosc === null) localStorage.removeItem(nazwa); else localStorage.setItem(nazwa, wartosc);
+    } catch (e) { return null; }
+  }
+  function klucz() { return pamiec('nux7-klucz'); }
+  function ulubione() {
+    if (konto) return konto.ulubione || [];
+    try { return JSON.parse(pamiec('nux7-ulubione') || '[]'); } catch (e) { return []; }
+  }
+
+  function api(sciezka, opcje) {
+    opcje = opcje || {};
+    opcje.headers = Object.assign({ 'Content-Type': 'application/json' }, opcje.headers || {});
+    if (klucz()) opcje.headers.Authorization = 'Bearer ' + klucz();
+    return fetch('/api/' + sciezka, opcje).then(function (o) {
+      return o.json().catch(function () { return {}; }).then(function (d) {
+        if (!o.ok) throw new Error(d.blad || 'Nie udało się połączyć z serwerem.');
+        return d;
+      });
+    });
+  }
+
+  function skrot(nazwa) {
+    return nazwa.replace(/^(Radio|RMF|ESKA|Antyradio)\s+/i, '').slice(0, 4).toUpperCase() || nazwa.slice(0, 3).toUpperCase();
+  }
+  function logo(element, stacja) {
+    element.textContent = '';
+    if (stacja.logo) {
+      var obraz = document.createElement('img');
+      obraz.alt = '';
+      obraz.loading = 'lazy';
+      obraz.src = stacja.logo;
+      obraz.onerror = function () { element.textContent = skrot(stacja.nazwa); };
+      element.appendChild(obraz);
+    } else {
+      element.textContent = skrot(stacja.nazwa);
+    }
+  }
+
+  function pokaz() {
+    var fraza = document.getElementById('szukaj').value.trim().toLowerCase();
+    var moje = ulubione();
+    var widoczne = stacje.filter(function (s) {
+      if (filtr === 'ulubione' && moje.indexOf(s.id) < 0) return false;
+      if (filtr === 'bezgadania' && !s.bezGadania) return false;
+      if (filtr === 'polski' && s.jezyk !== 'polski') return false;
+      if (filtr === 'angielski' && s.jezyk !== 'angielski') return false;
+      return !fraza || (s.nazwa + ' ' + s.grupa + ' ' + s.opis).toLowerCase().indexOf(fraza) >= 0;
+    });
+    lista.textContent = '';
+    if (!widoczne.length) {
+      var pusto = document.createElement('p');
+      pusto.className = 'pusto';
+      pusto.textContent = stacje.length ? 'Nie ma stacji pasujących do wyboru.' : 'Wczytuję listę stacji…';
+      lista.appendChild(pusto);
+      return;
+    }
+    var grupy = {};
+    widoczne.forEach(function (s) { (grupy[s.grupa] = grupy[s.grupa] || []).push(s); });
+    Object.keys(grupy).forEach(function (nazwaGrupy) {
+      var tytul = document.createElement('h2');
+      tytul.textContent = nazwaGrupy.toUpperCase();
+      lista.appendChild(tytul);
+      var siatka = document.createElement('div');
+      siatka.className = 'siatka';
+      grupy[nazwaGrupy].forEach(function (s) {
+        var gra = grana && grana.id === s.id;
+        var wiersz = document.createElement('div');
+        wiersz.className = 'stacja' + (gra ? ' gra' : '');
+
+        var wlacz = document.createElement('button');
+        wlacz.type = 'button';
+        wlacz.className = 'wlacz';
+        var znak = document.createElement('span');
+        znak.className = 'logo';
+        logo(znak, s);
+        var nazwy = document.createElement('span');
+        nazwy.className = 'nazwy';
+        var nazwa = document.createElement('b');
+        nazwa.textContent = s.nazwa;
+        var opis = document.createElement('span');
+        opis.textContent = gra ? 'Gra teraz' : s.opis;
+        nazwy.appendChild(nazwa); nazwy.appendChild(opis);
+        wlacz.appendChild(znak); wlacz.appendChild(nazwy);
+        wlacz.addEventListener('click', function () { graj(s); });
+
+        var serce = document.createElement('button');
+        serce.type = 'button';
+        serce.className = 'serce';
+        var lubiana = moje.indexOf(s.id) >= 0;
+        serce.setAttribute('aria-pressed', lubiana ? 'true' : 'false');
+        serce.setAttribute('aria-label', (lubiana ? 'Usuń z ulubionych: ' : 'Dodaj do ulubionych: ') + s.nazwa);
+        serce.innerHTML = '<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 20s-7-4.400-7-10a4 4 0 0 1 7-2.500A4 4 0 0 1 19 10c0 5.600-7 10-7 10z"/></svg>';
+        serce.addEventListener('click', function () { przelaczUlubiona(s.id); });
+
+        wiersz.appendChild(wlacz); wiersz.appendChild(serce);
+        siatka.appendChild(wiersz);
+      });
+      lista.appendChild(siatka);
+    });
+  }
+
+  function przelaczUlubiona(id) {
+    var moje = ulubione().slice();
+    var numer = moje.indexOf(id);
+    if (numer >= 0) moje.splice(numer, 1); else moje.push(id);
+    if (konto) {
+      konto.ulubione = moje;
+      api('konto', { method: 'PUT', body: JSON.stringify({ ulubione: moje }) }).catch(function () {});
+    } else {
+      pamiec('nux7-ulubione', JSON.stringify(moje));
+    }
+    pokaz();
+  }
+
+  function stanPrzycisku() {
+    var gra = !dzwiek.paused;
+    document.getElementById('ikona-pauza').hidden = !gra;
+    document.getElementById('ikona-graj').hidden = gra;
+    document.getElementById('graj-pauza').setAttribute('aria-label', gra ? 'Pauza' : 'Graj');
+    document.getElementById('gra-stan').textContent = gra ? 'Na żywo' : 'Zatrzymane';
+  }
+
+  function graj(stacja) {
+    grana = stacja;
+    document.getElementById('odtwarzacz').hidden = false;
+    document.getElementById('gra-nazwa').textContent = stacja.nazwa;
+    logo(document.getElementById('gra-logo'), stacja);
+    dzwiek.src = stacja.adres;
+    dzwiek.play().catch(function () {
+      document.getElementById('gra-stan').textContent = 'Stacja nie odpowiada';
+    });
+    document.title = stacja.nazwa + ' – Radio NUX7';
+    pokaz();
+  }
+
+  document.getElementById('graj-pauza').addEventListener('click', function () {
+    if (!grana) return;
+    if (dzwiek.paused) { dzwiek.src = grana.adres; dzwiek.play().catch(function () {}); } else { dzwiek.pause(); }
+  });
+  dzwiek.addEventListener('play', stanPrzycisku);
+  dzwiek.addEventListener('pause', stanPrzycisku);
+  dzwiek.addEventListener('error', function () { document.getElementById('gra-stan').textContent = 'Stacja nie odpowiada'; });
+  document.getElementById('glosnosc').addEventListener('input', function (z) { dzwiek.volume = Number(z.target.value); });
+  document.getElementById('szukaj').addEventListener('input', pokaz);
+  document.querySelectorAll('[data-filtr]').forEach(function (p) {
+    p.addEventListener('click', function () {
+      filtr = p.dataset.filtr;
+      document.querySelectorAll('[data-filtr]').forEach(function (x) { x.setAttribute('aria-pressed', x === p ? 'true' : 'false'); });
+      pokaz();
+    });
+  });
+
+  function wczytajStacje() {
+    return api('stacje').then(function (d) {
+      // Przeglądarka nie odtworzy adresów bez szyfrowania na tej stronie.
+      stacje = (d.stacje || []).filter(function (s) { return s.adres.indexOf('https://') === 0; });
+      pokaz();
+    }).catch(function (e) {
+      lista.textContent = '';
+      var p = document.createElement('p');
+      p.className = 'pusto';
+      p.textContent = 'Nie udało się wczytać listy stacji. ' + e.message;
+      lista.appendChild(p);
+    });
+  }
+
+  function pokazKonto() {
+    var kto = document.getElementById('kto');
+    document.getElementById('zaloguj').hidden = !!konto;
+    document.getElementById('wyloguj').hidden = !konto;
+    kto.hidden = !konto;
+    kto.textContent = konto ? (konto.imie || konto.email) : '';
+  }
+
+  // Logowanie i rejestracja
+  var okno = document.getElementById('okno'), rejestracja = false;
+  function ustawTryb() {
+    document.getElementById('okno-tytul').textContent = rejestracja ? 'Utwórz konto' : 'Witaj ponownie';
+    document.getElementById('wyslij').textContent = rejestracja ? 'Utwórz konto' : 'Zaloguj się';
+    document.getElementById('pytanie').textContent = rejestracja ? 'Masz już konto?' : 'Nie masz konta?';
+    document.getElementById('zmien-tryb').textContent = rejestracja ? 'Zaloguj się' : 'Utwórz konto';
+    document.getElementById('pole-imie').hidden = !rejestracja;
+    document.getElementById('haslo').autocomplete = rejestracja ? 'new-password' : 'current-password';
+    document.getElementById('komunikat').textContent = '';
+  }
+  document.getElementById('zaloguj').addEventListener('click', function () { rejestracja = false; ustawTryb(); okno.showModal(); });
+  document.getElementById('zmien-tryb').addEventListener('click', function () { rejestracja = !rejestracja; ustawTryb(); });
+  document.getElementById('zamknij').addEventListener('click', function () { okno.close(); });
+  document.getElementById('formularz').addEventListener('submit', function (z) {
+    z.preventDefault();
+    var dane = { email: document.getElementById('email').value, haslo: document.getElementById('haslo').value };
+    if (rejestracja) dane.imie = document.getElementById('imie').value;
+    api(rejestracja ? 'konto/rejestracja' : 'konto/logowanie', { method: 'POST', body: JSON.stringify(dane) })
+      .then(function (d) {
+        pamiec('nux7-klucz', d.klucz);
+        konto = d.konto;
+        document.getElementById('haslo').value = '';
+        okno.close();
+        pokazKonto();
+        return wczytajStacje();
+      })
+      .catch(function (e) { document.getElementById('komunikat').textContent = e.message; });
+  });
+  document.getElementById('wyloguj').addEventListener('click', function () {
+    api('konto/wyloguj', { method: 'POST' }).catch(function () {});
+    pamiec('nux7-klucz', null);
+    konto = null;
+    pokazKonto();
+    wczytajStacje();
+  });
+
+  pokaz();
+  (klucz() ? api('konto').then(function (d) { konto = d.konto; }).catch(function () { pamiec('nux7-klucz', null); }) : Promise.resolve())
+    .then(function () { pokazKonto(); return wczytajStacje(); });
+})();
+</script>
+</body>
+</html>
