@@ -4,7 +4,7 @@
     <string name="settings_overview">Passe Wiedergabe, Benachrichtigungen, Updates und alle wichtigen Projektinfos übersichtlich an.</string>
     <string name="settings_home_welcome_title">Dein Setup auf einen Blick</string>
     <string name="settings_home_welcome_subtitle">Schneller Zugriff auf Updates, Support und die wichtigsten App-Bereiche.</string>
-    <string name="settings_home_customize_title">RadioWave anpassen</string>
+    <string name="settings_home_customize_title">Radio NUX7 anpassen</string>
     <string name="settings_home_support_title">Support &amp; Danke</string>
     <string name="settings_home_support_card_title">Supporter &amp; Community</string>
     <string name="settings_home_support_card_subtitle" />
@@ -63,7 +63,7 @@
     <string name="settings_auto_play_title">Autoplay bei Android Auto Verbindung</string>
     <string name="settings_auto_play_subtitle">Startet den zuletzt gehörten Sender automatisch, sobald Android Auto verbunden ist.</string>
     <string name="settings_auto_play_app_start_title">Autoplay beim App-Start</string>
-    <string name="settings_auto_play_app_start_subtitle">Startet den zuletzt gehörten Sender, sobald RadioWave geöffnet wird – praktisch auf Autoradios, die die App mit dem Motor starten.</string>
+    <string name="settings_auto_play_app_start_subtitle">Startet den zuletzt gehörten Sender, sobald Radio NUX7 geöffnet wird – praktisch auf Autoradios, die die App mit dem Motor starten.</string>
     <string name="settings_restore_last_view_title">Letzte Ansicht wiederherstellen</string>
     <string name="settings_restore_last_view_subtitle">Öffnet beim Start den zuletzt genutzten Tab und den Player, falls er offen war.</string>
     <string name="settings_notification_play_pause_title">Wiedergabe/Pause-Schaltfläche</string>
@@ -92,7 +92,7 @@
     <string name="settings_online_cover_lookup_title">Song-Cover online suchen</string>
     <string name="settings_online_cover_lookup_subtitle">Sendet Interpret und Titel des laufenden Songs an die iTunes Search API. Wenn deaktiviert, wird das Senderlogo angezeigt.</string>
     <string name="settings_battery_optimization_title">Akku-Optimierung</string>
-    <string name="settings_battery_optimization_disabled">Für RadioWave deaktiviert. Die Hintergrundwiedergabe ist besser abgesichert.</string>
+    <string name="settings_battery_optimization_disabled">Für Radio NUX7 deaktiviert. Die Hintergrundwiedergabe ist besser abgesichert.</string>
     <string name="settings_battery_optimization_enabled">Aktiv. Kann auf manchen Geräten die Audiowiedergabe im Hintergrund aggressiv beenden.</string>
     <string name="settings_battery_check_again">Erneut prüfen</string>
     <string name="settings_battery_set_exception">Ausnahme setzen</string>
@@ -109,8 +109,8 @@
     <string name="settings_export_favorites_success">Favoriten exportiert</string>
     <string name="settings_export_favorites_failed">Favoriten konnten nicht exportiert werden</string>
     <string name="settings_import_favorites_read_failed">Die ausgewählte Datei konnte nicht gelesen werden (max. 2 MB)</string>
-    <string name="settings_import_favorites_parse_error">Diese Datei ist kein gültiges RadioWave-Favoriten-Backup</string>
-    <string name="settings_import_favorites_unsupported_version">Dieses Backup wurde mit einer neueren RadioWave-Version erstellt und kann noch nicht importiert werden</string>
+    <string name="settings_import_favorites_parse_error">Diese Datei ist kein gültiges Radio NUX7-Favoriten-Backup</string>
+    <string name="settings_import_favorites_unsupported_version">Dieses Backup wurde mit einer neueren Radio NUX7-Version erstellt und kann noch nicht importiert werden</string>
     <string name="settings_import_favorites_result">%1$d Favoriten importiert (%2$d bereits vorhanden, %3$d ungültig oder nicht erlaubt)</string>
     <string name="settings_import_playlist_title">Sender aus Playlist importieren</string>
     <string name="settings_import_playlist_subtitle">Mehrere eigene Sender aus einer M3U/M3U8- oder PLS-Datei hinzufügen.</string> <!-- REA 95fcb33: Text geaendert -->
@@ -178,7 +178,7 @@
     <string name="settings_display_category">Darstellung &amp; Bedienung</string>
     <string name="settings_eq_bluetooth_note">Auf Bluetooth-Kopfhörern bleibt der Equalizer aus Kompatibilitätsgründen aus. Das Preset greift wieder bei Lautsprecher, Kabel oder USB.</string>
     <string name="settings_history_explanation">Deinen Hörverlauf löschen? Deine Favoriten bleiben erhalten. Das lässt sich nicht rückgängig machen.</string>
-    <string name="settings_info_category">Über RadioWave &amp; Support</string>
+    <string name="settings_info_category">Über Radio NUX7 &amp; Support</string>
     <string name="settings_mobile_allowed">Mobile Daten erlaubt</string>
     <string name="settings_mobile_quality_title">Auto-Qualität: Mobilfunk / getaktet</string>
     <string name="settings_navigation_help">Während Ansagen stumm statt leiser. Der Sender läuft weiter und ist danach sofort wieder live.</string>

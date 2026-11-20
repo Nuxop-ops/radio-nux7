@@ -66,7 +66,7 @@ fun RadioWaveScreenHeader(
                 painter = painterResource(
                     if (useLightWordmark) R.drawable.radiowave_wordmark_light_v2 else R.drawable.radiowave_wordmark_v2,
                 ),
-                contentDescription = "RadioWave",
+                contentDescription = "Radio NUX7",
                 modifier = Modifier
                     .widthIn(max = 240.dp)
                     .fillMaxWidth()

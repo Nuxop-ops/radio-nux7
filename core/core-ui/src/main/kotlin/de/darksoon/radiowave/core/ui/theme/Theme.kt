@@ -19,13 +19,13 @@ import androidx.core.view.WindowCompat
 
 // REA 95fcb33: beide Schemata aus p000/u25.java <clinit> rekonstruiert (Parameterreihenfolge
 // über die bekannte Release-Klasse p000/n65.java ↔ 1.0.19 Theme.kt verifiziert). Sicherheit: hoch.
-// Die Literale (0xFF3E285F usw.) stehen nicht in jb0 (Color.kt), sondern direkt in u25 → im
+// Die Literale (0xFF3B3220 usw.) stehen nicht in jb0 (Color.kt), sondern direkt in u25 → im
 // Original vermutlich inline im Aufruf. REA-UNSICHER: ob sie als private vals in Theme.kt standen.
 private val PremiumDarkColorScheme = darkColorScheme(
     primary = RadioAccent,
     onPrimary = Color.Black,
-    primaryContainer = Color(0xFF3E285F), // 1.0.19: RadioAccentLight
-    onPrimaryContainer = Color(0xFFECDDFF), // 1.0.19: Color.Black
+    primaryContainer = Color(0xFF3B3220), // 1.0.19: RadioAccentLight
+    onPrimaryContainer = Color(0xFFF1DBA8), // 1.0.19: Color.Black
     secondary = MintAccent,
     onSecondary = Color.Black,
     secondaryContainer = DarkSurfaceVariant, // 1.0.19: MintLight
@@ -45,15 +45,15 @@ private val PremiumDarkColorScheme = darkColorScheme(
 // Hellmodus). Neu, weil Hell/System jetzt in den Einstellungen wählbar ist
 // (settings_theme_light / settings_theme_system statt settings_theme_dark_only).
 private val LightColorScheme = lightColorScheme(
-    primary = Color(0xFF6A3FD6),
+    primary = Color(0xFF7A5A14),
     onPrimary = Color.White,
-    primaryContainer = Color(0xFFE9DDFF),
-    onPrimaryContainer = Color(0xFF2A1B4D),
-    secondary = Color(0xFF5B4B8A),
+    primaryContainer = Color(0xFFF3E6C4),
+    onPrimaryContainer = Color(0xFF2A200A),
+    secondary = Color(0xFF6B5A3A),
     onSecondary = Color.White,
-    secondaryContainer = Color(0xFFEDE7F6),
-    onSecondaryContainer = Color(0xFF1F1A2B), // Wert = LightOnSurface, aber als Literal in u25
-    tertiary = Color(0xFF7C4DFF), // Wert = RadioAccentDeep, aber als Literal in u25
+    secondaryContainer = Color(0xFFF1EADB),
+    onSecondaryContainer = Color(0xFF1C1A16), // Wert = LightOnSurface, aber als Literal in u25
+    tertiary = Color(0xFFC9A45C), // Wert = RadioAccentDeep, aber als Literal in u25
     background = LightBackground,
     onBackground = LightOnSurface,
     surface = LightSurface,

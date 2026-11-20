@@ -392,7 +392,7 @@ private fun HomeHeader() {
             painter = painterResource(
                 if (useLightWordmark) CoreUiR.drawable.radiowave_wordmark_light_v2 else CoreUiR.drawable.radiowave_wordmark_v2,
             ),
-            contentDescription = "RadioWave",
+            contentDescription = "Radio NUX7",
             modifier = Modifier
                 .weight(1f)
                 .height(56.dp),

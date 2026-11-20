@@ -9,17 +9,17 @@
     <string name="toast_favorite_added">Added to favorites</string>
     <string name="toast_favorite_removed">Removed from favorites</string>
     <string name="update_dialog_release_notes_fallback">No release notes available.</string>
-    <string name="first_run_title">Welcome to RadioWave</string>
+    <string name="first_run_title">Welcome to Radio NUX7</string>
     <string name="first_run_body">Quick setup notes:\n- Android Auto can prefer efficient streams; you can change this in settings.\n- Battery optimization should be disabled for the app.\n- Release notes and “What’s new” are available in settings.</string>
     <string name="first_run_confirm">Understood</string>
     <string name="onboarding_step_welcome_title">Ad-free radio, built for daily use</string>
-    <string name="onboarding_step_welcome_body">RadioWave gives you fast internet radio without ads, accounts, or hidden tracking.</string>
+    <string name="onboarding_step_welcome_body">Radio NUX7 gives you fast internet radio without ads, accounts, or hidden tracking.</string>
     <string name="onboarding_step_search_title">Find stations quickly</string>
     <string name="onboarding_step_search_body">Use Search to browse stations, filter by country or genre, and save your favorites for later.</string>
     <string name="onboarding_step_player_title">Playback works beyond the app</string>
     <string name="onboarding_step_player_body">Use the mini player, fullscreen player, notification controls, and lockscreen controls to keep listening smoothly.</string>
     <string name="onboarding_step_auto_title">Android Auto stays under your control</string>
-    <string name="onboarding_step_auto_body">RadioWave supports Android Auto, previous/next station navigation, and an optional efficient in-car quality limit in settings.</string>
+    <string name="onboarding_step_auto_body">Radio NUX7 supports Android Auto, previous/next station navigation, and an optional efficient in-car quality limit in settings.</string>
     <string name="onboarding_step_updates_title">Updates and release notes are built in</string>
     <string name="onboarding_step_updates_body">You can open release notes, view “What’s new”, and restart this introduction anytime from settings.</string>
     <string name="onboarding_progress">Step %1$d of %2$d</string>
@@ -42,7 +42,7 @@
     <string name="shortcut_player_unavailable">No active playback right now</string>
     <string name="cast_load_failed">The Cast device couldn\'t play this station. Playing on this phone instead — start the station again to retry.</string>
     <string name="onboarding_step_mirror_title">Faster search, even offline</string>
-    <string name="onboarding_step_mirror_body">RadioWave can store the full station directory (~15 MB, updated weekly over Wi-Fi) on your device. Search becomes instant and typo-tolerant — and keeps working when the directory server is down. You can change this anytime in Settings.</string>
+    <string name="onboarding_step_mirror_body">Radio NUX7 can store the full station directory (~15 MB, updated weekly over Wi-Fi) on your device. Search becomes instant and typo-tolerant — and keeps working when the directory server is down. You can change this anytime in Settings.</string>
     <string name="onboarding_mirror_opt_in_label">Store directory locally</string>
 
     <!-- REA 95fcb33: neu im Handy-Build (aus resources.arsc rekonstruiert) -->

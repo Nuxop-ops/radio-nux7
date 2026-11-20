@@ -4,7 +4,7 @@
     <string name="settings_overview">Customize playback, notifications, updates, and important project info.</string>
     <string name="settings_home_welcome_title">Your setup, at a glance</string>
     <string name="settings_home_welcome_subtitle">Quick access to updates, support, and the most important app controls.</string>
-    <string name="settings_home_customize_title">Customize RadioWave</string>
+    <string name="settings_home_customize_title">Customize Radio NUX7</string>
     <string name="settings_home_support_title">Support &amp; thanks</string>
     <string name="settings_home_support_card_title">Supporters &amp; community</string>
     <string name="settings_home_support_card_subtitle" />
@@ -63,7 +63,7 @@
     <string name="settings_auto_play_title">Autoplay on Android Auto connect</string>
     <string name="settings_auto_play_subtitle">Starts the last station automatically when Android Auto connects.</string>
     <string name="settings_auto_play_app_start_title">Auto-play when the app opens</string>
-    <string name="settings_auto_play_app_start_subtitle">Starts the last station as soon as RadioWave is opened – handy on car head units that launch the app with the engine.</string>
+    <string name="settings_auto_play_app_start_subtitle">Starts the last station as soon as Radio NUX7 is opened – handy on car head units that launch the app with the engine.</string>
     <string name="settings_restore_last_view_title">Reopen the last view</string>
     <string name="settings_restore_last_view_subtitle">On start, returns to the last tab and reopens the player if it was open.</string>
     <string name="settings_notification_play_pause_title">Play/pause button</string>
@@ -92,7 +92,7 @@
     <string name="settings_online_cover_lookup_title">Look up song covers online</string>
     <string name="settings_online_cover_lookup_subtitle">Sends artist and title of the current song to the iTunes Search API. If disabled, the station logo is shown.</string>
     <string name="settings_battery_optimization_title">Battery optimization</string>
-    <string name="settings_battery_optimization_disabled">Disabled for RadioWave. Background playback is better protected.</string>
+    <string name="settings_battery_optimization_disabled">Disabled for Radio NUX7. Background playback is better protected.</string>
     <string name="settings_battery_optimization_enabled">Enabled. Can aggressively stop background audio on some devices.</string>
     <string name="settings_battery_check_again">Check again</string>
     <string name="settings_battery_set_exception">Set exception</string>
@@ -109,8 +109,8 @@
     <string name="settings_export_favorites_success">Favorites exported</string>
     <string name="settings_export_favorites_failed">Could not export favorites</string>
     <string name="settings_import_favorites_read_failed">Could not read the selected file (max. 2 MB)</string>
-    <string name="settings_import_favorites_parse_error">This file isn\'t a valid RadioWave favorites backup</string>
-    <string name="settings_import_favorites_unsupported_version">This backup was created with a newer version of RadioWave and can\'t be imported yet</string>
+    <string name="settings_import_favorites_parse_error">This file isn\'t a valid Radio NUX7 favorites backup</string>
+    <string name="settings_import_favorites_unsupported_version">This backup was created with a newer version of Radio NUX7 and can\'t be imported yet</string>
     <string name="settings_import_favorites_result">Imported %1$d favorites (%2$d already existed, %3$d invalid or not allowed)</string>
     <string name="settings_import_playlist_title">Import stations from playlist</string>
     <string name="settings_import_playlist_subtitle">Bulk-add custom stations from an M3U/M3U8 or PLS playlist file.</string> <!-- REA 95fcb33: nur values-de geaendert -->

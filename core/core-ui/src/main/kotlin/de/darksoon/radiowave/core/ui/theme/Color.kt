@@ -10,36 +10,36 @@ import androidx.compose.ui.graphics.Color
 // sinngemäß vergeben (R8 hat die Originalnamen entfernt).
 
 // Dark purple / white brand palette
-val DarkBackground = Color(0xFF14111D)
-val DarkSurface = Color(0xFF1C1730)
-val DarkSurfaceVariant = Color(0xFF27203D)
-val DarkCardBackground = Color(0xFF221B35)
+val DarkBackground = Color(0xFF0B0A09)
+val DarkSurface = Color(0xFF141310)
+val DarkSurfaceVariant = Color(0xFF1E1C18)
+val DarkCardBackground = Color(0xFF191714)
 
 // Purple / soft-white accent colors
-val RadioAccent = Color(0xFFB388FF)
-val RadioAccentLight = Color(0xFFD6BDFF)
+val RadioAccent = Color(0xFFE3C27E)
+val RadioAccentLight = Color(0xFFF1DBA8)
 
 // REA-UNSICHER: Name geraten. Neu in 95fcb33 (jb0.f9681f), steht zwischen RadioAccentLight
-// und MintAccent. Wird als zweite Farbe eines Verlaufs RadioAccentLight → 0xFF7C4DFF
+// und MintAccent. Wird als zweite Farbe eines Verlaufs RadioAccentLight → 0xFFC9A45C
 // (Kreis 84.dp, p000/x91.java:201) und als tertiary im Light-Scheme genutzt.
-val RadioAccentDeep = Color(0xFF7C4DFF)
+val RadioAccentDeep = Color(0xFFC9A45C)
 
-val MintAccent = Color(0xFFF3EEFF)
+val MintAccent = Color(0xFFF5F2EC)
 val MintLight = Color(0xFFFFFFFF)
 
 // Additional UI Colors
-val DarkOnSurface = Color(0xFFF6F3FF)
-val DarkOnSurfaceVariant = Color(0xFFD0C9E3)
+val DarkOnSurface = Color(0xFFF5F2EC)
+val DarkOnSurfaceVariant = Color(0xFFCFCAC0)
 val DarkOverlay = Color(0x99000000)
-val DarkBorder = Color(0xFF4B4462)
+val DarkBorder = Color(0xFF3A342A)
 
-val LightBackground = Color(0xFFFCFAFF)
-val LightSurface = Color(0xFFF5F1FB)
-val LightSurfaceVariant = Color(0xFFEEE8F8)
+val LightBackground = Color(0xFFFBFAF7)
+val LightSurface = Color(0xFFF4F1EA)
+val LightSurfaceVariant = Color(0xFFECE7DC)
 val LightCardBackground = Color(0xFFFFFFFF)
-val LightOnSurface = Color(0xFF1F1A2B)
-val LightOnSurfaceVariant = Color(0xFF665F78)
-val LightBorder = Color(0xFFD9D0EA)
+val LightOnSurface = Color(0xFF1C1A16)
+val LightOnSurfaceVariant = Color(0xFF6A655B)
+val LightBorder = Color(0xFFDAD3C4)
 
 // REA 95fcb33: neue Status-/Signalfarben. In 1.0.19 standen 0xFFFF8A8A und 0xFFFFC266 noch
 // als Literale in PlayerScreen.kt (statusColor()); im Handy-Build liegen sie als Felder in
@@ -66,4 +66,4 @@ val DangerRed = Color(0xFFFF5A6E)
  * bekommen dieselbe Liste – die individuellen Verläufe aus BrowseScreen.kt (1.0.19) sind weg.
  * REA-UNSICHER: Name geraten.
  */
-val GenreGradient = listOf(Color(0xFF6C4BD6), Color(0xFF3A2A6B))
+val GenreGradient = listOf(Color(0xFF5A4A2A), Color(0xFF26211A))
