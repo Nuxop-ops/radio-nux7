@@ -113,19 +113,55 @@ function pobierz(adres, limitCzasu = 10000) {
 
 const doPosrednika = () => (KLUCZ_POSREDNIKA ? '?k=' + encodeURIComponent(KLUCZ_POSREDNIKA) : '');
 
-async function odswiezAdresyRmf() {
-  if (BEZ_SIECI) return;
-  let znalezione = 0;
-  for (const stacja of wszystkieStacje.filter(s => s.rmfId)) {
-    try {
-      const tresc = await pobierz(RMF_ADRESY.replace('{id}', stacja.rmfId));
-      const adresy = (tresc.match(/https?:\/\/[^\s<>"']+/g) || []).filter(a => !/\.(xml|txt|png|jpg)(\?|$)/i.test(a));
-      const bezpieczny = adresy.find(a => a.startsWith('https://')) || adresy[0];
-      if (bezpieczny) { adresyRmf[stacja.id] = bezpieczny; znalezione++; }
-    } catch (e) { /* zostaje poprzedni adres, jeśli był */ }
+// Sprawdza, czy pod adresem faktycznie nadaje stacja (odpowiedź 200 z dźwiękiem).
+function adresGra(adres, limitCzasu = 5000) {
+  return new Promise(resolve => {
+    const lib = adres.startsWith('https') ? https : http;
+    let koniec = false;
+    const wynik = ok => { if (!koniec) { koniec = true; resolve(ok); } };
+    const zadanie = lib.get(adres, { headers: { 'User-Agent': 'RadioNUX7/1.0' }, timeout: limitCzasu }, odp => {
+      const typ = String(odp.headers['content-type'] || '');
+      wynik(odp.statusCode === 200 && /audio|mpeg|aac|ogg|octet-stream/i.test(typ));
+      zadanie.destroy();
+    });
+    zadanie.on('timeout', () => { zadanie.destroy(); wynik(false); });
+    zadanie.on('error', () => wynik(false));
+  });
+}
+
+// RMF podaje dla każdej stacji kilka adresów na różnych serwerach i nie wszystkie
+// działają. Wybieramy pierwszy, który naprawdę nadaje.
+async function znajdzAdresRmf(stacja) {
+  const tresc = await pobierz(RMF_ADRESY.replace('{id}', stacja.rmfId));
+  const wszystkie = (tresc.match(/https?:\/\/[^\s<>"']+/g) || []).filter(a => !/\.(xml|txt|png|jpg)(\?|$)/i.test(a));
+  const kandydaci = [...new Set(wszystkie)].sort((x, y) => Number(y.startsWith('https://')) - Number(x.startsWith('https://')));
+  for (const adres of kandydaci.slice(0, 8)) {
+    if (await adresGra(adres)) return adres;
   }
-  fs.writeFileSync(PLIK_ADRESOW, JSON.stringify(adresyRmf));
-  log('Adresy RMF: odświeżono', znalezione, 'z', wszystkieStacje.filter(s => s.rmfId).length);
+  return null;
+}
+
+let odswiezanieTrwa = false;
+async function odswiezAdresyRmf() {
+  if (BEZ_SIECI || odswiezanieTrwa) return;
+  odswiezanieTrwa = true;
+  try {
+    const kolejka = wszystkieStacje.filter(s => s.rmfId);
+    let dzialajace = 0;
+    const pracownik = async () => {
+      for (let stacja = kolejka.shift(); stacja; stacja = kolejka.shift()) {
+        try {
+          const adres = await znajdzAdresRmf(stacja);
+          if (adres) { adresyRmf[stacja.id] = adres; dzialajace++; } else { delete adresyRmf[stacja.id]; }
+        } catch (e) { /* strona RMF nie odpowiedziała: zostaje poprzedni adres, jeśli był */ }
+      }
+    };
+    await Promise.all([1, 2, 3, 4, 5, 6].map(pracownik));
+    fs.writeFileSync(PLIK_ADRESOW, JSON.stringify(adresyRmf));
+    log('Adresy RMF: działa', dzialajace, 'z', wszystkieStacje.filter(s => s.rmfId).length);
+  } finally {
+    odswiezanieTrwa = false;
+  }
 }
 
 async function odswiezNazwyZPosrednika() {

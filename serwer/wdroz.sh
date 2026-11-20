@@ -39,10 +39,23 @@ for PLIK in index.html logo.png ikona.png wersja.json; do
 done
 # Poniższe pliki są tylko w nowszych wersjach; przy cofaniu do starszej są usuwane.
 for PLIK in www/radio-nux7.apk www/sluchaj.html www/admin.html nginx.conf api/server.js api/stacje.js; do
-  if ! curl -fsSL "$ZRODLO/$PLIK" -o "$KATALOG/$PLIK"; then
+  NOWY_PLIK="$(mktemp)"
+  KOD="$(curl -sL --retry 3 --retry-delay 2 -o "$NOWY_PLIK" -w '%{http_code}' "$ZRODLO/$PLIK" || true)"
+  if [ "$KOD" = "200" ] && [ -s "$NOWY_PLIK" ]; then
+    cat "$NOWY_PLIK" > "$KATALOG/$PLIK"
+  elif [ "$KOD" = "404" ]; then
     rm -f "$KATALOG/$PLIK"
+  else
+    echo "Uwaga: nie udało się pobrać $PLIK (odpowiedź $KOD). Zostaje poprzednia wersja tego pliku."
   fi
+  rm -f "$NOWY_PLIK"
 done
+chmod 644 "$KATALOG"/www/* 2>/dev/null || true
+if [ -f "$KATALOG/www/radio-nux7.apk" ]; then
+  echo "Plik aplikacji: $(stat -c %s "$KATALOG/www/radio-nux7.apk") bajtów"
+else
+  echo "Uwaga: na serwerze nie ma pliku aplikacji radio-nux7.apk."
+fi
 JEST_API="nie"
 if [ -f "$KATALOG/api/server.js" ] && grep -q 'nux7-api' "$KATALOG/docker-compose.yml"; then
   JEST_API="tak"
