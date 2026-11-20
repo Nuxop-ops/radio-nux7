@@ -100,7 +100,28 @@ echo "5/6 Podłączam adresy /api do serwera kont"
 if [ "$JEST_API" != "tak" ]; then
   echo "Ta wersja nie ma serwera kont, pomijam."
 elif sed -n '/^nux7\.com {/,/^}/p' "$CADDYFILE" | grep -q "reverse_proxy 127.0.0.1:$PORT_API"; then
-  echo "Adresy /api są już podłączone."
+  if grep -q "reverse_proxy 127.0.0.1:$PORT_API {" "$CADDYFILE"; then
+    echo "Adresy /api są już podłączone."
+  else
+    # Starszy wpis bez natychmiastowego przesyłania dźwięku: uzupełniam go.
+    KOPIA_PRZESYL="/opt/kopie/Caddyfile.przed-nux7-przesyl"
+    cp "$CADDYFILE" "$KOPIA_PRZESYL"
+    NOWY="$(mktemp)"
+    awk -v port="$PORT_API" '
+      $0 ~ "^[ \t]*reverse_proxy 127.0.0.1:" port "$" {
+        print "\t\treverse_proxy 127.0.0.1:" port " {"
+        print "\t\t\tflush_interval -1"
+        print "\t\t}"
+        next
+      }
+      { print }
+    ' "$CADDYFILE" > "$NOWY"
+    cat "$NOWY" > "$CADDYFILE"
+    rm -f "$NOWY"
+    przeladuj_caddy "$KOPIA_PRZESYL"
+    rm -f "$KOPIA_PRZESYL"
+    echo "Uzupełniono wpis /api o natychmiastowe przesyłanie dźwięku."
+  fi
 else
   mkdir -p /opt/kopie
   cp "$CADDYFILE" "$KOPIA_API"
@@ -110,7 +131,9 @@ else
     /^nux7\.com \{/ {
       print "\t@nux7api path /api/*"
       print "\thandle @nux7api {"
-      print "\t\treverse_proxy 127.0.0.1:" port
+      print "\t\treverse_proxy 127.0.0.1:" port " {"
+      print "\t\t\tflush_interval -1"
+      print "\t\t}"
       print "\t}"
     }
   ' "$CADDYFILE" > "$NOWY"

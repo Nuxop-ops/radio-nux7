@@ -18,6 +18,10 @@ services:
     user: "1000:1000"
     working_dir: /app
     command: ["node", "server.js"]
+    # Klucz pośrednika stacji jest brany z jego własnego pliku ustawień.
+    env_file:
+      - path: /opt/radio-pl/.env
+        required: false
     environment:
       PORT: "8032"
       DANE: /dane

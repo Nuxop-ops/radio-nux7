@@ -43,7 +43,7 @@ h2 { margin: 34px 0 12px; font-size: 12px; font-weight: 600; letter-spacing: 0.2
 .stacja.gra { border-color: var(--akcent); }
 .stacja .wlacz { flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; padding: 10px 6px 10px 10px; border: 0; background: transparent; color: var(--tekst); text-align: left; cursor: pointer; border-radius: 18px; }
 .logo { flex: none; width: 46px; height: 46px; border-radius: 50%; background: #000 center/cover no-repeat; border: 1px solid var(--ramka); display: grid; place-items: center; font-size: 10px; font-weight: 600; letter-spacing: 0.04em; overflow: hidden; }
-.logo img { width: 100%; height: 100%; object-fit: contain; background: #fff; }
+.logo img { width: 100%; height: 100%; object-fit: contain; background: #fff; opacity: 0; transition: opacity 0.25s ease; }
 .nazwy { min-width: 0; }
 .nazwy b { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; font-family: var(--szeryf); font-weight: 600; font-size: 19px; line-height: 1.15; overflow: hidden; }
 .nazwy span { display: block; font-size: 12px; color: var(--cichy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -138,6 +138,7 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 52px; }
 <script>
 (function () {
   var stacje = [], konto = null, grana = null, filtr = 'wszystkie';
+  var wiersze = {}; // id stacji -> elementy jej wiersza na liście
   var dzwiek = document.getElementById('dzwiek');
   var lista = document.getElementById('lista');
 
@@ -174,6 +175,7 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 52px; }
       var obraz = document.createElement('img');
       obraz.alt = '';
       obraz.loading = 'lazy';
+      obraz.onload = function () { obraz.style.opacity = '1'; };
       obraz.src = stacja.logo;
       obraz.onerror = function () { element.textContent = skrot(stacja.nazwa); };
       element.appendChild(obraz);
@@ -193,6 +195,7 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 52px; }
       return !fraza || (s.nazwa + ' ' + s.grupa + ' ' + s.opis).toLowerCase().indexOf(fraza) >= 0;
     });
     lista.textContent = '';
+    wiersze = {};
     if (!widoczne.length) {
       var pusto = document.createElement('p');
       pusto.className = 'pusto';
@@ -239,9 +242,20 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 52px; }
         serce.addEventListener('click', function () { przelaczUlubiona(s.id); });
 
         wiersz.appendChild(wlacz); wiersz.appendChild(serce);
+        wiersze[s.id] = { wiersz: wiersz, opis: opis, serce: serce, stacja: s };
         siatka.appendChild(wiersz);
       });
       lista.appendChild(siatka);
+    });
+  }
+
+  // Zaznacza graną stację bez rysowania całej listy od nowa.
+  function oznaczGrana() {
+    Object.keys(wiersze).forEach(function (id) {
+      var w = wiersze[id];
+      var gra = !!grana && grana.id === id;
+      w.wiersz.classList.toggle('gra', gra);
+      w.opis.textContent = gra ? 'Gra teraz' : w.stacja.opis;
     });
   }
 
@@ -255,7 +269,11 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 52px; }
     } else {
       pamiec('nux7-ulubione', JSON.stringify(moje));
     }
-    pokaz();
+    var w = wiersze[id];
+    if (filtr === 'ulubione' || !w) { pokaz(); return; }
+    var lubiana = moje.indexOf(id) >= 0;
+    w.serce.setAttribute('aria-pressed', lubiana ? 'true' : 'false');
+    w.serce.setAttribute('aria-label', (lubiana ? 'Usuń z ulubionych: ' : 'Dodaj do ulubionych: ') + w.stacja.nazwa);
   }
 
   function stanPrzycisku() {
@@ -276,7 +294,7 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 52px; }
       document.getElementById('gra-stan').textContent = 'Stacja nie odpowiada';
     });
     document.title = stacja.nazwa + ' – Radio NUX7';
-    pokaz();
+    oznaczGrana();
   }
 
   document.getElementById('graj-pauza').addEventListener('click', function () {

@@ -14,6 +14,8 @@ const PORT = Number(process.env.PORT || 8032);
 const DANE = process.env.DANE || path.join(__dirname, 'dane');
 const ADRES_PUBLICZNY = (process.env.ADRES_PUBLICZNY || 'https://nux7.com').replace(/\/$/, '');
 const POSREDNIK = (process.env.POSREDNIK || 'http://127.0.0.1:8790').replace(/\/$/, '');
+// Klucz pośrednika stacji. Zostaje na serwerze, nikt go nie dostaje w adresie.
+const KLUCZ_POSREDNIKA = process.env.KLUCZ_POSREDNIKA || process.env.TOKEN || '';
 const RMF_ADRESY = process.env.RMF_ADRESY || 'https://www.rmfon.pl/stacje/flash_aac_{id}.xml.txt';
 const BEZ_SIECI = process.env.BEZ_SIECI === '1';
 
@@ -109,6 +111,8 @@ function pobierz(adres, limitCzasu = 10000) {
   });
 }
 
+const doPosrednika = () => (KLUCZ_POSREDNIKA ? '?k=' + encodeURIComponent(KLUCZ_POSREDNIKA) : '');
+
 async function odswiezAdresyRmf() {
   if (BEZ_SIECI) return;
   let znalezione = 0;
@@ -127,7 +131,7 @@ async function odswiezAdresyRmf() {
 async function odswiezNazwyZPosrednika() {
   if (BEZ_SIECI) return;
   try {
-    const lista = JSON.parse(await pobierz(POSREDNIK + '/api/stations', 8000));
+    const lista = JSON.parse(await pobierz(POSREDNIK + '/api/stations' + doPosrednika(), 8000));
     nazwyZPosrednika = Object.fromEntries(lista.map(s => [s.id, s.name]));
     log('Pośrednik stacji podał', lista.length, 'działających stacji');
   } catch (e) {
@@ -164,16 +168,46 @@ function listaStacji(uzytkownik, dlaAdmina = false) {
       continue;
     }
     if (stacja.ukryta || nieDziala || !stacja.nazwa) continue;
-    const adres = przezSerwer ? ADRES_PUBLICZNY + '/stream/' + stacja.id : adresNadawcy;
+    const adres = przezSerwer
+      ? ADRES_PUBLICZNY + '/api/strumien/' + stacja.id + '?s=' + kluczStrumienia(uzytkownik)
+      : adresNadawcy;
     if (!adres) continue;
     wynik.push({
       id: stacja.id, nazwa: stacja.nazwa, grupa: stacja.grupa, opis: opisStacji(stacja),
       jezyk: stacja.jezyk, bezGadania: !!stacja.bezGadania,
-      logo: stacja.bezLogo ? null : ADRES_PUBLICZNY + '/logo/' + stacja.id,
+      logo: stacja.bezLogo ? null : ADRES_PUBLICZNY + '/api/logo/' + stacja.id,
       adres,
     });
   }
   return wynik;
+}
+
+// Osobny klucz użytkownika tylko do słuchania przez serwer. Wyłączenie przełącznika
+// w panelu admina od razu przestaje go honorować.
+function kluczStrumienia(uzytkownik) {
+  if (!uzytkownik.kluczStrumienia) {
+    uzytkownik.kluczStrumienia = crypto.randomBytes(18).toString('base64url');
+    zapiszBaze();
+  }
+  return uzytkownik.kluczStrumienia;
+}
+
+// Przekazanie odpowiedzi pośrednika stacji (logo albo dźwięk) do słuchacza.
+function zPosrednika(req, res, sciezka, naglowkiOdpowiedzi) {
+  const zadanie = http.get(POSREDNIK + sciezka + doPosrednika(), odp => {
+    if (odp.statusCode !== 200) {
+      odp.resume();
+      return blad(res, odp.statusCode === 404 ? 404 : 502, 'Stacja nie odpowiada.');
+    }
+    const naglowki = Object.assign({ 'Content-Type': odp.headers['content-type'] || 'application/octet-stream' }, naglowkiOdpowiedzi);
+    for (const nazwa of ['icy-name', 'icy-br', 'icy-metaint']) {
+      if (odp.headers[nazwa]) naglowki[nazwa] = odp.headers[nazwa];
+    }
+    res.writeHead(200, naglowki);
+    odp.pipe(res);
+  });
+  zadanie.on('error', () => { if (!res.headersSent) blad(res, 502, 'Stacja nie odpowiada.'); else res.destroy(); });
+  res.on('close', () => zadanie.destroy());
 }
 
 // ---------- Odpowiedzi ----------
@@ -219,6 +253,21 @@ async function obsluz(req, res) {
   const metoda = req.method;
 
   if (sciezka === '/api/zdrowie') return json(res, 200, { ok: true });
+
+  const logo = sciezka.match(/^\/api\/logo\/([a-z0-9-]{1,40})$/);
+  if (logo && metoda === 'GET') {
+    const zmiany = baza.stacje[logo[1]] || {};
+    if (zmiany.bezLogo || zmiany.ukryta) return blad(res, 404, 'Brak logo.');
+    return zPosrednika(req, res, '/logo/' + logo[1], { 'Cache-Control': 'public, max-age=604800' });
+  }
+
+  const strumien = sciezka.match(/^\/api\/strumien\/([a-z0-9-]{1,40})$/);
+  if (strumien && metoda === 'GET') {
+    const podany = adres.searchParams.get('s') || '';
+    const sluchacz = podany && baza.uzytkownicy.find(u => u.kluczStrumienia === podany);
+    if (!sluchacz || !sluchacz.przezSerwer) return blad(res, 403, 'Brak dostępu.');
+    return zPosrednika(req, res, '/stream/' + strumien[1], { 'Cache-Control': 'no-store' });
+  }
 
   if (sciezka === '/api/stacje' && metoda === 'GET') {
     return json(res, 200, { stacje: listaStacji(uzytkownikZZapytania(req)) });
