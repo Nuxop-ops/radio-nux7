@@ -246,6 +246,28 @@ function zPosrednika(req, res, sciezka, naglowkiOdpowiedzi) {
   res.on('close', () => zadanie.destroy());
 }
 
+// Przekazanie dźwięku prosto z adresu nadawcy, który przy sprawdzaniu faktycznie grał.
+function zAdresu(req, res, adres, zapasowo, przekierowania = 0) {
+  const lib = adres.startsWith('https') ? https : http;
+  const zadanie = lib.get(adres, { headers: { 'User-Agent': 'RadioNUX7/1.0' }, timeout: 8000 }, odp => {
+    const kod = odp.statusCode;
+    if (kod >= 300 && kod < 400 && odp.headers.location && przekierowania < 3) {
+      odp.resume();
+      return zAdresu(req, res, new URL(odp.headers.location, adres).href, zapasowo, przekierowania + 1);
+    }
+    if (kod !== 200) { odp.resume(); return zapasowo(); }
+    zadanie.setTimeout(0);
+    res.writeHead(200, {
+      'Content-Type': odp.headers['content-type'] || 'audio/aac',
+      'Cache-Control': 'no-store',
+    });
+    odp.pipe(res);
+  });
+  zadanie.on('timeout', () => zadanie.destroy(new Error('brak odpowiedzi')));
+  zadanie.on('error', () => { if (!res.headersSent) zapasowo(); else res.destroy(); });
+  res.on('close', () => zadanie.destroy());
+}
+
 // ---------- Odpowiedzi ----------
 
 function json(res, kod, tresc) {
@@ -302,7 +324,11 @@ async function obsluz(req, res) {
     const podany = adres.searchParams.get('s') || '';
     const sluchacz = podany && baza.uzytkownicy.find(u => u.kluczStrumienia === podany);
     if (!sluchacz || !sluchacz.przezSerwer) return blad(res, 403, 'Brak dostępu.');
-    return zPosrednika(req, res, '/stream/' + strumien[1], { 'Cache-Control': 'no-store' });
+    const przezPosrednika = () => zPosrednika(req, res, '/stream/' + strumien[1], { 'Cache-Control': 'no-store' });
+    // Stacje RMF: pośrednik bierze pierwszy adres z listy RMF, który bywa martwy,
+    // więc podajemy dźwięk z adresu sprawdzonego przez nas.
+    if (adresyRmf[strumien[1]]) return zAdresu(req, res, adresyRmf[strumien[1]], przezPosrednika);
+    return przezPosrednika();
   }
 
   if (sciezka === '/api/stacje' && metoda === 'GET') {
