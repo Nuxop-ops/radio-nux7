@@ -1,0 +1,9 @@
+services:
+  nux7-www:
+    image: nginx:alpine
+    container_name: nux7-www
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8031:80"
+    volumes:
+      - ./www:/usr/share/nginx/html:ro

@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#070707">
+<title>Radio NUX7 – polskie stacje radiowe</title>
+<meta name="description" content="Radio NUX7 – polskie stacje radiowe w aplikacji na Androida. Działa także w Android Auto.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap">
+<style>
+:root {
+  --tlo: #070707;
+  --tekst: #f5f2ec;
+  --tekst-cichy: #d6d2ca;
+  --zloto: #e3c27e;
+  --na-zlocie: #171208;
+  --szklo: rgba(255, 255, 255, 0.08);
+  --szklo-ramka: rgba(255, 255, 255, 0.22);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; }
+body {
+  background: var(--tlo);
+  color: var(--tekst);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+.tlo { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; }
+main {
+  position: relative;
+  z-index: 1;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: max(28px, env(safe-area-inset-top)) 20px 140px 20px;
+}
+.marka { font-size: 12px; font-weight: 600; letter-spacing: 0.32em; color: var(--zloto); }
+h1 {
+  margin: 28px 0 0 0;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-weight: 500;
+  font-size: clamp(40px, 11vw, 60px);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+}
+.wstep { margin: 14px 0 0 0; color: var(--tekst-cichy); max-width: 30em; }
+.szklo {
+  margin-top: 24px;
+  padding: 24px 20px;
+  border-radius: 28px;
+  background: var(--szklo);
+  border: 1px solid var(--szklo-ramka);
+  -webkit-backdrop-filter: blur(22px) saturate(120%);
+  backdrop-filter: blur(22px) saturate(120%);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.45);
+}
+h2 { margin: 0; font-family: "Cormorant Garamond", Georgia, serif; font-weight: 500; font-size: 30px; line-height: 1.1; }
+.etykieta { margin: 0 0 10px 0; font-size: 11px; font-weight: 600; letter-spacing: 0.24em; color: var(--zloto); }
+.szklo p { margin: 10px 0 0 0; color: var(--tekst-cichy); }
+.przycisk {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 56px;
+  margin-top: 18px;
+  padding: 0 24px;
+  border: 0;
+  border-radius: 28px;
+  background: var(--zloto);
+  color: var(--na-zlocie);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+.przycisk[aria-disabled="true"] {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--szklo-ramka);
+  color: var(--tekst-cichy);
+  cursor: default;
+}
+.przycisk:focus-visible, .cichy:focus-visible { outline: 2px solid var(--tekst); outline-offset: 3px; }
+.wersja { margin-top: 10px; font-size: 13px; text-align: center; }
+ol { margin: 14px 0 0 0; padding: 0; list-style: none; counter-reset: krok; }
+ol li {
+  position: relative;
+  padding: 14px 0 14px 52px;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  color: var(--tekst-cichy);
+  counter-increment: krok;
+}
+ol li:first-child { border-top: 0; }
+ol li::before {
+  content: counter(krok);
+  position: absolute;
+  left: 0;
+  top: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--zloto);
+  color: var(--zloto);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+ol li strong { display: block; color: var(--tekst); font-weight: 500; }
+.pasek {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: max(12px, env(safe-area-inset-bottom));
+  z-index: 2;
+  max-width: 536px;
+  margin: 0 auto;
+  padding: 14px 14px 14px 18px;
+  border-radius: 24px;
+  background: rgba(30, 30, 30, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  -webkit-backdrop-filter: blur(22px) saturate(120%);
+  backdrop-filter: blur(22px) saturate(120%);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transform: translateY(160%);
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.pasek.widoczny { transform: translateY(0); }
+.pasek-tekst { flex: 1; min-width: 0; }
+.pasek-tekst strong { display: block; font-weight: 600; }
+.pasek-tekst span { font-size: 13px; color: var(--tekst-cichy); }
+.pasek .przycisk { width: auto; min-height: 48px; margin: 0; padding: 0 20px; border-radius: 24px; }
+.cichy {
+  min-width: 48px;
+  min-height: 48px;
+  border: 0;
+  background: transparent;
+  color: var(--tekst-cichy);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+[hidden] { display: none !important; }
+@media (prefers-reduced-motion: reduce) { .pasek { transition: none; } }
+</style>
+</head>
+<body>
+
+<svg class="tlo" aria-hidden="true" viewBox="0 0 390 844" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="p1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2a2a2a"/><stop offset="1" stop-color="#0e0e0e"/></linearGradient>
+    <linearGradient id="p2" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#232323"/><stop offset="1" stop-color="#0a0a0a"/></linearGradient>
+    <linearGradient id="p3" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#1b1b1b"/><stop offset="1" stop-color="#333333"/></linearGradient>
+    <linearGradient id="blask" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.5" stop-color="#fff" stop-opacity="0.85"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+  </defs>
+  <polygon points="0,0 210,0 150,130 0,190" fill="url(#p1)"/>
+  <polygon points="210,0 390,0 390,150 260,210 150,130" fill="url(#p2)"/>
+  <polygon points="0,190 150,130 260,210 190,370 0,330" fill="url(#p3)"/>
+  <polygon points="260,210 390,150 390,420 300,440 190,370" fill="url(#p1)"/>
+  <polygon points="0,330 190,370 140,560 0,520" fill="url(#p2)"/>
+  <polygon points="190,370 300,440 280,620 140,560" fill="url(#p3)"/>
+  <polygon points="300,440 390,420 390,680 280,620" fill="url(#p2)"/>
+  <polygon points="0,520 140,560 110,760 0,720" fill="url(#p1)"/>
+  <polygon points="140,560 280,620 250,844 90,844 110,760" fill="url(#p2)"/>
+  <polygon points="280,620 390,680 390,844 250,844" fill="url(#p3)"/>
+  <polygon points="0,720 110,760 90,844 0,844" fill="url(#p3)"/>
+  <path fill="none" stroke="#000" stroke-width="5" d="M210 0L150 130L0 190M150 130L260 210L390 150M260 210L190 370L0 330M190 370L300 440L390 420M190 370L140 560L0 520M300 440L280 620L140 560M280 620L390 680M140 560L110 760L0 720M110 760L90 844M280 620L250 844"/>
+  <g fill="none" stroke="url(#blask)" stroke-width="1.5">
+    <path d="M150 130L260 210"/><path d="M190 370L300 440"/><path d="M140 560L280 620"/><path d="M0 330L190 370"/>
+  </g>
+</svg>
+
+<main>
+  <div class="marka">RADIO NUX7</div>
+  <h1>Polskie radio zawsze pod ręką</h1>
+  <p class="wstep">Ulubione polskie stacje w jednej aplikacji na telefon i tablet z Androidem. Działa także w Android Auto.</p>
+
+  <section class="szklo" aria-labelledby="tytul-instalacji">
+    <p class="etykieta">APLIKACJA NA ANDROIDA</p>
+    <h2 id="tytul-instalacji">Zainstaluj Radio NUX7</h2>
+    <p id="opis-instalacji">Sprawdzam, czy aplikacja jest gotowa do pobrania.</p>
+    <a class="przycisk" id="pobierz" href="#" aria-disabled="true">Aplikacja w przygotowaniu</a>
+    <p class="wersja" id="wersja" hidden></p>
+  </section>
+
+  <section class="szklo" aria-labelledby="tytul-krokow">
+    <p class="etykieta">JAK ZAINSTALOWAĆ</p>
+    <h2 id="tytul-krokow">Trzy krótkie kroki</h2>
+    <ol>
+      <li><strong>Pobierz plik aplikacji</strong>Dotknij przycisku „Zainstaluj" na telefonie lub tablecie z Androidem.</li>
+      <li><strong>Zezwól na instalację</strong>Telefon zapyta jeden raz o zgodę na instalowanie aplikacji z przeglądarki. Włącz ją i otwórz pobrany plik.</li>
+      <li><strong>Android Auto</strong>W ustawieniach Android Auto dotknij kilka razy numeru wersji, wejdź w ustawienia dewelopera i włącz „Nieznane źródła". Radio pojawi się na ekranie samochodu.</li>
+    </ol>
+  </section>
+</main>
+
+<div class="pasek" id="pasek" role="region" aria-label="Instalacja aplikacji" hidden>
+  <div class="pasek-tekst">
+    <strong>Zainstaluj Radio NUX7</strong>
+    <span>Aplikacja na ten telefon lub tablet</span>
+  </div>
+  <button class="cichy" id="nie-teraz" type="button">Nie teraz</button>
+  <a class="przycisk" id="pobierz-pasek" href="#">Zainstaluj</a>
+</div>
+
+<script>
+(function () {
+  var android = /Android/i.test(navigator.userAgent);
+  var przycisk = document.getElementById('pobierz');
+  var opis = document.getElementById('opis-instalacji');
+  var wersja = document.getElementById('wersja');
+  var pasek = document.getElementById('pasek');
+  var przyciskPaska = document.getElementById('pobierz-pasek');
+
+  function ukrytyNaDzis() {
+    try { return sessionStorage.getItem('nux7-pasek') === 'nie'; } catch (e) { return false; }
+  }
+
+  function brakAplikacji() {
+    opis.textContent = 'Aplikacja jest jeszcze w przygotowaniu. Gdy będzie gotowa, pobierzesz ją z tej strony.';
+    przycisk.textContent = 'Aplikacja w przygotowaniu';
+    przycisk.setAttribute('aria-disabled', 'true');
+    przycisk.removeAttribute('href');
+  }
+
+  function jestAplikacja(dane) {
+    przycisk.href = dane.apk;
+    przycisk.removeAttribute('aria-disabled');
+    przyciskPaska.href = dane.apk;
+    if (dane.wersja) {
+      wersja.textContent = 'Wersja ' + dane.wersja;
+      wersja.hidden = false;
+    }
+    if (android) {
+      opis.textContent = 'Aplikacja jest gotowa do zainstalowania na tym urządzeniu.';
+      przycisk.textContent = 'Zainstaluj aplikację';
+      if (!ukrytyNaDzis()) {
+        pasek.hidden = false;
+        setTimeout(function () { pasek.classList.add('widoczny'); }, 600);
+      }
+    } else {
+      opis.textContent = 'Otwórz nux7.com na telefonie lub tablecie z Androidem, aby zainstalować aplikację. Tutaj możesz pobrać sam plik.';
+      przycisk.textContent = 'Pobierz plik aplikacji';
+    }
+  }
+
+  document.getElementById('nie-teraz').addEventListener('click', function () {
+    pasek.classList.remove('widoczny');
+    try { sessionStorage.setItem('nux7-pasek', 'nie'); } catch (e) {}
+    setTimeout(function () { pasek.hidden = true; }, 450);
+  });
+
+  przycisk.addEventListener('click', function (zdarzenie) {
+    if (przycisk.getAttribute('aria-disabled') === 'true') { zdarzenie.preventDefault(); }
+  });
+
+  fetch('wersja.json', { cache: 'no-store' })
+    .then(function (odpowiedz) { return odpowiedz.ok ? odpowiedz.json() : {}; })
+    .then(function (dane) { if (dane && dane.apk) { jestAplikacja(dane); } else { brakAplikacji(); } })
+    .catch(brakAplikacji);
+})();
+</script>
+</body>
+</html>
