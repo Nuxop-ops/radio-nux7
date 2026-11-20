@@ -5,11 +5,14 @@
 
 const rmfGlowne = [
   [5, 'RMF FM'], [6, 'RMF MAXX'], [7, 'RMF Classic'], [190, 'Radio RMF24'],
-  [82, '36 lat RMF FM'], [112, 'Best of RMF ON'], [148, 'Sizeer FM'],
+];
+
+const rmfLokalne = [
   [152, 'Radio Gra Toruń'], [162, 'Radio Gra Wrocław'],
 ];
 
 const rmfTematyczne = [
+  [82, '36 lat RMF FM'], [112, 'Best of RMF ON'], [148, 'Sizeer FM'],
   [1, 'RMF Rock'], [2, 'RMF Classic Rock'], [3, 'RMF Dance'], [4, 'RMF R&B'],
   [8, 'RMF Poplista'], [9, 'RMF Polskie przeboje'], [10, 'RMF Słoneczne przeboje'],
   [11, 'RMF Chillout'], [12, 'RMF Viral'], [14, 'RMF Love'], [15, 'RMF Gold'],
@@ -134,7 +137,7 @@ function oznacz(stacja) {
 const lista = [];
 const dodajRmf = (grupa, wiersze) => wiersze.forEach(([rmfId, nazwa]) =>
   lista.push(oznacz({ id: 'rmf-' + rmfId, nazwa, grupa, rmfId })));
-dodajRmf('RMF główne', rmfGlowne);
+dodajRmf('Najpopularniejsze', rmfGlowne);
 dodajRmf('RMF tematyczne', rmfTematyczne);
 dodajRmf('RMF MAXX', rmfMaxx);
 dodajRmf('RMF Classic', rmfClassic);
@@ -143,5 +146,17 @@ eska.forEach(([kod, nazwa]) => lista.push(oznacz({
   id: 'eska-' + kod, nazwa, grupa: 'ESKA', adresy: ['https://ic1.smcdn.pl/' + kod + '-1.mp3'],
 })));
 inne.forEach(([id, nazwa, grupa, adresy]) => lista.push(oznacz({ id, nazwa, grupa, adresy })));
+dodajRmf('Lokalne', rmfLokalne);
+
+// Pierwsza grupa na liście: największe stacje ogólnopolskie, w tej kolejności.
+const NAJPOPULARNIEJSZE = [
+  'rmf-5', 'zet', 'eska-2380', 'rmf-6', 'antyradio', 'rmf-7', 'rmf-190',
+  'eska-5380', 'vox', 'zlote',
+];
+const naPoczatek = NAJPOPULARNIEJSZE.map(id => lista.find(s => s.id === id)).filter(Boolean);
+naPoczatek.forEach(s => { s.grupa = 'Najpopularniejsze'; });
+const uporzadkowana = naPoczatek.concat(lista.filter(s => !naPoczatek.includes(s)));
+lista.length = 0;
+lista.push(...uporzadkowana);
 
 module.exports = lista;
