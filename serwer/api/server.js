@@ -204,6 +204,9 @@ function listaStacji(uzytkownik, dlaAdmina = false) {
       continue;
     }
     if (stacja.ukryta || nieDziala || !stacja.nazwa) continue;
+    // Stacja RMF, dla której żaden adres nie nadaje, nie zagra także przez serwer.
+    // Wraca na listę sama, gdy przy kolejnym sprawdzeniu znów zacznie nadawać.
+    if (wzor.rmfId && !adresNadawcy && Object.keys(adresyRmf).length > 20) continue;
     const adres = przezSerwer
       ? ADRES_PUBLICZNY + '/api/strumien/' + stacja.id + '?s=' + kluczStrumienia(uzytkownik)
       : adresNadawcy;
