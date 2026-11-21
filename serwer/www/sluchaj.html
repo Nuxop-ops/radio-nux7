@@ -163,11 +163,8 @@ h1 { margin: 10px 0 0; font-family: var(--szeryf); font-weight: 500; font-size: 
 .grane li:first-child { border-top: 0; }
 .grane li time { flex: none; width: 44px; color: var(--cichy); font-variant-numeric: tabular-nums; }
 .grane li span { color: var(--cichy); }
-.fala { margin: 18px auto 0; height: 36px; display: flex; align-items: center; justify-content: center; gap: 5px; max-width: 300px; }
-.fala i { flex: none; width: 2px; height: 36px; border-radius: 1px; background: var(--akcent); transform-origin: center; transform: scaleY(0.1); transition: transform 0.09s linear; }
-.fala i.dalej { background: rgba(214,210,202,0.45); }
-.fala.stoi i { transform: scaleY(0.1) !important; }
-@media (prefers-reduced-motion: reduce) { .fala i { transition: none; } }
+.fala { display: block; margin: 14px auto 0; width: min(340px, 100%); height: 66px; }
+.mini-fala { flex: none; display: block; width: 104px; height: 30px; pointer-events: none; }
 .kolo.wielkie { box-shadow: 0 10px 30px color-mix(in srgb, var(--akcent) 35%, transparent); }
 .wylacznik-opis { margin: 10px 0 0 !important; color: var(--akcent) !important; font-size: 13px !important; }
 .kafelki { flex: none; width: min(560px, 100%); margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -211,6 +208,7 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
   .wiadomosc.glowna .opis { padding: 14px 16px 16px; }
   .filtry { grid-template-columns: repeat(2, 1fr); }
   .glosnosc { display: none; }
+  .mini-fala { width: 68px; }
   .kolka { justify-content: space-between; gap: 14px 8px; }
   .kolko { width: 76px; }
 }
@@ -259,6 +257,7 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
           <span class="logo" id="mini-logo"></span>
           <span class="nazwy"><b id="mini-nazwa"></b><span id="mini-stan">Na żywo</span></span>
         </button>
+        <canvas class="mini-fala" id="mini-fala" aria-hidden="true"></canvas>
         <input class="glosnosc" id="glosnosc" type="range" min="0" max="1" step="0.05" value="1" aria-label="Głośność">
         <button class="kolo" id="mini-graj" type="button" aria-label="Pauza"></button>
       </div>
@@ -321,7 +320,7 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
     <h2 id="duza-nazwa"></h2>
     <p id="duzy-opis"></p>
     <button class="co-gra" id="co-gra" type="button" aria-expanded="false" hidden><span class="utwor" id="utwor"></span><span class="wykonawca" id="wykonawca"></span><small>Dotknij, żeby zobaczyć więcej</small></button>
-    <div class="fala stoi" id="fala" aria-hidden="true"></div>
+    <canvas class="fala" id="fala" aria-hidden="true"></canvas>
     <div class="sterowanie">
       <button class="ikona-przycisk" id="duze-serce" type="button"></button>
       <button class="ikona-przycisk" id="poprzednia" type="button" aria-label="Poprzednia stacja" style="color:var(--tekst)"></button>
@@ -942,7 +941,6 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
       e.setAttribute('aria-pressed', lubiana ? 'true' : 'false');
       e.setAttribute('aria-label', (lubiana ? 'Usuń z ulubionych: ' : 'Dodaj do ulubionych: ') + (s ? s.nazwa : ''));
     });
-    document.getElementById('fala').classList.toggle('stoi', !grana || !gra || niegra || !pomiar);
     document.getElementById('mini').hidden = !grana;
     if (grana) {
       var stan = niegra ? 'Stacja nie odpowiada' : (gra ? 'Na żywo' : 'Zatrzymane');
@@ -1094,25 +1092,119 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
     try {
       var kontekst = new (window.AudioContext || window.webkitAudioContext)();
       var analiza = kontekst.createAnalyser();
-      analiza.fftSize = 128;
-      analiza.smoothingTimeConstant = 0.75;
+      analiza.fftSize = 256;
+      analiza.smoothingTimeConstant = 0.6;
       kontekst.createMediaElementSource(dzwiek).connect(analiza);
       analiza.connect(kontekst.destination);
       pomiar = { kontekst: kontekst, analiza: analiza, dane: new Uint8Array(analiza.frequencyBinCount) };
-      var slupki = document.getElementById('fala').children;
-      (function rysujFale() {
-        requestAnimationFrame(rysujFale);
-        if (dzwiek.paused || document.getElementById('odtwarzacz').hidden) return;
-        pomiar.analiza.getByteFrequencyData(pomiar.dane);
-        for (var n = 0; n < slupki.length; n++) {
-          // Niskie tony pośrodku, wyższe na boki, tak jak w projekcie.
-          var pasmo = Math.min(pomiar.dane.length - 1, 1 + Math.round(Math.abs(n - 16) * 1.9));
-          var sila = Math.pow(pomiar.dane[pasmo] / 255, 1.4);
-          slupki[n].style.transform = 'scaleY(' + Math.max(0.1, sila).toFixed(3) + ')';
-        }
-      })();
     } catch (e) { pomiar = null; }
   }
+
+  // Fala dźwięku: duża w odtwarzaczu i mała na dolnym pasku. Niskie tony pośrodku, wyższe na boki.
+  var fale = [
+    { plotno: document.getElementById('fala'), ile: 57, odbicie: true, widac: function () { return !document.getElementById('odtwarzacz').hidden; } },
+    { plotno: document.getElementById('mini-fala'), ile: 21, odbicie: false, widac: function () { return !document.getElementById('mini').hidden; } }
+  ];
+  fale.forEach(function (f) {
+    f.pedzel = f.plotno.getContext('2d');
+    f.poziomy = []; f.szczyty = []; f.postoj = [];
+    for (var n = 0; n < f.ile; n++) { f.poziomy.push(0); f.szczyty.push(0); f.postoj.push(0); }
+    f.cicho = false;
+  });
+  var barwyFali = null, barwyZ = '';
+  function mieszaj(kolor, z, ile) {
+    var k = [0, 2, 4].map(function (i) { return parseInt(kolor.substr(1 + i, 2), 16); });
+    return 'rgb(' + k.map(function (v, i) { return Math.round(v + (z[i] - v) * ile); }).join(',') + ')';
+  }
+  function barwy(pedzel) {
+    var akcent = getComputedStyle(document.documentElement).getPropertyValue('--akcent').trim();
+    if (akcent === barwyZ && barwyFali) return barwyFali;
+    pedzel.fillStyle = '#e3c27e'; pedzel.fillStyle = akcent;
+    var szesc = pedzel.fillStyle;
+    if (!/^#[0-9a-f]{6}$/i.test(szesc)) szesc = '#e3c27e';
+    barwyZ = akcent;
+    barwyFali = {
+      dol: mieszaj(szesc, [0, 0, 0], 0.5), srodek: szesc, gora: mieszaj(szesc, [255, 250, 238], 0.6),
+      blask: mieszaj(szesc, [0, 0, 0], 0).replace('rgb', 'rgba').replace(')', ',0.55)'),
+      odbicie: mieszaj(szesc, [0, 0, 0], 0).replace('rgb', 'rgba').replace(')', ',')
+    };
+    return barwyFali;
+  }
+  function rysujFale(f, zywa) {
+    var p = f.pedzel, plotno = f.plotno;
+    var gestosc = Math.min(3, window.devicePixelRatio || 1);
+    var w = Math.round(plotno.clientWidth * gestosc), h = Math.round(plotno.clientHeight * gestosc);
+    if (!w || !h) return;
+    if (plotno.width !== w || plotno.height !== h) { plotno.width = w; plotno.height = h; f.cicho = false; }
+    var srodek = (f.ile - 1) / 2, ruch = false;
+    for (var n = 0; n < f.ile; n++) {
+      var cel = 0;
+      if (zywa) {
+        var od = Math.pow(Math.abs(n - srodek) / srodek, 1.5), do_ = Math.pow(Math.min(1, (Math.abs(n - srodek) + 1) / srodek), 1.5);
+        var a = 1 + Math.floor(od * 72), b = Math.max(a + 1, 1 + Math.floor(do_ * 72)), suma = 0;
+        for (var i = a; i < b; i++) suma += pomiar.dane[i];
+        // Wysokie tony są cichsze, więc je lekko podbijamy, żeby boki też żyły.
+        cel = Math.min(1, Math.pow(suma / (b - a) / 255, 1.5) * (1 + od * 0.9));
+      }
+      var v = f.poziomy[n];
+      v += (cel - v) * (cel > v ? 0.55 : 0.16);
+      if (v < 0.004) v = 0;
+      f.poziomy[n] = v;
+      if (v >= f.szczyty[n]) { f.szczyty[n] = v; f.postoj[n] = 22; }
+      else if (f.postoj[n] > 0) f.postoj[n]--;
+      else f.szczyty[n] = Math.max(v, f.szczyty[n] - 0.014);
+      if (v > 0 || f.szczyty[n] > 0) ruch = true;
+    }
+    if (!ruch && f.cicho) return;
+    f.cicho = !ruch;
+    var kolory = barwy(p);
+    p.clearRect(0, 0, w, h);
+    var krok = w / f.ile, gruby = Math.max(gestosc, Math.round(krok * 0.56)), promien = gruby / 2;
+    var podstawa = f.odbicie ? Math.round(h * 0.7) : h - gestosc, zakres = podstawa - 3 * gestosc;
+    var kropka = Math.max(gestosc * 2, gruby);
+    var wzor = p.createLinearGradient(0, podstawa, 0, podstawa - zakres);
+    wzor.addColorStop(0, kolory.dol); wzor.addColorStop(0.5, kolory.srodek); wzor.addColorStop(1, kolory.gora);
+    function slupek(x, y, wys) {
+      p.beginPath();
+      if (p.roundRect) p.roundRect(x, y, gruby, wys, promien); else p.rect(x, y, gruby, wys);
+      p.fill();
+    }
+    p.save();
+    p.shadowColor = kolory.blask; p.shadowBlur = (f.odbicie ? 9 : 5) * gestosc;
+    p.fillStyle = wzor;
+    for (n = 0; n < f.ile; n++) {
+      var wys = Math.max(kropka, f.poziomy[n] * zakres);
+      slupek(Math.round(n * krok + (krok - gruby) / 2), podstawa - wys, wys);
+    }
+    p.restore();
+    p.fillStyle = kolory.gora;
+    for (n = 0; n < f.ile; n++) {
+      if (f.szczyty[n] * zakres <= kropka + gestosc * 2) continue;
+      var y = podstawa - f.szczyty[n] * zakres - gestosc * 3;
+      p.globalAlpha = Math.min(1, 0.35 + f.szczyty[n]);
+      p.fillRect(Math.round(n * krok + (krok - gruby) / 2), Math.max(0, y), gruby, Math.max(1, Math.round(gestosc * 1.5)));
+    }
+    p.globalAlpha = 1;
+    if (f.odbicie) {
+      var cien = p.createLinearGradient(0, podstawa, 0, h);
+      cien.addColorStop(0, kolory.odbicie + '0.26)'); cien.addColorStop(1, kolory.odbicie + '0)');
+      p.fillStyle = cien;
+      for (n = 0; n < f.ile; n++) {
+        var dlugi = Math.max(kropka, f.poziomy[n] * zakres) * 0.42;
+        slupek(Math.round(n * krok + (krok - gruby) / 2), podstawa + gestosc * 2, Math.min(dlugi, h - podstawa - gestosc * 2));
+      }
+    }
+  }
+  (function klatka() {
+    requestAnimationFrame(klatka);
+    var zywa = !!pomiar && !dzwiek.paused && !dzwiek.muted;
+    var pobrane = false;
+    fale.forEach(function (f) {
+      if (!f.widac()) return;
+      if (zywa && !pobrane) { pomiar.analiza.getByteFrequencyData(pomiar.dane); pobrane = true; }
+      rysujFale(f, zywa);
+    });
+  })();
 
   function graj(stacja) {
     // Po włączeniu pomiaru dźwięk spoza naszego serwera byłby niemy, więc wczytujemy stronę od nowa.
@@ -1266,11 +1358,6 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
   document.getElementById('wylacznik').innerHTML = ikona(IKONY.zegar, 26);
   document.getElementById('kafel-grane-znak').innerHTML = ikona(IKONY.nuty, 22);
   document.getElementById('kafel-wiadomosci-znak').innerHTML = ikona(IKONY.wiadomosci, 22);
-  (function () {
-    var fala = document.getElementById('fala'), slupki = '';
-    for (var n = 0; n < 33; n++) slupki += '<i' + (Math.abs(n - 16) > 8 ? ' class="dalej"' : '') + '></i>';
-    fala.innerHTML = slupki;
-  })();
   document.getElementById('kafel-grane').addEventListener('click', function () {
     var pole = document.getElementById('grane');
     pole.hidden = !pole.hidden;
