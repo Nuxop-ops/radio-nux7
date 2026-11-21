@@ -38,7 +38,7 @@ for PLIK in index.html logo.png ikona.png wersja.json; do
   curl -fsSL "$ZRODLO/www/$PLIK" -o "$KATALOG/www/$PLIK"
 done
 # Poniższe pliki są tylko w nowszych wersjach; przy cofaniu do starszej są usuwane.
-for PLIK in www/napis.png www/radio-nux7.apk www/sluchaj.html www/admin.html nginx.conf api/server.js api/stacje.js api/sprawdz.js api/wiadomosci.js; do
+for PLIK in www/manifest.json www/sw.js www/ikona-192.png www/napis.png www/radio-nux7.apk www/sluchaj.html www/admin.html nginx.conf api/server.js api/stacje.js api/sprawdz.js api/wiadomosci.js; do
   NOWY_PLIK="$(mktemp)"
   KOD="$(curl -sL --retry 3 --retry-delay 2 -o "$NOWY_PLIK" -w '%{http_code}' "$ZRODLO/$PLIK" || true)"
   if [ "$KOD" = "200" ] && [ -s "$NOWY_PLIK" ]; then

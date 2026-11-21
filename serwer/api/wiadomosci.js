@@ -10,14 +10,15 @@ const TEMATY = [
   { id: 'polska', nazwa: 'Polska' },
   { id: 'zdarzenia', nazwa: 'Wypadki i zdarzenia' },
   { id: 'nauka', nazwa: 'Technologie, AI i nauka' },
-  { id: 'podroze', nazwa: 'Podróże i ciekawostki' },
+  { id: 'podroze', nazwa: 'Przyroda i ciekawe miejsca' },
+  { id: 'irlandia', nazwa: 'Irlandia' },
   { id: 'uroda', nazwa: 'Uroda i styl' },
   { id: 'kultura', nazwa: 'Kultura i rozrywka' },
   { id: 'gospodarka', nazwa: 'Gospodarka' },
   { id: 'sport', nazwa: 'Sport' },
 ];
 // Tematy zaznaczone, dopóki użytkownik sam nie wybierze.
-const DOMYSLNE = ['swiat', 'polska', 'zdarzenia', 'nauka', 'podroze', 'kultura'];
+const DOMYSLNE = ['swiat', 'polska', 'irlandia', 'zdarzenia', 'nauka', 'podroze', 'kultura'];
 
 // Kanał, który nie odpowiada, jest pomijany i nie psuje reszty.
 const KANALY = [
@@ -40,10 +41,15 @@ const KANALY = [
   ['CHIP', 'nauka', 'https://www.chip.pl/feed'],
   ['Kopalnia Wiedzy', 'nauka', 'https://kopalniawiedzy.pl/rss.xml'],
   ['Crazy Nauka', 'nauka', 'https://www.crazynauka.pl/feed/'],
-  // Podróże i ciekawostki z ciekawych miejsc.
+  // Przyroda i opisy ciekawych miejsc. Bez ofert wycieczek.
   ['Focus', 'podroze', 'https://www.focus.pl/feed'],
   ['National Geographic', 'podroze', 'https://www.national-geographic.pl/rss'],
-  ['Fly4free', 'podroze', 'https://www.fly4free.pl/feed/'],
+  ['Nauka o klimacie', 'podroze', 'https://naukaoklimacie.pl/feed'],
+  ['Tatromaniak', 'podroze', 'https://tatromaniak.pl/feed/'],
+  ['Urania', 'podroze', 'https://www.urania.edu.pl/rss.xml'],
+  // Polskie serwisy o Irlandii.
+  ['Hello Irlandia', 'irlandia', 'https://helloirlandia.ie/feed/'],
+  ['Polska-IE', 'irlandia', 'https://www.polska-ie.com/feed/'],
   // Uroda, kosmetyki i styl.
   ['Hello Zdrowie', 'uroda', 'https://www.hellozdrowie.pl/feed/'],
   ['Elle', 'uroda', 'https://www.elle.pl/rss'],
@@ -101,15 +107,24 @@ function obraz(wpis) {
   return null;
 }
 
-// Kanały tematyczne (technologie, podróże, uroda, sport) zostają w swoim temacie.
-const WLASNY_TEMAT = new Set(['sport', 'nauka', 'podroze', 'uroda']);
+// Oferty, promocje i reklamy wycieczek nie są wiadomościami.
+const OFERTY = /promocj|wyprzeda[żz]|\brabat|kod\w* rabatow|last minute|tanie loty|tani\w* lot\w*|loty? (?:za|od) \d|\bod \d[\d ]* (?:zł|pln|euro|eur)\b|\bza \d[\d ]* (?:zł|pln|euro|eur)\b|% taniej|okazj[aeię]|\bofert[ayę]\b|all inclusive|biur\w+ podróży|wczasy|wycieczk\w+ (?:za|od|w cenie)|black friday|cyber monday|kup teraz|sprawdź cen|bilety? (?:za|od) /i;
+// Teksty o Irlandii trafiają do osobnego tematu, skądkolwiek pochodzą.
+const IRLANDIA = /irland|dublin|\bcork\b|galway|\bmayo\b|limerick|kerry\b|donegal|connemar|zielon\w+ wysp|klif\w+ moher|wild atlantic/i;
+
+// Kanały tematyczne (technologie, przyroda, uroda, sport, Irlandia) zostają w swoim temacie.
+const WLASNY_TEMAT = new Set(['sport', 'nauka', 'podroze', 'uroda', 'irlandia']);
 
 // Zwraca temat wiadomości albo null, gdy wiadomość ma być pominięta.
 function temat(zKanalu, tytul, wstep) {
   const calosc = tytul + ' ' + wstep;
-  if (RELIGIA.test(calosc)) return null;
-  if (WLASNY_TEMAT.has(zKanalu)) return POLITYKA_WPROST.test(calosc) ? null : zKanalu;
+  if (RELIGIA.test(calosc) || OFERTY.test(calosc)) return null;
+  if (WLASNY_TEMAT.has(zKanalu)) {
+    if (POLITYKA_WPROST.test(calosc)) return null;
+    return zKanalu !== 'sport' && IRLANDIA.test(tytul) ? 'irlandia' : zKanalu;
+  }
   if (POLITYKA.test(calosc)) return null;
+  if (IRLANDIA.test(tytul)) return 'irlandia';
   if (ZDARZENIA.test(calosc)) return 'zdarzenia';
   if (SPORT.test(tytul)) return 'sport';
   return zKanalu;

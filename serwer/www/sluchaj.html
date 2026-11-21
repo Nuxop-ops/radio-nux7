@@ -7,6 +7,8 @@
 <title>Radio NUX7 – słuchaj w przeglądarce</title>
 <meta name="description" content="Polskie stacje radiowe w przeglądarce. Ten sam wygląd i te same ulubione co w aplikacji Radio NUX7.">
 <link rel="icon" type="image/png" href="ikona.png">
+<link rel="apple-touch-icon" href="ikona.png">
+<link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap">
@@ -717,6 +719,31 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
       tresc.appendChild(p4);
     }
 
+    tresc.appendChild(el('p', 'etykieta zlota', 'RADIO NA KOMPUTERZE'));
+    var p5 = panel();
+    var w5 = el('div', 'opcja');
+    var t5 = el('div', '');
+    t5.style.flex = '1';
+    w5.appendChild(t5);
+    if (wOknieProgramu()) {
+      t5.textContent = 'Radio jest zainstalowane i działa jako osobny program.';
+    } else if (zaproszenieDoInstalacji) {
+      t5.textContent = 'Zainstaluj radio jak zwykły program: własne okno, ikona na pulpicie i na pasku zadań.';
+      var a5 = el('button', 'przycisk drugi', 'Zainstaluj');
+      a5.type = 'button';
+      a5.addEventListener('click', function () {
+        var zaproszenie = zaproszenieDoInstalacji;
+        zaproszenieDoInstalacji = null;
+        zaproszenie.prompt();
+        zaproszenie.userChoice.then(function () { if (zakladka === 'opcje') rysuj(); });
+      });
+      w5.appendChild(a5);
+    } else {
+      t5.textContent = 'W przeglądarce Chrome albo Edge kliknij ikonę instalacji po prawej stronie paska adresu albo wybierz z menu „Zainstaluj Radio NUX7”. Radio dostanie własne okno i ikonę na pulpicie.';
+    }
+    p5.appendChild(w5);
+    tresc.appendChild(p5);
+
     tresc.appendChild(el('p', 'etykieta zlota', 'APLIKACJA NA TELEFON'));
     var p3 = panel();
     var w3 = el('div', 'opcja');
@@ -729,6 +756,23 @@ dialog .przycisk { width: 100%; margin-top: 22px; min-height: 56px; }
     p3.appendChild(w3);
     tresc.appendChild(p3);
   }
+
+  // ---------- Instalacja na komputerze ----------
+
+  var zaproszenieDoInstalacji = null;
+  function wOknieProgramu() {
+    return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  }
+  window.addEventListener('beforeinstallprompt', function (zdarzenie) {
+    zdarzenie.preventDefault();
+    zaproszenieDoInstalacji = zdarzenie;
+    if (zakladka === 'opcje') rysuj();
+  });
+  window.addEventListener('appinstalled', function () {
+    zaproszenieDoInstalacji = null;
+    if (zakladka === 'opcje') rysuj();
+  });
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
 
   // ---------- Wiadomości ----------
 
